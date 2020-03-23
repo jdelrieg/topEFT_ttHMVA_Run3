@@ -62,7 +62,7 @@ if __name__ == "__main__":
                     ttys.append(vtty)
             for tty in ttys:
                 mycut = tty.adaptExpr(cut.allCuts(),cut=True)
-                if options.doS2V: mycut  = scalarToVector(mycut)
+                if options.doS2V: mycut  = scalarToVector(mycut,tty.getTree())
                 fname2cuts[mysource].add(mycut)
             friends = ""
             if len(options.friendTrees + options.friendTreesMC + options.friendTreesData) > 0:
