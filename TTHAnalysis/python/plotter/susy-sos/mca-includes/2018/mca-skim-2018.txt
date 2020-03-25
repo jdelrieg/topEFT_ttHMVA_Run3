@@ -1,0 +1,71 @@
+data : DoubleMuon_Run2018A_25Oct2019
+data : DoubleMuon_Run2018B_25Oct2019
+data : DoubleMuon_Run2018C_25Oct2019
+data : DoubleMuon_Run2018D_25Oct2019
+data : MET_Run2018A_25Oct2019
+data : MET_Run2018B_25Oct2019
+data : MET_Run2018C_25Oct2019
+data : MET_Run2018D_25Oct2019
+data : SingleMuon_Run2018A_25Oct2019
+data : SingleMuon_Run2018B_25Oct2019
+data : SingleMuon_Run2018C_25Oct2019
+data : SingleMuon_Run2018D_25Oct2019
+DYJetsToLL_M1to4_HT100to200 : DYJetsToLL_M1to4_HT100to200 : xsec
+DYJetsToLL_M1to4_HT200to400 : DYJetsToLL_M1to4_HT200to400 : xsec
+DYJetsToLL_M1to4_HT400to600 : DYJetsToLL_M1to4_HT400to600 : xsec
+DYJetsToLL_M1to4_HT600toInf : DYJetsToLL_M1to4_HT600toInf : xsec
+DYJetsToLL_M1to4_HT70to100 : DYJetsToLL_M1to4_HT70to100 : xsec
+DYJetsToLL_M4to50_HT100to200 : DYJetsToLL_M4to50_HT100to200 : xsec
+DYJetsToLL_M4to50_HT200to400 : DYJetsToLL_M4to50_HT200to400 : xsec
+DYJetsToLL_M4to50_HT400to600 : DYJetsToLL_M4to50_HT400to600 : xsec
+DYJetsToLL_M4to50_HT600toInf : DYJetsToLL_M4to50_HT600toInf : xsec
+DYJetsToLL_M4to50_HT70to100 : DYJetsToLL_M4to50_HT70to100 : xsec
+DYJetsToLL_M50_HT100to200 : DYJetsToLL_M50_HT100to200 : xsec
+DYJetsToLL_M50_HT1200to2500 : DYJetsToLL_M50_HT1200to2500 : xsec
+DYJetsToLL_M50_HT200to400 : DYJetsToLL_M50_HT200to400 : xsec
+DYJetsToLL_M50_HT2500toInf : DYJetsToLL_M50_HT2500toInf : xsec
+DYJetsToLL_M50_HT400to600 : DYJetsToLL_M50_HT400to600 : xsec
+DYJetsToLL_M50_HT600to800 : DYJetsToLL_M50_HT600to800 : xsec
+DYJetsToLL_M50_HT800to1200 : DYJetsToLL_M50_HT800to1200 : xsec
+SMS_TChiWZ : SMS_TChiWZ : xsec
+TBar_tch : TBar_tch : xsec
+TBar_tWch_noFullyHad : TBar_tWch_noFullyHad : xsec
+TGJets_lep : TGJets_lep : xsec
+T_sch_lep : T_sch_lep : xsec
+T_tch : T_tch : xsec
+TTGJets : TTGJets : xsec
+TTJets_DiLepton : TTJets_DiLepton : xsec
+TTJets_SingleLeptonFromTbar : TTJets_SingleLeptonFromTbar : xsec
+TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
+T_tWch_noFullyHad : T_tWch_noFullyHad : xsec
+TTWToLNu_fxfx : TTWToLNu_fxfx : xsec
+TTZToLLNuNu_amc : TTZToLLNuNu_amc : xsec
+TTZToLLNuNu_m1to10 : TTZToLLNuNu_m1to10 : xsec
+tWll : tWll : xsec
+TZQToLL : TZQToLL : xsec
+VVTo2L2Nu_M1toInf : VVTo2L2Nu_M1toInf : xsec
+VVTo2L2Nu : VVTo2L2Nu : xsec
+WGToLNuG : WGToLNuG : xsec
+WJetsToLNu_HT100to200 : WJetsToLNu_HT100to200 : xsec
+WJetsToLNu_HT1200to2500 : WJetsToLNu_HT1200to2500 : xsec
+WJetsToLNu_HT200to400 : WJetsToLNu_HT200to400 : xsec
+WJetsToLNu_HT2500toInf : WJetsToLNu_HT2500toInf : xsec
+WJetsToLNu_HT400to600 : WJetsToLNu_HT400to600 : xsec
+WJetsToLNu_HT600to800 : WJetsToLNu_HT600to800 : xsec
+WJetsToLNu_HT800to1200 : WJetsToLNu_HT800to1200 : xsec
+WpWpJJ : WpWpJJ : xsec
+WW_DPS : WW_DPS : xsec
+WWToLNuQQ : WWToLNuQQ : xsec
+WWW_ll : WWW_ll : xsec
+WWW : WWW : xsec
+WWZ : WWZ : xsec
+WZTo2L2Q : WZTo2L2Q : xsec
+WZTo3LNu_fxfx : WZTo3LNu_fxfx : xsec
+WZTo3LNu_mllmin01 : WZTo3LNu_mllmin01 : xsec
+WZTo3LNu_pow : WZTo3LNu_pow : xsec
+WZZ : WZZ : xsec
+ZGTo2LG : ZGTo2LG : xsec
+ZZTo2L2Q : ZZTo2L2Q : xsec
+ZZTo4L_M1toInf : ZZTo4L_M1toInf : xsec
+ZZTo4L : ZZTo4L : xsec
+ZZZ : ZZZ : xsec
