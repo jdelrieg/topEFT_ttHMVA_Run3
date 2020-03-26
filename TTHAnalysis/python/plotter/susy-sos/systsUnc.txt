@@ -12,7 +12,7 @@ $alias : PromptFromMC : $ttHX|$ttV|Rares|Convs|WZ|ZZ|EWK
 #$alias : FRAll  : data_fakes|.*_promptsub|TT_FR_QCD
 
 $alias : BkgFromMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs
-$alias : allMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|√Fakes.*|Rares|Convs|sig_.*
+$alias : allMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|sig_.*
 
 $alias : allSR : .*sr.*
 
