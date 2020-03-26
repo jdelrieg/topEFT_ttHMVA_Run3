@@ -89,7 +89,9 @@ def base(selection):
     if selection=='2los':
          GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
          if args.doWhat in ["plots"]: GO+=" susy-sos/2los_plots.txt "
-         if args.doWhat in ["cards"]: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
+         if args.doWhat in ["cards"]:
+             if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
+             else: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
 
          wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR)
          GO="%s -W %s"%(GO,wBG)
@@ -103,7 +105,9 @@ def base(selection):
     elif selection=='3l':
         GO="%s susy-sos/mca/mca-3l-%s.txt susy-sos/3l_cuts.txt "%(CORE,YEAR)
         if args.doWhat in ["plots"]: GO+=" susy-sos/3l_plots.txt "
-        if args.doWhat in ["cards"]: GO+="  minMllSFOS [4,10,20,30,50] "
+        if args.doWhat in ["cards"]:
+            if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: GO+="  minMllSFOS [1,4,10,20,30,50] "
+            else: GO+="  minMllSFOS [4,10,20,30,50] "
         
         wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR,YEAR)
         GO="%s -W %s"%(GO,wBG)
