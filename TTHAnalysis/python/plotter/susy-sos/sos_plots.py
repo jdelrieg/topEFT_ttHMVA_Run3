@@ -2,6 +2,7 @@
 import sys
 import re
 import os
+import errno
 import argparse
 
 helpText = "LEP = '2los', '3l'\n\
@@ -88,7 +89,9 @@ def base(selection):
     if selection=='2los':
          GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
          if args.doWhat in ["plots"]: GO+=" susy-sos/2los_plots.txt "
-         if args.doWhat in ["cards"]: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
+         if args.doWhat in ["cards"]:
+             if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
+             else: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
 
          wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR)
          GO="%s -W %s"%(GO,wBG)
@@ -102,7 +105,9 @@ def base(selection):
     elif selection=='3l':
         GO="%s susy-sos/mca/mca-3l-%s.txt susy-sos/3l_cuts.txt "%(CORE,YEAR)
         if args.doWhat in ["plots"]: GO+=" susy-sos/3l_plots.txt "
-        if args.doWhat in ["cards"]: GO+="  minMllSFOS [4,10,20,30,50] "
+        if args.doWhat in ["cards"]:
+            if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: GO+="  minMllSFOS [1,4,10,20,30,50] "
+            else: GO+="  minMllSFOS [4,10,20,30,50] "
         
         wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR,YEAR)
         GO="%s -W %s"%(GO,wBG)
@@ -212,50 +217,51 @@ def prepareWrapper(name):
                         f.write('    echo "running %s"\n'%year)
                         f.write('    source "%s/jobs/runJob_%s.sh"\n'%(ODIR,newName))
                         f.write('fi\n')
+        f.write( 'cd %s\n'%(ODIR) )
         f.write( 'CARDS_ALL=""\n' )
         masses = '_'.join((args.signalMasses.rstrip('+').split('_'))[-2:])
-        f.write( 'for f in `find   %s/scan/SR -name "%s"`\n'%(ODIR,masses) ) 
+        f.write( 'for f in `find   ./scan/SR -name "%s"`\n'%(masses) ) 
         f.write( 'do CARDS_ALL="${CARDS_ALL} `find  $f -regex .*txt`"\n'  )
         f.write( 'done\n' )
         f.write( 'echo ${CARDS_ALL}\n' )
         f.write( 'cd %s\n'%(HIGGSCOMBINEDIR) )
         f.write( 'eval `scramv1 runtime -sh`\n' )
-        f.write( 'cd -\n' )
-        f.write( '[ -d %s/combinedCards ] || mkdir %s/combinedCards\n'%(ODIR,ODIR) )
-        f.write( 'combineCards.py -S $CARDS_ALL > %s/combinedCards/%s.txt\n' %( ODIR, masses) )
-        f.write( '[ -d %s/limits ] || mkdir %s/limits\n'%(ODIR,ODIR) )
-        f.write( 'combine -M Asymptotic %s/combinedCards/%s.txt -n %s -m %s > %s/limits/%s_limit.txt \n'%(ODIR, masses, masses, masses.split('_')[0], ODIR, masses ) )
-        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root %s/limits \n'%(masses, masses.split('_')[0], ODIR ) )
+        f.write( 'cd %s\n'%(ODIR) )
+        f.write( '[ -d ./combinedCards ] || mkdir ./combinedCards\n' )
+        f.write( 'combineCards.py -S $CARDS_ALL > ./combinedCards/%s.txt\n' %(masses) )
+        f.write( '[ -d ./limits ] || mkdir ./limits\n' )
+        f.write( 'combine -M Asymptotic ./combinedCards/%s.txt -n %s -m %s > ./limits/%s_limit.txt \n'%( masses, masses, masses.split('_')[0], masses ) )
+        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root ./limits \n'%(masses, masses.split('_')[0] ) )
 
 
         f.write( 'CARDS_2L=""\n' )
-        f.write( 'for f in `find   %s/scan/SR -type d -regex ".*\(2los_cr_ss\|2los_cr_dy\|2los_cr_tt\|2los_sr\).*/%s"`\n'%(ODIR,masses) ) ##-type d -regex '.*\(cr_ss\|3l_sr\).*/100_70'
+        f.write( 'for f in `find   ./scan/SR -type d -regex ".*\(2los_cr_ss\|2los_cr_dy\|2los_cr_tt\|cr_wz\|2los_sr\).*/%s"`\n'%(masses) ) ##-type d -regex '.*\(cr_ss\|3l_sr\).*/100_70'
         f.write( 'do CARDS_2L="${CARDS_2L} `find  $f -regex .*txt`"\n'  )
         f.write( 'done\n' )
         f.write( 'echo ${CARDS_2L}\n' )
         f.write( 'cd %s\n'%(HIGGSCOMBINEDIR) )
         f.write( 'eval `scramv1 runtime -sh`\n' )
-        f.write( 'cd -\n' )
-        f.write( '[ -d %s/combinedCards ] || mkdir %s/combinedCards\n'%(ODIR,ODIR) )
-        f.write( 'combineCards.py -S $CARDS_2L > %s/combinedCards/%s_2lep.txt\n' %( ODIR, masses) )
-        f.write( '[ -d %s/limits ] || mkdir %s/limits\n'%(ODIR,ODIR) )
-        f.write( 'combine -M Asymptotic %s/combinedCards/%s_2lep.txt -n %s -m %s > %s/limits/%s_limit_2lep.txt \n'%(ODIR, masses, masses, masses.split('_')[0], ODIR, masses ) )
-        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root %s/limits/higgsCombine%s.Asymptotic.mH%s_2lep.root \n'%(masses, masses.split('_')[0], ODIR, masses, masses.split('_')[0] ) )
+        f.write( 'cd %s\n'%(ODIR) )
+        f.write( '[ -d ./combinedCards ] || mkdir ./combinedCards\n' )
+        f.write( 'combineCards.py -S $CARDS_2L > ./combinedCards/%s_2lep.txt\n' %(masses) )
+        f.write( '[ -d ./limits ] || mkdir ./limits\n' )
+        f.write( 'combine -M Asymptotic ./combinedCards/%s_2lep.txt -n %s -m %s > ./limits/%s_limit_2lep.txt \n'%( masses, masses, masses.split('_')[0], masses ) )
+        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root ./limits/higgsCombine%s.Asymptotic.mH%s_2lep.root \n'%(masses, masses.split('_')[0], masses, masses.split('_')[0] ) )
 
 
         f.write( 'CARDS_3L=""\n' )
-        f.write( 'for f in `find   %s/scan/SR -type d -regex ".*\(2los_cr_ss\|2los_cr_dy\|2los_cr_tt\|cr_wz\|3l_sr\).*/%s"`\n'%(ODIR,masses) ) ##-type d -regex '.*\(cr_ss\|3l_sr\).*/100_70'
+        f.write( 'for f in `find   ./scan/SR -type d -regex ".*\(2los_cr_ss\|2los_cr_dy\|2los_cr_tt\|cr_wz\|3l_sr\).*/%s"`\n'%(masses) ) ##-type d -regex '.*\(cr_ss\|3l_sr\).*/100_70'
         f.write( 'do CARDS_3L="${CARDS_3L} `find  $f -regex .*txt`"\n'  )
         f.write( 'done\n' )
         f.write( 'echo ${CARDS_3L}\n' )
         f.write( 'cd %s\n'%(HIGGSCOMBINEDIR) )
         f.write( 'eval `scramv1 runtime -sh`\n' )
-        f.write( 'cd -\n' )
-        f.write( '[ -d %s/combinedCards ] || mkdir %s/combinedCards\n'%(ODIR,ODIR) )
-        f.write( 'combineCards.py -S $CARDS_3L > %s/combinedCards/%s_3lep.txt\n' %( ODIR, masses) )
-        f.write( '[ -d %s/limits ] || mkdir %s/limits\n'%(ODIR,ODIR) )
-        f.write( 'combine -M Asymptotic %s/combinedCards/%s_3lep.txt -n %s -m %s > %s/limits/%s_limit_3lep.txt \n'%(ODIR, masses, masses, masses.split('_')[0], ODIR, masses ) )
-        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root %s/limits/higgsCombine%s.Asymptotic.mH%s_3lep.root \n'%(masses, masses.split('_')[0], ODIR, masses, masses.split('_')[0] ) )
+        f.write( 'cd %s\n'%(ODIR) )
+        f.write( '[ -d ./combinedCards ] || mkdir ./combinedCards\n' )
+        f.write( 'combineCards.py -S $CARDS_3L > ./combinedCards/%s_3lep.txt\n' %(masses) )
+        f.write( '[ -d ./limits ] || mkdir ./limits\n' )
+        f.write( 'combine -M Asymptotic ./combinedCards/%s_3lep.txt -n %s -m %s > ./limits/%s_limit_3lep.txt \n'%( masses, masses, masses.split('_')[0], masses ) )
+        f.write( 'mv higgsCombine%s.Asymptotic.mH%s.root ./limits/higgsCombine%s.Asymptotic.mH%s_3lep.root \n'%(masses, masses.split('_')[0], masses, masses.split('_')[0] ) )
 
 
     
