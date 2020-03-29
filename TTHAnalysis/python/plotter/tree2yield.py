@@ -300,11 +300,7 @@ class TreeToYield:
     def _init(self):
         if "root://" in self._fname:
             ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-#            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
-            #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=200000") # worse than 65k
-            #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=32768") # worse than 65k
-            self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=65535") # good
-            #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=0") #worse than 65k
+            self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=%d"%self._options.readaheadsz)
         else:
             self._tfile = ROOT.TFile.Open(self._fname)
         if not self._tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
@@ -315,7 +311,7 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         for tf_tree, tf_filename in self._listFriendTrees():
-            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')),
+            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')+(("?readaheadsz=%d"%self._options.readaheadsz) if "root://" in self._fname else '')),
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
@@ -723,6 +719,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--neglist", dest="negAllowed", action="append", default=[], help="Give process name regexp where negative values are allowed")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
+    parser.add_option("--readaheadsz", dest="readaheadsz", type=int, default=65535, help="readaheadsz (bytes) for remote file opening")
 
 
 def mergeReports(reports):
