@@ -311,7 +311,7 @@ class TreeToYield:
         if "root://" in self._fname: self._tree.SetCacheSize()
         self._friends = []
         for tf_tree, tf_filename in self._listFriendTrees():
-            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')+(("?readaheadsz=%d"%self._options.readaheadsz) if "root://" in self._fname else '')),
+            tf = self._tree.AddFriend(tf_tree, tf_filename.replace('/pool/ciencias/','/pool/cienciasrw/')+(("?readaheadsz=%d"%self._options.readaheadsz) if "root://" in tf_filename else '')),
             self._friends.append(tf)
         self._isInit = True
     def _close(self):
