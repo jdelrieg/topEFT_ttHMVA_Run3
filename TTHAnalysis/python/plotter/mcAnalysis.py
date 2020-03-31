@@ -4,6 +4,7 @@ from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import *
+import CMGTools.Production.eostools as eostools
 import pickle, re, random, time
 from copy import copy, deepcopy
 from collections import defaultdict
@@ -258,6 +259,11 @@ class MCAnalysis:
                     if os.path.exists(treepath+"/"+cname) or (treename == "NanoAOD" and os.path.isfile(treepath+"/"+cname+".root")):
                         basepath = treepath
                         break
+                    elif (treename == "NanoAOD" and treepath.startswith('root://')):
+                        _, _, retcode = eostools.runXRDFSCommand(treepath+"/"+cname+".root","stat")
+                        if (retcode==0):
+                            basepath = treepath
+                            break
                 if not basepath:
                     raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
 
@@ -285,7 +291,7 @@ class MCAnalysis:
                         rootfiles = glob("%s/%s/*.root" % (basepath, cname))
                     elif os.path.isfile(rootfile):
                         rootfiles = [ rootfile ]
-                    elif os.path.isfile(rootfile+".root"):
+                    elif (os.path.isfile(rootfile+".root") or basepath.startswith('root://')):
                         rootfiles = [ rootfile+".root" ]
                     else:
                         raise RuntimeError("%s -- ERROR: cannot find NanoAOD file for %s process in paths (%s)" % (__name__, cname, repr(options.path)))

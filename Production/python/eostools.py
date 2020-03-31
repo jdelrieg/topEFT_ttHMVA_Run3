@@ -38,6 +38,15 @@ def runXRDCommand(path, cmd, *args):
     # print ' '.join(command)
     return _runCommand(command)
 
+def runXRDFSCommand(path, cmd, *args):
+
+    tokens = splitPFN(path)
+
+    command = ['xrdfs', '%s://%s'%(tokens[0],tokens[1]), cmd, tokens[2]]
+    command.extend(args)
+    # print ' '.join(command)
+    return _runCommand(command)
+
 def runEOSCommand(path, cmd, *args):
     """Run an eos command.
 
