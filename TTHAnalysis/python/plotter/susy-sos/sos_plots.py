@@ -94,14 +94,8 @@ def base(selection):
              else: GO+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
 
          wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR)
-         GO="%s -W %s"%(GO,wBG)
+         GO="%s -W %s --binname %s "%(GO,wBG,conf)
 
-         if args.doWhat == "cards":         
-             GO += " --binname %s "%args.bin
-         else:
-             GO += " --binname 2los "
-
- 
     elif selection=='3l':
         GO="%s susy-sos/mca/mca-3l-%s.txt susy-sos/3l_cuts.txt "%(CORE,YEAR)
         if args.doWhat in ["plots"]: GO+=" susy-sos/3l_plots.txt "
@@ -110,12 +104,7 @@ def base(selection):
             else: GO+="  minMllSFOS [4,10,20,30,50] "
         
         wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR,YEAR)
-        GO="%s -W %s"%(GO,wBG)
-
-        if args.doWhat == "cards":         
-            GO += " --binname %s "%args.bin
-        else:
-            GO += " --binname 3l "
+        GO="%s -W %s --binname %s "%(GO,wBG,conf)
 
     else:
         raise RuntimeError('Unknown selection')
