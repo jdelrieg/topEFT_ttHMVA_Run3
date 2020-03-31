@@ -24,7 +24,17 @@ lep1_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['lepSF(LepGood1_pt\,Lep
 lep2_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)'\,'lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,-1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)']
 #lep3_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['if3(nLepGood==3\,lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)\,1)'\,'if3(nLepGood==3\,lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,-1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)\,1)']
 
-#CMS_scale_j	: $PromptFromMC : .* : templateAsymm; \
-#        FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt'], \
-#        AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
+CMS_scale_j	: $allMC : .* : templateAsymm; \
+        FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt'], \
+        AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
 
+CMS_btag_lf		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']
+CMS_btag_hf		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
+
+CMS_btag_lfstats1	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']
+CMS_btag_lfstats2	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']
+CMS_btag_hfstats1	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
+CMS_btag_hfstats2	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
+
+CMS_btag_cferr1		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
+CMS_btag_cferr2		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
