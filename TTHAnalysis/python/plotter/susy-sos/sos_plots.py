@@ -194,13 +194,14 @@ def prepareWrapper(name):
         nameSplit = name.split('_')
         for year in ["2016","2017","2018"]:
             for nlep in ["2los","3l"]:
-                for ireg in ["sr","cr_ss","cr_dy","cr_tt","cr_vv"]:
+                for ireg in ["sr","cr_ss","cr_dy","cr_tt","cr_vv","cr_wz"]:
                     for ibin in ["low","med","high"]:
-                        if ibin == "high" and nlep != "2los" and ireg!="sr": continue
-                        if ireg == "cr_ss" and nlep != "2los" and ibin != "med": continue
-                        if ireg == "cr_dy" and (nlep != "2los"  or ibin == "high"): continue
-                        if ireg == "cr_tt" and (nlep != "2los"  or ibin == "high"): continue
-                        if ireg == "cr_vv" and (nlep != "2los"  or ibin == "high"): continue
+                        if ireg == "sr"    and (nlep == "3l"   and ibin == "high"): continue
+                        if ireg == "cr_ss" and (nlep != "2los" or  ibin != "med" ): continue
+                        if ireg == "cr_dy" and (nlep != "2los" or  ibin == "high"): continue
+                        if ireg == "cr_tt" and (nlep != "2los" or  ibin == "high"): continue
+                        if ireg == "cr_vv" and (nlep != "2los" or  ibin == "high"): continue
+                        if ireg == "cr_wz" and (nlep != "3l"   or  ibin == "high"): continue
                         newName = '_'.join([nlep,ireg,ibin,nameSplit[-3],nameSplit[-2],year])
                         f.write('if test -f "%s/jobs/runJob_%s.sh"; then\n'%(ODIR,newName))
                         f.write('    echo "running %s"\n'%year)
