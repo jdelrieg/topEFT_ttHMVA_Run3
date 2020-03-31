@@ -7,22 +7,24 @@ $alias : allSR : .*sr.*
 
 ### Uncertainties
 
-lumi_13TeV_2016		: $allMC : .* : normSymm : 1.025; year="2016"
-lumi_13TeV_2017		: $allMC : .* : normSymm : 1.023; year="2017"
-lumi_13TeV_2018		: $allMC : .* : normSymm : 1.025; year="2018"
+lumi_13TeV_2016     : $allMC : .* : normSymm : 1.025; year="2016"
+lumi_13TeV_2017     : $allMC : .* : normSymm : 1.023; year="2017"
+lumi_13TeV_2018     : $allMC : .* : normSymm : 1.025; year="2018"
 
-norm_tt_lnU		: prompt_tt.* : .* : normSymm : 2.0; lnU=True
-norm_dy_lnU		: prompt_dy.* : .* : normSymm : 2.0; lnU=True
-norm_wz_lnU		: prompt_wz.* : .* : normSymm : 2.0; lnU=True
-norm_vv		: prompt_vv.* : .* : normSymm : 1.5
-norm_fakes	: Fakes.*|semidd_fakes : .* : normSymm : 1.4
-norm_rares	: Rares : .* : normSymm : 1.5
-norm_convs	: Convs : .* : normSymm : 1.5
+norm_tt_lnU     : prompt_tt.* : .* : normSymm : 2.0; lnU=True
+norm_dy_lnU     : prompt_dy.* : .* : normSymm : 2.0; lnU=True
+norm_wz_lnU     : prompt_wz.* : .* : normSymm : 2.0; lnU=True
+norm_vv     : prompt_vv.* : .* : normSymm : 1.5
+norm_fakes  : Fakes.*|semidd_fakes : .* : normSymm : 1.4
+norm_rares  : Rares : .* : normSymm : 1.5
+norm_convs  : Convs : .* : normSymm : 1.5
 
-trigger_eff	: $allMC : .* : templateAsymm;  AddWeights=['triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,0)'\,'triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,-1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,0)']
-lep1_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,1)/lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,0)'\,'lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,-1)/lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,0)']
-lep2_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)'\,'lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,-1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)']
-#lep3_sel_eff	: $allMC : .* : templateAsymm;  AddWeights=['if3(nLepGood==3\,lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)\,1)'\,'if3(nLepGood==3\,lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,-1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)\,1)']
+triggerSF   : $allMC : .*2l.* : templateAsymm;  AddWeights=['triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,1)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,0)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,0)'\,'triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,-1)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,-1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,0)\,MET_pt\,metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year\,0)']
+triggerSF   : $allMC : .*3l.* : templateAsymm;  AddWeights=['triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,1\,LepGood3_pt\,LepGood3_eta\,lepton_permut(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,MET_pt\,metmmm_pt(LepGood1_pt\,LepGood1_phi\,LepGood2_pt\,LepGood2_phi\,LepGood3_pt\,LepGood3_phi\,MET_pt\,MET_phi\,lepton_Id_selection(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,year\,1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,0\,LepGood3_pt\,LepGood3_eta\,lepton_permut(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,MET_pt\,metmmm_pt(LepGood1_pt\,LepGood1_phi\,LepGood2_pt\,LepGood2_phi\,LepGood3_pt\,LepGood3_phi\,MET_pt\,MET_phi\,lepton_Id_selection(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,year\,0)'\,'triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,-1\,LepGood3_pt\,LepGood3_eta\,lepton_permut(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,MET_pt\,metmmm_pt(LepGood1_pt\,LepGood1_phi\,LepGood2_pt\,LepGood2_phi\,LepGood3_pt\,LepGood3_phi\,MET_pt\,MET_phi\,lepton_Id_selection(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,year\,-1)/triggerSF(muDleg_SF(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta\,0\,LepGood3_pt\,LepGood3_eta\,lepton_permut(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,MET_pt\,metmmm_pt(LepGood1_pt\,LepGood1_phi\,LepGood2_pt\,LepGood2_phi\,LepGood3_pt\,LepGood3_phi\,MET_pt\,MET_phi\,lepton_Id_selection(LepGood1_pdgId\,LepGood2_pdgId\,LepGood3_pdgId))\,year\,0)']
+
+lepSF_1    : $allMC : .*    : templateAsymm;  AddWeights=['lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,1)/lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,0)'\,'lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,-1)/lepSF(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year\,0)']
+lepSF_2    : $allMC : .*    : templateAsymm;  AddWeights=['lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)'\,'lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,-1)/lepSF(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year\,0)']
+lepSF_3   : $allMC : .*3l.* : templateAsymm;  AddWeights=['lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)'\,'lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,-1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)']
 
 CMS_scale_j	: $allMC : .* : templateAsymm; \
         FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt'], \
