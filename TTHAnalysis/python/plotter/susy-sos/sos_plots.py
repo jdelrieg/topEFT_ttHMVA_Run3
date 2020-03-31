@@ -346,8 +346,9 @@ if __name__ == '__main__':
                      x = x.replace('-E ^met250$','-E ^met300_col$')
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
-                if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_lowMll_3p5pt.txt"%(YEAR,args.lep,args.bin))
-                else:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
+                else:
+                    if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_lowMll_3p5pt.txt"%(YEAR,args.lep,args.bin))
+                    else:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/closure/mca-2los-%s-closure.txt'%(YEAR))
                 x = add(x,"-X ^met200$ ")
@@ -445,7 +446,6 @@ if __name__ == '__main__':
             if args.lowmll_NominalPt_bothlep: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -E ^mindR$")
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             if args.fakes == "semidd":
-                #: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt "%(YEAR,args.lep,args.bin))
                 if args.lowmll_LowPt_bothlep : x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_lowMll_3p5pt.txt"%(YEAR,args.lep,args.bin))
                 else: x= add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
 
