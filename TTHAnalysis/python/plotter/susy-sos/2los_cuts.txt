@@ -10,7 +10,7 @@ mll		: mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_p
 upsilonVeto	: mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) < 9 || mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) > 10.5
 dilepPt		: pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi) > 3 
 
-ISRjet		: JetSel1_Recl_jetId >= 4
+ISRjet		: JetSel1_jetId >= 4
 METoverHT	: (MET_pt/htJet25j)>(2/3) && (MET_pt/htJet25j) < 1.4
 minHT		: htJet25j > 100
 
@@ -41,7 +41,7 @@ inclMET_2l         : (MET_pt > 125 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepG
 OS		: LepGood1_pdgId*LepGood2_pdgId<0
 ledlepPt	: 5.0 < LepGood1_pt && LepGood1_pt < 30.0
 twoTight	: LepGood1_isLepTight && LepGood2_isLepTight
-bveto		: nBJetMedium25_Recl == 0
+bveto		: nBJetMedium25 == 0
 mtautau		: 0.0 > mass_tautau(MET_pt,MET_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi) || mass_tautau(MET_pt,MET_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi) > 160.0
 ### EWK
 mT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) < 70. && mt_2(LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) < 70.0
@@ -64,14 +64,14 @@ CRDYledlepPt	: 5.0 < LepGood1_pt	; Disable=True
 ### Disable ledlepPt, bveto, mT
 #CRTTlepId	: LepGood1_isTightLepTT && LepGood2_isTightLepTT	; Disable=True
 CRTTledlepPt	: 5.0 < LepGood1_pt	; Disable=True
-btag		: nBJetLoose25 > 0	; Disable=True
+btag		: nBJetMedium25 > 0	; Disable=True
 
 
 ##### VV CR
 ### Disable leplepPt, mT
 #CRVVlepId	: LepGood1_isTightLepVV && LepGood2_isTightLepVV	; Disable=True
 CRVVledlepPt	: 30.0 < LepGood1_pt	; Disable=True
-CRVVbveto		: nBJetLoose25_Recl == 0; Disable=True
+CRVVbveto		: nBJetLoose25 == 0; Disable=True
 CRVVmT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) > 90. || mt_2(LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 90.0	; Disable=True
 
 ##### SS CR
