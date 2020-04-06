@@ -1,7 +1,7 @@
 # vim: syntax=sh
 
 $alias : BkgFromMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs
-$alias : allMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|sig_.*
+$alias : allMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|signal_.*
 
 $alias : allSR : .*sr.*
 
