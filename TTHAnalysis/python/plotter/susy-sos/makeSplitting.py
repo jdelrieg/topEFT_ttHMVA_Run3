@@ -6,6 +6,7 @@ parser.add_argument("what", help="what to do'")
 parser.add_argument("outDir", help="output directory'")
 parser.add_argument("--addopts", default=None, help="additional options to sos_plots.py")
 parser.add_argument("--onlyFit", action='store_true', default=False, help="only rerun fits")
+parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
 args = parser.parse_args()
 
 years=["2016","2017","2018"]
@@ -56,7 +57,7 @@ output          = {odir}/logs/out.$(Cluster).$(Process)
 error           = {odir}/logs/err.$(Cluster).$(Process)
 log             = {odir}/logs/log.$(Cluster).$(Process)
 +MaxRuntime = {duration}
-+AccountingGroup = "group_u_CMST3.all"
+{acctgroup}
 getenv = True
 
 request_cpus = 1
@@ -65,7 +66,7 @@ queue Chunk matching {odir}/job_*_bkg.sh
 request_cpus = 1
 queue Chunk matching {odir}/job_*_sig.sh
 queue Chunk matching {odir}/job_*_fit.sh
-""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration)
+""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "{%s}"'%args.accountingGroup if args.accountingGroup else '')
    with open('%s/htcondor_submitter.sub'%odir,'w') as outf:
       outf.write(submitter)
 
