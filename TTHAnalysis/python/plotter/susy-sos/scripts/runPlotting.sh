@@ -15,7 +15,12 @@ YEAR=$2
 LEP=$3
 REG=$4
 BIN=$5
-FLAGS=$6
+while ! [ -z "$6" ]; do
+    if [ "$6" = "@" ]; then
+        break;
+    fi
+    FLAGS="$FLAGS $6"; shift;
+done
 while ! [ -z "$7" ]; do
     EXTRAS="$EXTRAS $7"; shift;
 done
