@@ -1,12 +1,7 @@
 #!/bin/bash
 export XRD_NETWORKSTACK=IPv4
-cd [SRC]
+cd $1
 eval $(scramv1 runtime -sh); 
-cd CMGTools/TTHAnalysis/python/plotter
-[CMD]
-echo "Job for susy-sos task [INST] is done."
-echo "Log files can be found at [WORK]/susy-interface/tmp/[INST]/log"
-#if [ ! -z "[EMAIL]" ]; then
-#  echo "Job for SUSY-Interface task [INST] is done." | mail -s "SUSY-Interface JobControl" [EMAIL]
-#fi
-touch [JOBDIR]/[JOBID]
+cd src/CMGTools/TTHAnalysis/python/plotter
+bash ${2} && touch ${2}.good
+touch ${2}.done

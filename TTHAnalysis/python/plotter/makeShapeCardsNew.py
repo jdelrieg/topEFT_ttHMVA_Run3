@@ -24,6 +24,7 @@ parser.add_option("--amc", "--autoMCStats", dest="autoMCStats", action="store_tr
 parser.add_option("--autoMCStatsThreshold", dest="autoMCStatsValue", type="int", default=10, help="threshold to put on autoMCStats")
 parser.add_option("--infile", dest="infile", action="store_true", default=False, help="Read histograms to file")
 parser.add_option("--savefile", dest="savefile", action="store_true", default=False, help="Save histos to file")
+parser.add_option("--justdump", dest="justdump", action="store_true", default=False, help="Exit after reading/saving histos with bare histogram file")
 parser.add_option("--categorize", dest="categ", type="string", nargs=3, default=None, help="Split in categories. Requires 3 arguments: expression, binning, bin labels")
 parser.add_option("--regularize", dest="regularize", action="store_true", default=False, help="Regularize templates")
 parser.add_option("--threshold", dest="threshold", type=float, default=0.0, help="Minimum event yield to consider processes")
@@ -63,6 +64,9 @@ if options.savefile:
         h.writeToFile(savefile, takeOwnership=False)
     savefile.Close()
 
+if options.justdump:
+    sys.exit()
+
 if options.asimov:
     if options.asimov in ("s","sig","signal","s+b"):
         asimovprocesses = mca.listSignals() + mca.listBackgrounds()
@@ -70,6 +74,7 @@ if options.asimov:
         asimovprocesses = mca.listBackgrounds()
     else: raise RuntimeError("the --asimov option requires to specify signal/sig/s/s+b or background/bkg/b/b-only")
     tomerge = None
+    print 'Asimov from:',asimovprocesses
     for p in asimovprocesses:
         if p in report: 
             if tomerge is None: 
