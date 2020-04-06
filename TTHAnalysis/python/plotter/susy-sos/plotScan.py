@@ -1,3 +1,4 @@
+import os
 import re
 import glob
 import ROOT
@@ -46,7 +47,7 @@ savefmts=[".pdf",".png",".jpg",".root",".C"]
 def getLimit(files, label, outdir):
     limits=[]
     for f in files:
-        mass=f.split('/')[-1].replace('_2lep','').replace('_limit.txt','').split('_')
+        mass=os.path.basename(f).split('_')[3:5]
         massH=float(mass[0])
         massL=float(mass[0])-float(mass[1])
         with open(f) as fin:
@@ -68,23 +69,19 @@ def getLimit(files, label, outdir):
     
     
     thisLim=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vMed)
-    print "THE LIMIT"
-    print sorted(thisLim,key=lambda x:x[0])
     
     vDmBins=vDm
     vDmBins.sort()
-    print sorted(set(vDmBins))[:11], len(sorted(set(vDmBins))[:11])
     vDmBins=list(sorted(set(vDmBins))[:11])
-    print vDmBins
     vDmBins.append(85)
 #    h2lim = TH2D("lim","",11, 87.5,362.5,10,array.array('d', vDmBins))#70,1,71)
     h2lim = TH2D("lim","",11, 87.5,362.5,11,array.array('d', vDmBins))#70,1,71)
     
     for lim in thisLim:
-        print lim[0],lim[1],lim[2]
+#        print lim[0],lim[1],lim[2]
         h2lim.Fill(lim[0],lim[1],lim[2])
 
-    h2lim.Print("all")
+#    h2lim.Print("all")
 #    h2lim.Smooth(1,"k3a")
 #    h2lim.Smooth(1,"kba")
 #    h2lim.Smooth(1,"kba")
@@ -170,98 +167,103 @@ def getLimit(files, label, outdir):
 
 
     for fmt in savefmts:
+        os.system("mkdir -p %s"%outdir)
         c1.SaveAs("%s/h2lim_%s%s"%(outdir,label,fmt))
     return h2limRet
 
 
-indir="./fullRun2_testCR_v2_skim_longQ_allCRs_semidd/limits/"
-label="cr_dyAndTt_semidd"
-outdir="/afs/cern.ch/user/v/vtavolar/www/SusySOS/scans/cr_dyAndTt_semidd/"
+def run(indirs,tag,label,outdir):
+    limCurves=[]
+    dirs=glob.glob(indirs)
+    files = ['%s/log_b_%s_%s.txt'%(d,os.path.basename(d),tag) for d in dirs]
+    files = filter(lambda f: os.path.exists(f),files)
+    print 'Found %d files'%len(files)
+    h2All = getLimit(files, label, outdir)
+
+outdir="sos_outplot/"
+for sel in ['nominal','lowmll_NominalPt_bothlep']:
+    for tag in ['all','2lep','3lep']:
+        run("./scans/%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(sel,tag),outdir)
+        run("./scans/%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(sel,tag),outdir)
 
 
-limCurves=[]
-files=glob.glob(indir+'*limit.txt')
-print "FILES ALL"
-print files
-h2All = getLimit(files, label, outdir)
-
-files=glob.glob(indir+'*limit_2lep.txt')
-print "FILES 2L"
-print files
-h22l = getLimit(files, label+"_2lep", outdir)
+#files=glob.glob(indir+'*limit_2lep.txt')
+#print "FILES 2L"
+#print files
+#h22l = getLimit(files, label+"_2lep", outdir)
 
 
-h22l.Divide(h2All)
-c1=TCanvas()
-ROOT.gStyle.SetPaintTextFormat("4.3f")
-
-
-c1=TCanvas()
-c1.SetLeftMargin(0.12)
-c1.SetRightMargin(0.12)
-c1.SetBottomMargin(0.13)
-
-h22l.SetStats(0)
-h22l.GetXaxis().SetTitle("m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
-h22l.GetYaxis().SetTitle("#Delta m(#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}) [GeV]")
-h22l.GetXaxis().SetLabelFont(42)   
-h22l.GetXaxis().SetTitleFont(42)   
-h22l.GetXaxis().SetLabelSize(0.042)
-h22l.GetXaxis().SetTitleSize(0.052)
-
-h22l.GetXaxis().SetRangeUser(100,270)
-h22l.GetZaxis().SetRangeUser(1.,4.)
-
-h22l.GetYaxis().SetTitleOffset(1.10)   
-h22l.GetYaxis().SetLabelFont(42)   
-h22l.GetYaxis().SetTitleFont(42)   
-h22l.GetYaxis().SetLabelSize(0.042)
-h22l.GetYaxis().SetTitleSize(0.052)
-
-h22l.Draw("colz text")
-
-t = c1.GetTopMargin()
-r = c1.GetRightMargin()
-l = c1.GetLeftMargin()
-latex = ROOT.TLatex()
-latex.SetNDC()
-latex.SetTextAngle(0)
-latex.SetTextColor(ROOT.kBlack)    
-extraTextSize = extraOverCmsTextSize*cmsTextSize
-latex.SetTextFont(42)
-latex.SetTextAlign(31) 
-latex.SetTextSize(lumiTextSize*t)    
-latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
-latex.SetTextFont(cmsTextFont)
-latex.SetTextAlign(11) 
-latex.SetTextFont(cmsTextFont)
-latex.SetTextAlign(11) 
-latex.SetTextSize(cmsTextSize*t)    
-latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
-x1=87.5
-y1=70.
-x2=287.5
-y2=85.
-
-
-b = TBox(x1,y1,x2,y2)
-b.SetFillColor(ROOT.kWhite)
-b.SetLineColor(ROOT.kBlack)
-b.SetLineWidth(2)
-b.Draw("l")
-c1.Update()
-mT=ROOT.TLatex(x1+3.5,y1+0.67*(y2-y1), moreText)
-mT.SetTextFont(42)
-mT.SetTextSize(0.040)
-mT.Draw()
-mT2=ROOT.TLatex(x1+3.5,y1+0.22*(y2-y1), "median exp. lim. at 95% CL, ratio of (2 lep.) to (2+3 lep.) cats.")
-mT2.SetTextFont(42)
-mT2.SetTextSize(0.040)
-mT2.Draw()
-
-for fmt in savefmts:
-    c1.SaveAs("%s/h2lim_ratio2lto2lp3l%s"%(outdir,fmt))
-
+#h22l = h2All#h22l.Divide(h2All)
+#c1=TCanvas()
+#ROOT.gStyle.SetPaintTextFormat("4.3f")
+#
+#
+#c1=TCanvas()
+#c1.SetLeftMargin(0.12)
+#c1.SetRightMargin(0.12)
+#c1.SetBottomMargin(0.13)
+#
+#h22l.SetStats(0)
+#h22l.GetXaxis().SetTitle("m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
+#h22l.GetYaxis().SetTitle("#Delta m(#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}) [GeV]")
+#h22l.GetXaxis().SetLabelFont(42)   
+#h22l.GetXaxis().SetTitleFont(42)   
+#h22l.GetXaxis().SetLabelSize(0.042)
+#h22l.GetXaxis().SetTitleSize(0.052)
+#
+#h22l.GetXaxis().SetRangeUser(100,270)
+#h22l.GetZaxis().SetRangeUser(1.,4.)
+#
+#h22l.GetYaxis().SetTitleOffset(1.10)   
+#h22l.GetYaxis().SetLabelFont(42)   
+#h22l.GetYaxis().SetTitleFont(42)   
+#h22l.GetYaxis().SetLabelSize(0.042)
+#h22l.GetYaxis().SetTitleSize(0.052)
+#
+#h22l.Draw("colz text")
+#
+#t = c1.GetTopMargin()
+#r = c1.GetRightMargin()
+#l = c1.GetLeftMargin()
+#latex = ROOT.TLatex()
+#latex.SetNDC()
+#latex.SetTextAngle(0)
+#latex.SetTextColor(ROOT.kBlack)    
+#extraTextSize = extraOverCmsTextSize*cmsTextSize
+#latex.SetTextFont(42)
+#latex.SetTextAlign(31) 
+#latex.SetTextSize(lumiTextSize*t)    
+#latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
+#latex.SetTextFont(cmsTextFont)
+#latex.SetTextAlign(11) 
+#latex.SetTextFont(cmsTextFont)
+#latex.SetTextAlign(11) 
+#latex.SetTextSize(cmsTextSize*t)    
+#latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
+#x1=87.5
+#y1=70.
+#x2=287.5
+#y2=85.
+#
+#
+#b = TBox(x1,y1,x2,y2)
+#b.SetFillColor(ROOT.kWhite)
+#b.SetLineColor(ROOT.kBlack)
+#b.SetLineWidth(2)
+#b.Draw("l")
+#c1.Update()
+#mT=ROOT.TLatex(x1+3.5,y1+0.67*(y2-y1), moreText)
+#mT.SetTextFont(42)
+#mT.SetTextSize(0.040)
+#mT.Draw()
+#mT2=ROOT.TLatex(x1+3.5,y1+0.22*(y2-y1), "median exp. lim. at 95% CL, ratio of (2 lep.) to (2+3 lep.) cats.")
+#mT2.SetTextFont(42)
+#mT2.SetTextSize(0.040)
+#mT2.Draw()
+#
+#for fmt in savefmts:
+#    c1.SaveAs("%s/h2lim_ratio2lto2lp3l%s"%(outdir,fmt))
+#
 
 
 
