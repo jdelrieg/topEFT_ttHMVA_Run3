@@ -246,8 +246,9 @@ if __name__ == '__main__':
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
                 else:
-                    if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_lowMll_3p5pt.txt"%(YEAR,args.lep,args.bin))
-                    else:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
+                    if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_LowMll_LowPt.txt"%(YEAR,args.lep,args.bin))
+                    elif args.lowmll_NominalPt_bothlep:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
+                    else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/closure/mca-2los-%s-closure.txt'%(YEAR))
                 x = add(x,"-X ^met200$ ")
@@ -330,8 +331,13 @@ if __name__ == '__main__':
                 x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_ss.txt "%(YEAR,args.lep))
                 x = add(x, "-E ^2LNT$ -X ^twoTight$")
             if args.fakes == "semidd" :
-                if args.lowmll_LowPt_bothlep: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_lowMll_3p5pt.txt"%(YEAR,args.lep))
-                else : x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_Nominal.txt"%(YEAR,args.lep))
+                if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_%s_LowMll_LowPt.txt"%(YEAR,args.lep,args.bin))
+                elif args.lowmll_NominalPt_bothlep:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
+                else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
+
+
+
+
 
     elif '3l_' in torun:
         x,x2 = base('3l')
