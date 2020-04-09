@@ -41,7 +41,7 @@ categories=[
 ]            
 
 what=args.what
-odir=args.outDir
+odir=args.outDir.rstrip("/")
 duration=args.duration*3600
 opts="--unc --fakes=semidd"
 if args.addopts: opts+=' %s'%args.addopts
