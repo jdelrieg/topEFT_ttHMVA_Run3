@@ -100,8 +100,8 @@ def getLimit(files, label, outdir):
     h2lim.GetXaxis().SetTitleFont(42)   
     h2lim.GetXaxis().SetLabelSize(0.042)
     h2lim.GetXaxis().SetTitleSize(0.052)
+    h2lim.GetXaxis().SetRangeUser(100,300)
 
-    h2lim.GetXaxis().SetRangeUser(100,270)
     h2lim.GetZaxis().SetRangeUser(3e-2,70)
 
     h2lim.GetYaxis().SetTitleOffset(1.10)   
@@ -135,7 +135,7 @@ def getLimit(files, label, outdir):
     latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
     x1=87.5
     y1=65.
-    x2=287.5
+    x2=312.5
     y2=85.
 
 
