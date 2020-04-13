@@ -11,11 +11,29 @@ lumi_13TeV_2016     : $allMC : .* : normSymm : 1.025; year="2016"
 lumi_13TeV_2017     : $allMC : .* : normSymm : 1.023; year="2017"
 lumi_13TeV_2018     : $allMC : .* : normSymm : 1.025; year="2018"
 
-norm_tt_lnU     : prompt_tt.* : .* : normSymm : 2.0; lnU=True
-norm_dy_lnU     : prompt_dy.* : .* : normSymm : 2.0; lnU=True
-norm_wz_lnU     : prompt_wz.* : .* : normSymm : 2.0; lnU=True
+norm_tt_low_16_lnU     : prompt_tt.* : .*low.* : normSymm : 2.0; lnU=True, year="2016"
+norm_tt_low_17_lnU     : prompt_tt.* : .*low.* : normSymm : 2.0; lnU=True, year="2017"
+norm_tt_low_18_lnU     : prompt_tt.* : .*low.* : normSymm : 2.0; lnU=True, year="2018"
+norm_tt_med_16_lnU     : prompt_tt.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2016"
+norm_tt_med_17_lnU     : prompt_tt.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2017"
+norm_tt_med_18_lnU     : prompt_tt.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2018"
+
+norm_dy_low_16_lnU     : prompt_dy.* : .*low.* : normSymm : 2.0; lnU=True, year="2016"
+norm_dy_low_17_lnU     : prompt_dy.* : .*low.* : normSymm : 2.0; lnU=True, year="2017"
+norm_dy_low_18_lnU     : prompt_dy.* : .*low.* : normSymm : 2.0; lnU=True, year="2018"
+norm_dy_med_16_lnU     : prompt_dy.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2016"
+norm_dy_med_17_lnU     : prompt_dy.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2017"
+norm_dy_med_18_lnU     : prompt_dy.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2018"
+
+norm_wz_low_16_lnU     : prompt_wz.* : .*low.* : normSymm : 2.0; lnU=True, year="2016"
+norm_wz_low_17_lnU     : prompt_wz.* : .*low.* : normSymm : 2.0; lnU=True, year="2017"
+norm_wz_low_18_lnU     : prompt_wz.* : .*low.* : normSymm : 2.0; lnU=True, year="2018"
+norm_wz_med_16_lnU     : prompt_wz.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2016"
+norm_wz_med_17_lnU     : prompt_wz.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2017"
+norm_wz_med_18_lnU     : prompt_wz.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2018"
+
 norm_vv     : prompt_vv.* : .* : normSymm : 1.5
-norm_fakes  : Fakes.*|semidd_fakes : .* : normSymm : 1.4
+norm_fakes  : FRfakes_data|semidd_fakes : .* : normSymm : 1.4
 norm_rares  : Rares : .* : normSymm : 1.5
 norm_convs  : Convs : .* : normSymm : 1.5
 

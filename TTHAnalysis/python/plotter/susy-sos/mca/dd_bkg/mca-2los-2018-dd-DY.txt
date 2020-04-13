@@ -1,6 +1,6 @@
 ## TChiWZ Signal Points
 ## ------------------------------------
-incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2018/mca-2los-signal.txt", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_100_99+\,signal_TChiWZ_150_120+"
+incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2018/mca-2los-signal.txt", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_150_120+"
 
 ## Prompt tt bkg
 ## ------------------------------------
@@ -15,8 +15,7 @@ incl_prompt_dy	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-2los-prompt-dy.t
 incl_prompt_vv	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-2los-prompt-vv.txt"
 
 ## Non prompt bkg
-## ------------------------------------
-incl_semidd_fakes         : + ; IncludeMca="susy-sos/mca-includes/2018/2los_semiddbkg/mca-fakes-semiDD.txt"
+incl_fakes         : + ; IncludeMca="susy-sos/mca-includes/2018/2los_semiddbkg/mca-fakes-applData-DY.txt"
 
 ## Rares bkg
 ## ------------------------------------
