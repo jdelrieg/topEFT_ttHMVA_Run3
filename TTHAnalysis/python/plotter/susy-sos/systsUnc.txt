@@ -33,7 +33,7 @@ norm_wz_med_17_lnU     : prompt_wz.* : .*med.*|.*high.* : normSymm : 2.0; lnU=Tr
 norm_wz_med_18_lnU     : prompt_wz.* : .*med.*|.*high.* : normSymm : 2.0; lnU=True, year="2018"
 
 norm_vv     : prompt_vv.* : .* : normSymm : 1.5
-norm_fakes  : Fakes.*|semidd_fakes : .* : normSymm : 1.4
+norm_fakes  : FRfakes_data|semidd_fakes : .* : normSymm : 1.4
 norm_rares  : Rares : .* : normSymm : 1.5
 norm_convs  : Convs : .* : normSymm : 1.5
 
