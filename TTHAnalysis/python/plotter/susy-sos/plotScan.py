@@ -4,12 +4,18 @@ import glob
 import ROOT
 from ROOT import *
 import array
+import argparse
 
-###to be changed accordingly###
-indir="./datacards/limits/" ##"limits" folder from your datacard production
-label="scan"                ##label to identify this scan
-outdir="/output/scanPlots/" ##output folder for plots
+parser = argparse.ArgumentParser()
+parser.add_argument("--indir", default=[], action="append", required=True, help="Choose the input directories")
+parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
+parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
+parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
+args = parser.parse_args()
 
+if len(args.indir) == 0: raise RuntimeError("No input directories given!")
+if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
+if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
 
 moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
@@ -31,8 +37,6 @@ relExtraDY            = 1.2
 extraOverCmsTextSize  = 0.56 #0.76
 
 
-
-
 class Limit:
     def __init__(self,mass, Dm, med, p1s, m1s):
         self.mass=mass
@@ -42,8 +46,6 @@ class Limit:
         self.m1s=m1s
         
         
-savefmts=[".pdf",".png",".jpg",".root",".C"]
-
 def getLimit(files, label, outdir):
     limits=[]
     for f in files:
@@ -63,9 +65,9 @@ def getLimit(files, label, outdir):
                     m1s = float(line.split()[-1])
             lim=Limit(massH, massL, med, p1s, m1s)
             limits.append(lim)    
-    vm=map( lambda lim : lim.mass, limits)
-    vDm=map( lambda lim : lim.Dm, limits)
-    vMed=map( lambda lim : lim.med, limits)
+    vm=map(lambda lim : lim.mass, limits)
+    vDm=map(lambda lim : lim.Dm, limits)
+    vMed=map(lambda lim : lim.med, limits)
     
     
     thisLim=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vMed)
@@ -74,7 +76,6 @@ def getLimit(files, label, outdir):
     vDmBins.sort()
     vDmBins=list(sorted(set(vDmBins))[:11])
     vDmBins.append(85)
-#    h2lim = TH2D("lim","",11, 87.5,362.5,10,array.array('d', vDmBins))#70,1,71)
     h2lim = TH2D("lim","",11, 87.5,362.5,11,array.array('d', vDmBins))#70,1,71)
     
     for lim in thisLim:
@@ -99,8 +100,8 @@ def getLimit(files, label, outdir):
     h2lim.GetXaxis().SetTitleFont(42)   
     h2lim.GetXaxis().SetLabelSize(0.042)
     h2lim.GetXaxis().SetTitleSize(0.052)
+    h2lim.GetXaxis().SetRangeUser(100,300)
 
-    h2lim.GetXaxis().SetRangeUser(100,270)
     h2lim.GetZaxis().SetRangeUser(3e-2,70)
 
     h2lim.GetYaxis().SetTitleOffset(1.10)   
@@ -134,7 +135,7 @@ def getLimit(files, label, outdir):
     latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
     x1=87.5
     y1=65.
-    x2=287.5
+    x2=312.5
     y2=85.
 
 
@@ -166,8 +167,8 @@ def getLimit(files, label, outdir):
     mT3.Draw()
 
 
-    for fmt in savefmts:
-        os.system("mkdir -p %s"%outdir)
+    os.system("mkdir -p %s"%outdir)
+    for fmt in args.savefmts:
         c1.SaveAs("%s/h2lim_%s%s"%(outdir,label,fmt))
     return h2limRet
 
@@ -180,11 +181,15 @@ def run(indirs,tag,label,outdir):
     print 'Found %d files'%len(files)
     h2All = getLimit(files, label, outdir)
 
-outdir="sos_outplot/"
-for sel in ['nominal','lowmll_NominalPt_bothlep']:
-    for tag in ['all','2lep','3lep']:
-        run("./scans/%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(sel,tag),outdir)
-        run("./scans/%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(sel,tag),outdir)
+
+outdir=args.outDir.rstrip("/")
+print "Scans will be saved in the folder '%s'..."%outdir
+for sel in args.indir:
+    sel = sel.rstrip("/")
+    name = sel.split("/")[-1]
+    for tag in args.tag:
+        print "For tag "+tag+":"
+        run("%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(name,tag),outdir)
 
 
 #files=glob.glob(indir+'*limit_2lep.txt')
@@ -261,9 +266,5 @@ for sel in ['nominal','lowmll_NominalPt_bothlep']:
 #mT2.SetTextSize(0.040)
 #mT2.Draw()
 #
-#for fmt in savefmts:
+#for fmt in args.savefmts:
 #    c1.SaveAs("%s/h2lim_ratio2lto2lp3l%s"%(outdir,fmt))
-#
-
-
-

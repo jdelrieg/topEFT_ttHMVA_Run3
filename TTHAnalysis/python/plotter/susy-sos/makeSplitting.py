@@ -41,7 +41,7 @@ categories=[
 ]            
 
 what=args.what
-odir=args.outDir
+odir=args.outDir.rstrip("/")
 duration=args.duration*3600
 opts="--unc --fakes=semidd"
 if args.addopts: opts+=' %s'%args.addopts
@@ -202,7 +202,7 @@ class merge_and_fit:
          }
          for tag,filt in flags.iteritems():
             cn = 'card_%s_%s.txt'%(fullpoint,tag)
-            if not onlyFit: out.append("combineCards.py %s > %s"%(' '.join(['%s=\${ORIGDIR}/%s'%(x,y) for x,y in filter(filt,cards)]), cn))
+            if not onlyFit: out.append("combineCards.py %s > %s"%(' '.join(['%s=%s'%(x,y) for x,y in filter(filt,cards)]), cn))
             elif os.path.exists(cdir+'/'+cn): return []
             out.append("combine -M AsymptoticLimits -t -1 --expectSignal 0 --run blind -n _%s_%s -m %s %s 2>&1 > log_b_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # bkg-only asimov
             out.append("combine -M AsymptoticLimits -t -1 --expectSignal 1 --run blind -n _%s_%s -m %s %s 2>&1 > log_s_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # sig-injected asimov
