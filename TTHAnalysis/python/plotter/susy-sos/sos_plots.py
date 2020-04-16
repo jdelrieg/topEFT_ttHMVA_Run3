@@ -295,6 +295,7 @@ if __name__ == '__main__':
 
         if 'cr_dy' in torun:
             if '_med' in torun: x = x.replace('-E ^met200$','-E ^met200_CR$')
+            if args.fakes == "dd": x = x.replace('susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd-DY.txt'%(YEAR))
             x = add(x,"-X ^ledlepPt$ ")
             x = add(x,"-I ^mtautau$ ")
             x = add(x,"-E ^CRDYledlepPt$ ")
