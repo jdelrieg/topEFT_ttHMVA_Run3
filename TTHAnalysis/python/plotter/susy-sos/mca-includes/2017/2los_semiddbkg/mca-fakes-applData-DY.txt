@@ -9,6 +9,3 @@ FRfakes_data : MET_Run2017C_25Oct2019    ;FakeRate="susy-sos/fakerate/2017/2los/
 FRfakes_data : MET_Run2017D_25Oct2019    ;FakeRate="susy-sos/fakerate/2017/2los/fakerate_appldata-DY.txt", Label="Nonprompt e/\#mu", FillColor=ROOT.kGray
 FRfakes_data : MET_Run2017E_25Oct2019    ;FakeRate="susy-sos/fakerate/2017/2los/fakerate_appldata-DY.txt", Label="Nonprompt e/\#mu", FillColor=ROOT.kGray
 FRfakes_data : MET_Run2017F_25Oct2019    ;FakeRate="susy-sos/fakerate/2017/2los/fakerate_appldata-DY.txt", Label="Nonprompt e/\#mu", FillColor=ROOT.kGray
-
-# FRfakes_data  : DoubleMuon_Run2017_25Oct2019 ;FakeRate="susy-sos/fakerate/2017/2los/fakerate_appldata.txt", Label="Nonprompt e/\#mu", FillColor=ROOT.kGray
-# FRfakes_data  : MET_Run2017_25Oct2019        ;FakeRate="susy-sos/fakerate/2017/2los/fakerate_appldata.txt", Label="Nonprompt e/\#mu", FillColor=ROOT.kGray
