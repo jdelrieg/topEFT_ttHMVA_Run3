@@ -66,7 +66,7 @@ queue Chunk matching {odir}/job_*_bkg.sh
 request_cpus = 1
 queue Chunk matching {odir}/job_*_sig.sh
 queue Chunk matching {odir}/job_*_fit.sh
-""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "{%s}"'%args.accountingGroup if args.accountingGroup else '')
+""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "%s"'%args.accountingGroup if args.accountingGroup else '')
    with open('%s/htcondor_submitter.sub'%odir,'w') as outf:
       outf.write(submitter)
 
