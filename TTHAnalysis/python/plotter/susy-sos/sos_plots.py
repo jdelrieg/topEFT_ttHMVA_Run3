@@ -166,7 +166,7 @@ def runIt(GO,plotting,name):
             GO = GO.replace(P0,"${MYTEMPSKIMDIR}/")
 
         GO+=plotting
-        ret = "python makeShapeCardsNew.py {barefile} {justdump} --outdir {outdir} {procsel} --all-processes {asimov} {GO}"
+        ret = "python makeShapeCardsNew.py {barefile} {justdump} --outdir {outdir} {procsel} --all-processes --amc {asimov} {GO}"
         ret = ret.format(**{
             'barefile': '--infile' if args.infile else '--savefile',
             'justdump': '--justdump' if args.justdump else '',
