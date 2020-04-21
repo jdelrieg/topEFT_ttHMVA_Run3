@@ -505,9 +505,13 @@ ZHTobb_ll, ZHToTauTau,
 ##SUSY SOS signals
 #TChiWZ
 SMS_TChiWZ=kreator.makeMCComponent("SMS_TChiWZ","/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_GridpackScan_94X_mc2017_realistic_v14-v1/MINIAODSIM","CMS",".*root",1)
+SMS_N2N1_higgsino=kreator.makeMCComponent("SMS_N2N1_higgsino","/SMS-N2N1-higgsino_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_GridpackScan_94X_mc2017_realistic_v14-v1/MINIAODSIM","CMS",".*root",1)
+SMS_N2C1_higgsino=kreator.makeMCComponent("SMS_N2C1_higgsino","/SMS-N2C1-higgsino_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_GridpackScan_94X_mc2017_realistic_v14-v1/MINIAODSIM","CMS",".*root",1)
 ##FIXME! add other signal models
 SignalSUSY = [
-SMS_TChiWZ
+    SMS_TChiWZ,
+    SMS_N2N1_higgsino,
+    SMS_N2C1_higgsino,
 ]
 
 # low Mll samples
