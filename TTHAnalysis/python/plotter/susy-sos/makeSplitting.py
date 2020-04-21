@@ -60,7 +60,7 @@ log             = {odir}/logs/log.$(Cluster).$(Process)
 {acctgroup}
 getenv = True
 
-request_cpus = 1
+request_cpus = 4
 queue Chunk matching {odir}/job_*_bkg.sh
 
 request_cpus = 1
@@ -108,7 +108,7 @@ class bare_production:
                prs = set([tk.pr for tk in job if (yr==tk.yr and _cat==tk.cat)])
                lep,reg,bin = _cat.split('/')
                if 'background' in prs:
-                  _printCmd(lep,reg,bin,'--data --nCores 1',yr,outfile)
+                  _printCmd(lep,reg,bin,'--data --nCores 4',yr,outfile)
                   expoutput.append('%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(odir,yr,cat,cat))
                prs.discard('background')
                if len(prs):
