@@ -281,7 +281,7 @@ float triggerSF(float muDleg_SF, float _met, float _met_corr, int year, int nSig
 	float met_corr = max(float(50.1) , min(float(499.999), _met_corr));
 
 	// High MET triggers
-	if(met_corr>=200.0){
+	if(met_corr>=240.0){
 		eff_Data	= 0.5 * epsilonInf_Data[year] * ( TMath::Erf( (met_corr - mean_Data[year]) / sigma_Data[year] ) + 1 );
 		eff_MC		= 0.5 * epsilonInf_MC[year] * ( TMath::Erf( (met_corr - mean_MC[year]) / sigma_MC[year] ) + 1 );
 		if(nSigma!=0){
@@ -347,7 +347,7 @@ float triggerMCEff(float muDleg_MCEff, float _met, float _met_corr, int year, in
 	float met_corr = max(float(50.1) , min(float(499.999), _met_corr));
 
 	// High MET triggers
-	if(met_corr>=200.0) {
+	if(met_corr>=240.0) {
 		MCEff	= 0.5 * epsilonInf_MC[year] * ( TMath::Erf( (met_corr - mean_MC[year]) / sigma_MC[year] ) + 1 );
 		if(nSigma!=0){
 			if(met_corr>=250.0){ // 2% uncertainty at the plateau
