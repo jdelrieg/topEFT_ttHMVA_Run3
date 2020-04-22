@@ -374,5 +374,9 @@ def susySOS_sequence_TnP(year,collection): # TnP module should always be last
     if collection == "Muon": return [autoPuWeight, yearTag, xsecTag, muonJetBTagDeepCSV, TnP(year,collection) ]
     if collection == "Electron": return [autoPuWeight, yearTag, xsecTag, eleJetBTagDeepCSV, TnP(year,collection) ]
 
+
 # signal re-weighting
 from CMGTools.TTHAnalysis.tools.nanoAOD.mllReweight import mllReweight
+from CMGTools.TTHAnalysis.tools.vb_decaymodes import VB_DecayModes
+
+sigRew = [mllReweight,VB_DecayModes]
