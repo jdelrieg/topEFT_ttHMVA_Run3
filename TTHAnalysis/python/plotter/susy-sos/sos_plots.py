@@ -11,7 +11,7 @@ REG = 'sr', 'sr_col', 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss','cr_wz', 'appl', 'appl_
 \t'appl_1F_NoSF', 'appl_2F_NoSF','appl_3F_NoSF', 'appl_1F_SF1F', 'appl_2F_SF2F',\n\
 \t'appl_col_1F_NoSF', 'appl_col_2F_NoSF',\n\
 \t'sr_closure', 'sr_closure_norm'\n\
-BIN = 'min', 'low', 'med', 'high'"
+BIN = 'min', 'low', 'med', 'high', 'ultra'"
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
                                  epilog=helpText)
 parser.add_argument("outDir", help="Choose the output directory.\nOutput will be saved to 'outDir/year/LEP_REG_BIN'")
@@ -51,7 +51,7 @@ conf="%s_%s_%s"%(args.lep,args.reg,args.bin)
 if YEAR not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please choose '2016', '2017' or '2018'")
 if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
 if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col", "cr_ss_1F_NoSF", "cr_ss_2F_NoSF", "cr_ss_1F_SF1", "cr_ss_2F_SF2", "appl_1F_NoSF", "appl_2F_NoSF","appl_3F_NoSF", "appl_1F_SF1F", "appl_2F_SF2F", "appl_col_1F_NoSF", "appl_col_2F_NoSF", "sr_closure", "sr_closure_norm"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
-if args.bin not in ["min", "low", "med", "high"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
+if args.bin not in ["min", "low", "med", "high","ultra"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
 if args.fakes not in ["mc", "dd", "semidd"]: raise RuntimeError("Unknown choice for FAKES option. Please check help." )
 if args.doWhat not in ["plots", "cards"]: raise RuntimeError("Unknown choice for DOWHAT option. Please check help." ) # More options to be added
 if (args.signalMasses or args.asimov or args.justdump) and args.doWhat != "cards": raise RuntimeError("Option to be used only with the 'cards' option!")
@@ -196,20 +196,25 @@ def binChoice(x,torun):
     metBinSup = ''
     x2 = add(x,'-E ^eventFilters$ ')
     if '_min' in torun:
-        metBinTrig = 'met75'
-        metBinInf = 'met75'
+        metBinTrig = 'metmin'
+        metBinInf = 'metmin'
     elif '_low' in torun:
-        metBinTrig = 'met125'
-        metBinInf = 'met125'
-        metBinSup = 'met200'
+        metBinTrig = 'metlow'
+        metBinInf = 'metlow'
+        metBinSup = 'metmed'
     elif '_med' in torun:
-        metBinTrig = 'met200'
-        metBinInf = 'met200'
-        metBinSup = 'met250' if ( ('2los_' in torun) and ('cr_' not in torun) and ('_col' not in torun) ) else ''
+        metBinTrig = 'metmed'
+        metBinInf = 'metmed'
+        metBinSup = 'methigh' if ( ('2los_' in torun) and ('cr_' not in torun) and ('_col' not in torun) ) else ''
         x2 = add(x2,'-X ^mm$ ')
     elif '_high' in torun:
-        metBinTrig = 'met250'
-        metBinInf = 'met250'
+        metBinTrig = 'methigh'
+        metBinInf = 'methigh'
+        metBinSup = 'metultra'
+        x2 = add(x2,'-X ^mm$ ')
+    elif '_ultra' in torun:
+        metBinTrig = 'metultra'
+        metBinInf  = 'metultra'
         x2 = add(x2,'-X ^mm$ ')
     if metBinInf != '': x2 = add(x2,'-E ^'+metBinInf+'$ -E ^'+metBinTrig+'_trig$ ')
     if metBinSup != '': x2 = add(x2,'-E ^'+metBinSup+'$ -I ^'+metBinSup+'$ ')
@@ -233,10 +238,9 @@ if __name__ == '__main__':
 
         if args.fakes == "semidd": x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/semidd_bkg/mca-2los-%s-semidd.txt'%(YEAR))
         if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR))
-
         if 'sr' in torun:
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if args.lowmll_NominalPt_bothlep and not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -E ^mindR$")
+
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -249,8 +253,8 @@ if __name__ == '__main__':
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
                 else:
                     if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(YEAR,args.lep,args.bin))
-                    elif args.lowmll_NominalPt_bothlep and not '_low' in torun:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
-                    else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
+
+
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/closure/mca-2los-%s-closure.txt'%(YEAR))
                 x = add(x,"-X ^met200$ ")
@@ -263,7 +267,7 @@ if __name__ == '__main__':
 
         if 'appl' in torun:
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if args.lowmll_NominalPt_bothlep and not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -E ^mindR$")
+
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -316,7 +320,7 @@ if __name__ == '__main__':
 
         if 'cr_ss' in torun: # Only 'med' bin exists
             if args.lowmll_LowPt_bothlep: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if args.lowmll_NominalPt_bothlep: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -E ^mindR$")
+
             if '_med' in torun:
                 x = x.replace('-E ^met200$','-E ^met200_CR$')
                 x = add(x,'-X ^pt5sublep$ ')
@@ -352,14 +356,13 @@ if __name__ == '__main__':
 
         if 'sr' in torun:
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if args.lowmll_NominalPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -E ^mindR$")
+
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             if args.fakes == "semidd":
                 if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
-                elif args.lowmll_NominalPt_bothlep and not '_low' in torun: x= add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
-                else: x= add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
 
         if 'appl' in torun:
+            if '_low' in torun: x=add(x, "-E ^lowMetSel$ -X ^met125_trig$ -X ^minMll$ -X ^ledlepPt$ -X ^pt5sublep$ -X ^mm$")
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             x = add(x,"-X ^threeTight$ ")
