@@ -15,9 +15,6 @@ minHT		: htJet25j > 100
 
 
 ##### Triggers and Binning # To be discussed
-### Min MET
-metmins       : MET_pt > 75 && MET_pt < 125   ; Disable= True
-metmin_trig_CR       : (year==2016 && HLT_MuMu16) || ( (year==2017 || year==2018) && HLT_MuMu )  ; Disable=True
 ### Low MET
 metlow      : MET_pt > 125 && metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi,LepGood3_pt,LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId)) > 125  ; Disable=True
 metlow_trig     : (year==2016 && HLT_MuMuMET16) || ( (year==2017 || year==2018) && HLT_MuMuMET )    ; Disable=True

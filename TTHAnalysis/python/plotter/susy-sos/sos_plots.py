@@ -11,7 +11,7 @@ REG = 'sr', 'sr_col', 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss','cr_wz', 'appl', 'appl_
 \t'appl_1F_NoSF', 'appl_2F_NoSF','appl_3F_NoSF', 'appl_1F_SF1F', 'appl_2F_SF2F',\n\
 \t'appl_col_1F_NoSF', 'appl_col_2F_NoSF',\n\
 \t'sr_closure', 'sr_closure_norm'\n\
-BIN = 'min', 'low', 'med', 'high', 'ultra'"
+BIN =  'low', 'med', 'high', 'ultra'"
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
                                  epilog=helpText)
 parser.add_argument("outDir", help="Choose the output directory.\nOutput will be saved to 'outDir/year/LEP_REG_BIN'")
@@ -31,7 +31,6 @@ parser.add_argument("--unc", action="store_true", default=False, help="Include u
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
 parser.add_argument("--lowmll_LowPt_bothlep", action="store_true", default=False, help="Flag to run with low mll & low lead/sublead lep pt cuts")
-parser.add_argument("--lowmll_NominalPt_bothlep", action="store_true", default=False, help="Flag to run with low mll &  nominal lead/sublead lep pt cuts")
 
 parser.add_argument("--doWhat", default="plots", help="Do 'plots' or 'cards'. Default = '%(default)s'")
 # only valid for doWhat=='cards'
@@ -51,7 +50,7 @@ conf="%s_%s_%s"%(args.lep,args.reg,args.bin)
 if YEAR not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please choose '2016', '2017' or '2018'")
 if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
 if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col", "cr_ss_1F_NoSF", "cr_ss_2F_NoSF", "cr_ss_1F_SF1", "cr_ss_2F_SF2", "appl_1F_NoSF", "appl_2F_NoSF","appl_3F_NoSF", "appl_1F_SF1F", "appl_2F_SF2F", "appl_col_1F_NoSF", "appl_col_2F_NoSF", "sr_closure", "sr_closure_norm"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
-if args.bin not in ["min", "low", "med", "high","ultra"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
+if args.bin not in [ "low", "med", "high","ultra"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
 if args.fakes not in ["mc", "dd", "semidd"]: raise RuntimeError("Unknown choice for FAKES option. Please check help." )
 if args.doWhat not in ["plots", "cards"]: raise RuntimeError("Unknown choice for DOWHAT option. Please check help." ) # More options to be added
 if (args.signalMasses or args.asimov or args.justdump) and args.doWhat != "cards": raise RuntimeError("Option to be used only with the 'cards' option!")
@@ -92,7 +91,7 @@ def base(selection):
          GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
          if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
          if args.doWhat in ["cards"]:
-             if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
+             if args.lowmll_LowPt_bothlep : plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
              else: plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
 
          wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR)
@@ -102,7 +101,7 @@ def base(selection):
         GO="%s susy-sos/mca/mca-3l-%s.txt susy-sos/3l_cuts.txt "%(CORE,YEAR)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/3l_plots.txt "
         if args.doWhat in ["cards"]:
-            if args.lowmll_LowPt_bothlep or args.lowmll_NominalPt_bothlep: plotting+="  minMllSFOS [1,4,10,20,30,50] "
+            if args.lowmll_LowPt_bothlep : plotting+="  minMllSFOS [1,4,10,20,30,50] "
             else: plotting+="  minMllSFOS [4,10,20,30,50] "
         
         wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR,YEAR)
@@ -195,10 +194,7 @@ def binChoice(x,torun):
     metBinInf = ''
     metBinSup = ''
     x2 = add(x,'-E ^eventFilters$ ')
-    if '_min' in torun:
-        metBinTrig = 'metmin'
-        metBinInf = 'metmin'
-    elif '_low' in torun:
+    if '_low' in torun:
         metBinTrig = 'metlow'
         metBinInf = 'metlow'
         metBinSup = 'metmed'
@@ -210,7 +206,7 @@ def binChoice(x,torun):
     elif '_high' in torun:
         metBinTrig = 'methigh'
         metBinInf = 'methigh'
-        metBinSup = 'metultra'
+        metBinSup = 'metultra' 
         x2 = add(x2,'-X ^mm$ ')
     elif '_ultra' in torun:
         metBinTrig = 'metultra'
@@ -245,10 +241,13 @@ if __name__ == '__main__':
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
-                     x = x.replace('-E ^met200$','-E ^met200_col$')
+                     x = x.replace('-E ^metmed$','-E ^metmed_col$')
                 if '_high' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
-                     x = x.replace('-E ^met250$','-E ^met300_col$')
+                     x = x.replace('-E ^methigh$','-E ^methigh_col$')
+                if '_ultra' in torun: 
+                     x = add(x,"-X ^pt5sublep$ ")
+                     x = x.replace('-E ^metultra$','-E ^metultra_col$')                
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
                 else:
@@ -272,10 +271,14 @@ if __name__ == '__main__':
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
-                    x = x.replace('-E ^met200$','-E ^met200_col$')
+                    x = x.replace('-E ^metmed$','-E ^metmed_col$')
                 if '_high' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
-                    x = x.replace('-E ^met250$','-E ^met300_col$')
+                    x = x.replace('-E ^methigh$','-E ^methigh_col$')
+                if '_ultra' in torun: 
+                    x = add(x,"-X ^pt5sublep$ ")
+                    x = x.replace('-E ^metultra$','-E ^metultra_col$')
+
             x = add(x,"-X ^twoTight$ ")
             if '1F_NoSF' in torun:
                 x = add(x, "-E ^1LNT$ ")
@@ -340,10 +343,6 @@ if __name__ == '__main__':
                 x = add(x, "-E ^2LNT$ -X ^twoTight$")
             if args.fakes == "semidd" :
                 if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt"%(YEAR,args.lep))
-                elif args.lowmll_NominalPt_bothlep:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_LowMll_NominalPt.txt"%(YEAR,args.lep))
-                #else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt"%(YEAR,args.lep))
-
-
 
 
 
@@ -362,7 +361,6 @@ if __name__ == '__main__':
                 if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
 
         if 'appl' in torun:
-            if '_low' in torun: x=add(x, "-E ^lowMetSel$ -X ^met125_trig$ -X ^minMll$ -X ^ledlepPt$ -X ^pt5sublep$ -X ^mm$")
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             x = add(x,"-X ^threeTight$ ")
@@ -379,8 +377,6 @@ if __name__ == '__main__':
             if args.fakes == "semidd": x = x.replace('susy-sos/mca/semidd_bkg/mca-3l-%s-semidd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-3l-%s-dd.txt'%(YEAR))    
             x = add(x,"-X ^minMll$ -X ^maxMll$ -X ^ledlepPt$ -X ^pt5sublep$ ")
             x = add(x,"-E ^CRWZmll$ ")
-            if '_min' in torun: 
-                x = add(x,"-E ^CRWZPtLep_MuMu$ ")
             if '_low' in torun: 
                 x = add(x,"-E ^CRWZPtLep_MuMu$ ")
                 x = x.replace('-E ^met125_trig','-E ^met125_trig_CR')
