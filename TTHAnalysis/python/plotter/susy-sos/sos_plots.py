@@ -248,7 +248,7 @@ if __name__ == '__main__':
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
                 else:
-                    if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_LowMll_LowPt.txt"%(YEAR,args.lep,args.bin))
+                    if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(YEAR,args.lep,args.bin))
                     elif args.lowmll_NominalPt_bothlep and not '_low' in torun:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
                     else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
             if '_closure' in torun:
@@ -328,16 +328,16 @@ if __name__ == '__main__':
                 x = add(x, "-E ^2LNT$ -X ^twoTight$" )    
             elif '1F_SF1' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/semidd_bkg/Tests/mca-2los-%s-1F.txt'%(YEAR))
-                x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_ss.txt "%(YEAR,args.lep))
+                x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt "%(YEAR,args.lep))
                 x = add(x, "-E ^1LNT$ -X ^twoTight$" )
             elif '2F_SF2' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/semidd_bkg/Tests/mca-2los-%s-2F.txt'%(YEAR))
-                x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_ss.txt "%(YEAR,args.lep))
+                x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt "%(YEAR,args.lep))
                 x = add(x, "-E ^2LNT$ -X ^twoTight$")
             if args.fakes == "semidd" :
-                if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_LowMll_LowPt.txt"%(YEAR,args.lep))
+                if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt"%(YEAR,args.lep))
                 elif args.lowmll_NominalPt_bothlep:  x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_LowMll_NominalPt.txt"%(YEAR,args.lep))
-                else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss_Nominal.txt"%(YEAR,args.lep))
+                #else:x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt"%(YEAR,args.lep))
 
 
 
@@ -355,11 +355,12 @@ if __name__ == '__main__':
             if args.lowmll_NominalPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -E ^mindR$")
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             if args.fakes == "semidd":
-                if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_LowMll_LowPt.txt"%(YEAR,args.lep,args.bin))
+                if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
                 elif args.lowmll_NominalPt_bothlep and not '_low' in torun: x= add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_LowMll_NominalPt.txt"%(YEAR,args.lep,args.bin))
                 else: x= add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s_Nominal.txt"%(YEAR,args.lep,args.bin))
 
         if 'appl' in torun:
+            if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             x = add(x,"-X ^threeTight$ ")
             if '1F_NoSF' in torun:
@@ -394,3 +395,4 @@ if __name__ == '__main__':
         if YEAR=="2018" and "cr_wz" not in torun: x = x.replace(LUMI," -l 59.2 ")
 
     runIt(x,x2,'%s'%torun)
+
