@@ -134,7 +134,7 @@ float muDleg_SF(int year, float _pt1, float _eta1, float _pt2, float _eta2, int 
 	// Definitions and Protection
 	float mu1_Data, mu1_MC, mu2_Data, mu2_MC, mu3_Data, mu3_MC;
 	float d12_Data, d12_MC, d13_Data, d13_MC, d23_Data, d23_MC;
-	float SF, SF1, SF2, SF3;
+	float SF;
 	float pt1 = max(float(3.501), min(float(499.999), _pt1));
 	float pt2 = max(float(3.501), min(float(499.999), _pt2));
 	float pt3 = max(float(3.501), min(float(499.999), _pt3));
@@ -157,9 +157,7 @@ float muDleg_SF(int year, float _pt1, float _eta1, float _pt2, float _eta2, int 
 	if(choose_leptons==12){
 		d12_Data = dcaDzleg_Data(year, _eta1, _eta2);
 		d12_MC = dcaDzleg_MC(year, _eta1, _eta2);
-		SF1 = (mu1_MC == 0.0) ? 0.0 : mu1_Data / mu1_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-		SF2 = (mu2_MC == 0.0) ? 0.0 : mu2_Data / mu2_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-		SF  = (d12_MC == 0.0) ? 0.0 : SF1 * SF2 * d12_Data / d12_MC;
+		SF  = (mu1_MC*mu2_MC*d12_MC == 0.0) ? 0.0 : mu1_Data / mu1_MC * (1 + nSigma * 0.02) * mu2_Data / mu2_MC * (1 + nSigma * 0.02) * d12_Data / d12_MC; // 2% uncertainty per muon
 	}
 	else{
 		// Third muon efficiency
@@ -175,16 +173,12 @@ float muDleg_SF(int year, float _pt1, float _eta1, float _pt2, float _eta2, int 
 		if(choose_leptons==13){
 			d13_Data = dcaDzleg_Data(year, _eta1, _eta3);
 			d13_MC = dcaDzleg_MC(year, _eta1, _eta3);
-			SF1 = (mu1_MC == 0.0) ? 0.0 : mu1_Data / mu1_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-			SF3 = (mu3_MC == 0.0) ? 0.0 : mu3_Data / mu3_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-			SF  = (d13_MC == 0.0) ? 0.0 : SF1 * SF3 * d13_Data / d13_MC;
+			SF  = (mu1_MC*mu3_MC*d13_MC == 0.0) ? 0.0 : mu1_Data / mu1_MC * (1 + nSigma * 0.02) * mu3_Data / mu3_MC * (1 + nSigma * 0.02) * d13_Data / d13_MC; // 2% uncertainty per muon
 		}
 		else if(choose_leptons==23){
 			d23_Data = dcaDzleg_Data(year, _eta2, _eta3);
 			d23_MC = dcaDzleg_MC(year, _eta2, _eta3);
-			SF2 = (mu2_MC == 0.0) ? 0.0 : mu2_Data / mu2_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-			SF3 = (mu3_MC == 0.0) ? 0.0 : mu3_Data / mu3_MC * (1 + nSigma * 0.02); // 2% uncertainty per muon
-			SF  = (d23_MC == 0.0) ? 0.0 : SF2 * SF3 * d23_Data / d23_MC;
+			SF  = (mu2_MC*mu3_MC*d23_MC == 0.0) ? 0.0 : mu2_Data / mu2_MC * (1 + nSigma * 0.02) * mu3_Data / mu3_MC * (1 + nSigma * 0.02) * d23_Data / d23_MC; // 2% uncertainty per muon
 		}
 		else if(choose_leptons==123){
 			d12_Data = dcaDzleg_Data(year, _eta1, _eta2);	d13_Data = dcaDzleg_Data(year, _eta1, _eta3);	d23_Data = dcaDzleg_Data(year, _eta2, _eta3);
