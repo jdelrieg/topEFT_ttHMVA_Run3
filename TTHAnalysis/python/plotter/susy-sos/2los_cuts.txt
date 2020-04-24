@@ -23,7 +23,6 @@ metlow_trig		: (year==2016 && HLT_MuMuMET16) || ( (year==2017 || year==2018) && 
 
 ####### Med MET	
 metmed		: metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 	; Disable=True
-metmed_CR	: metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200	; Disable=True
 metmed_trig	: (year==2016 && HLT_HighMET16) || ( (year==2017 || year==2018) && HLT_HighMET )	; Disable=True
 
 ### High MET

@@ -257,7 +257,7 @@ if __name__ == '__main__':
 
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/closure/mca-2los-%s-closure.txt'%(YEAR))
-                x = add(x,"-X ^met200$ ")
+                x = add(x,"-X ^metmed$ ")
                 x = add(x,"-E ^inclMET_2l$ ")
                 x = add(x,"--ratioNums=Fakes_MC --ratioDen=QCDFR_fakes ")
                 if '_norm' in torun:
@@ -303,7 +303,6 @@ if __name__ == '__main__':
             if args.reg != "cr_ss" and args.fakes == "semidd": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-%s-semidd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR))
 
         if 'cr_dy' in torun:
-            if '_med' in torun: x = x.replace('-E ^met200$','-E ^met200_CR$')
             if args.fakes == "semidd" or args.fakes == "dd": x = x.replace('susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd-DY.txt'%(YEAR))
             x = add(x,"-X ^ledlepPt$ ")
             x = add(x,"-I ^mtautau$ ")
@@ -311,14 +310,12 @@ if __name__ == '__main__':
 
         if 'cr_tt' in torun:
             if '_med' in torun:
-                x = x.replace('-E ^met200$','-E ^met200_CR$')
                 x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
             x = add(x,"-E ^CRTTledlepPt$ -E ^btag$ ")
 
         if 'cr_vv' in torun:
             if '_med' in torun:
-                x = x.replace('-E ^met200$','-E ^met200_CR$')
                 x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
             x = add(x,"-E ^CRVVledlepPt$ -E ^CRVVbveto$ -E ^CRVVmT$ ")
@@ -327,7 +324,6 @@ if __name__ == '__main__':
             if args.lowmll_LowPt_bothlep: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_med' in torun:
-                x = x.replace('-E ^met200$','-E ^met200_CR$')
                 x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^mT$")
             x = add(x,"-I ^OS$  ")
@@ -381,7 +377,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^CRWZmll$ ")
             if '_low' in torun: 
                 x = add(x,"-E ^CRWZPtLep_MuMu$ ")
-                x = x.replace('-E ^met125_trig','-E ^met125_trig_CR')
+                x = x.replace('-E ^metlow_trig','-E ^metlow_trig_CR')
                 x = x.replace('triggerSF','triggerWZSF')
             if '_med' in torun: x = add(x,"-E ^CRWZPtLep_HighMET$ ")
 
