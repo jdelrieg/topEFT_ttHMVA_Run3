@@ -253,7 +253,8 @@ if __name__ == '__main__':
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(YEAR,args.lep,args.bin))
                 else:
                     if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(YEAR,args.lep,args.bin))
-
+                    else:
+                        raise RuntimeError('The selection you are trying to plot does not exist!')
 
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los-%s.txt'%(YEAR),'susy-sos/mca/closure/mca-2los-%s-closure.txt'%(YEAR))
@@ -341,7 +342,8 @@ if __name__ == '__main__':
                 x = add(x, "-E ^2LNT$ -X ^twoTight$")
             if args.fakes == "semidd" :
                 if args.lowmll_LowPt_bothlep: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_cr_ss.txt"%(YEAR,args.lep))
-
+                else:
+                    raise RuntimeError('The selection you are trying to plot does not exist!')
 
 
     elif '3l_' in torun:
@@ -357,6 +359,8 @@ if __name__ == '__main__':
             if '_med' in torun: x = add(x,'-X ^maxMll$ ')
             if args.fakes == "semidd":
                 if args.lowmll_LowPt_bothlep or '_low' in torun: x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
+                else:
+                    raise RuntimeError('The selection you are trying to plot does not exist!')
 
         if 'appl' in torun:
             if args.lowmll_LowPt_bothlep and not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
