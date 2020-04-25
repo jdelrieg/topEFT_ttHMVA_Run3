@@ -27,6 +27,7 @@ categories=[
 '2los/sr/low',
 '2los/sr/med',
 '2los/sr/high',
+'2los/sr/ultra',
 '3l/sr/low',
 '3l/sr/med',
 '2los/cr_ss/med',
