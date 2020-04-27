@@ -187,7 +187,7 @@ class merge_and_fit:
                else:
                   out.append("set -e; mkdir -p \$(dirname %s)"%f2)
                   out.append("hadd -f %s %s %s"%(f2,f,f0))
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards --unc --fakes=semidd %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,opts,pr,odir,yr))
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,opts,pr,odir,yr))
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
                print 'Skipping %s because not all bare inputs are present'%pr
