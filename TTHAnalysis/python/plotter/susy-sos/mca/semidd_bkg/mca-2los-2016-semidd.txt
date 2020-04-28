@@ -16,7 +16,7 @@ incl_prompt_vv	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-2los-prompt-vv.t
 
 ## Non prompt Bkg
 ## ------------------------------------
-incl_semidd_fakes: + ; IncludeMca="susy-sos/mca-includes/2016/2los_semiddbkg/mca-fakes-semiDD.txt"
+incl_fakes: + ; IncludeMca="susy-sos/mca-includes/2016/2los_semiddbkg/mca-fakes-semiDD.txt"
 
 ## Rares Bkg
 ## ------------------------------------

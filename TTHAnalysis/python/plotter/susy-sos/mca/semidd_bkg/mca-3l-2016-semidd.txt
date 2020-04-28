@@ -8,7 +8,7 @@ incl_prompt	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-prompt.txt"
 
 ## Non prompt bkg
 ## ------------------------------------
-incl_semidd_fakes : + ; IncludeMca="susy-sos/mca-includes/2016/3l_semiddbkg/mca-fakes-semiDD.txt"
+incl_fakes : + ; IncludeMca="susy-sos/mca-includes/2016/3l_semiddbkg/mca-fakes-semiDD.txt"
 
 ## Rares bkg
 ## ------------------------------------

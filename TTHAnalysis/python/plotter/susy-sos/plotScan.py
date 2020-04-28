@@ -3,7 +3,7 @@ import re
 import glob
 import array
 import argparse
-import sys 
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--indir", default=[], action="append", required=True, help="Choose the input directories")
@@ -37,12 +37,12 @@ cmsTextFont           = 52
 cmsTextSize           = 0.55
 cmsTextOffset         = 0.1
 lumiText              = "137 fb^{-1} (13 TeV)"
-lumiTextFont          = 42  
+lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
 leg_ylo=75.
 leg_nlines=3
- 
+
 # Plot range
 range_xlo=95.
 range_xhi=270.
@@ -64,7 +64,7 @@ class Limit:
         self.med=med
         self.p1s=p1s
         self.m1s=m1s
-                
+
 def getLimitHists(files, tag):
     limits=[]
     for f in files:
@@ -89,7 +89,7 @@ def getLimitHists(files, tag):
     vMed=map( lambda lim : lim.med, limits)
     vP1=map( lambda lim : lim.p1s, limits)
     vM1=map( lambda lim : lim.m1s, limits)
-        
+
     thisLim=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vMed)
     thisLimP1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vP1)
     thisLimM1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vM1)
@@ -135,15 +135,15 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
     h_bkgd.GetXaxis().SetTitle("m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
-    h_bkgd.GetXaxis().SetLabelFont(42)   
-    h_bkgd.GetXaxis().SetTitleFont(42)   
+    h_bkgd.GetXaxis().SetLabelFont(42)
+    h_bkgd.GetXaxis().SetTitleFont(42)
     h_bkgd.GetXaxis().SetLabelSize(0.042)
     h_bkgd.GetXaxis().SetTitleSize(0.052)
 
     h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}) [GeV]")
-    h_bkgd.GetYaxis().SetTitleOffset(1.10)   
-    h_bkgd.GetYaxis().SetLabelFont(42)   
-    h_bkgd.GetYaxis().SetTitleFont(42)   
+    h_bkgd.GetYaxis().SetTitleOffset(1.10)
+    h_bkgd.GetYaxis().SetLabelFont(42)
+    h_bkgd.GetYaxis().SetTitleFont(42)
     h_bkgd.GetYaxis().SetLabelSize(0.042)
     h_bkgd.GetYaxis().SetTitleSize(0.052)
 
@@ -265,7 +265,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
         mT4.SetTextFont(42)
         mT4.SetTextSize(0.040)
         mT4.Draw()
-        
+
     if len(limit_labels)>1:
         XOFF = 150.
         gl3=TGraph(2)
@@ -321,5 +321,3 @@ for sel in args.indir:
 
         card_prototype=sel+"_merged/cards/TChiWZ{MLL}_*/log_b_*_{TAG}.txt"
         runMLL(card_prototype,tag,'mll_'+tag,outdir)
-
-

@@ -71,7 +71,7 @@ P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SO
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
-TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights"
+TREESALLSKIM = TREESALL
 
 def base(selection):
     plotting=''
@@ -171,7 +171,7 @@ def runIt(GO,plotting,name):
         ret = "python makeShapeCardsNew.py {barefile} {justdump} --outdir {outdir} {procsel} --all-processes --amc {asimov} {GO}"
         sig_reformatted = args.signalMasses if args.signalMasses else ''
         for suffix in ['pos','neg']:
-            if ('TChiWZ'+suffix) in sig_reformatted: 
+            if ('TChiWZ'+suffix) in sig_reformatted:
                 sig_reformatted = sig_reformatted.replace("TChiWZ"+suffix,"TChiWZ") + "_" + suffix
         ret = ret.format(**{
             'barefile': '--infile' if args.infile else '--savefile',

@@ -7,7 +7,7 @@ parser.add_argument("outDir", help="output directory'")
 parser.add_argument("--addopts", default=None, help="additional options to sos_plots.py")
 parser.add_argument("--onlyFit", action='store_true', default=False, help="only rerun fits")
 parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
-parser.add_argument("--reuseBackground", default=None, help="outDire from previous run for re-using backgrounds")
+parser.add_argument("--reuseBackground", default=None, help="outDir from previous run for re-using backgrounds")
 parser.add_argument("--reweight", default="none,pos,neg", help="Comma-separated list of scenarios to consider: none, pos, neg")
 args = parser.parse_args()
 
