@@ -7,10 +7,12 @@ parser.add_argument("outDir", help="output directory'")
 parser.add_argument("--addopts", default=None, help="additional options to sos_plots.py")
 parser.add_argument("--onlyFit", action='store_true', default=False, help="only rerun fits")
 parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
+parser.add_argument("--reuseBackground", default=None, help="outDir from previous run for re-using backgrounds")
+parser.add_argument("--reweight", default="none,pos,neg", help="Comma-separated list of scenarios to consider: none, pos, neg")
 args = parser.parse_args()
 
 years=["2016","2017","2018"]
-signals=[
+_signals=[
 "signal_TChiWZ_100_1","signal_TChiWZ_100_20","signal_TChiWZ_100_30","signal_TChiWZ_100_40","signal_TChiWZ_100_50","signal_TChiWZ_100_60","signal_TChiWZ_100_70","signal_TChiWZ_100_80","signal_TChiWZ_100_85","signal_TChiWZ_100_90","signal_TChiWZ_100_92","signal_TChiWZ_100_95","signal_TChiWZ_100_97","signal_TChiWZ_100_99",\
 "signal_TChiWZ_125_105","signal_TChiWZ_125_110","signal_TChiWZ_125_115","signal_TChiWZ_125_117","signal_TChiWZ_125_120","signal_TChiWZ_125_122","signal_TChiWZ_125_124","signal_TChiWZ_125_35","signal_TChiWZ_125_45","signal_TChiWZ_125_5","signal_TChiWZ_125_55","signal_TChiWZ_125_65","signal_TChiWZ_125_75","signal_TChiWZ_125_85","signal_TChiWZ_125_95",\
 "signal_TChiWZ_150_1","signal_TChiWZ_150_10","signal_TChiWZ_150_100","signal_TChiWZ_150_110","signal_TChiWZ_150_120","signal_TChiWZ_150_130","signal_TChiWZ_150_135","signal_TChiWZ_150_140","signal_TChiWZ_150_142","signal_TChiWZ_150_145","signal_TChiWZ_150_147","signal_TChiWZ_150_149","signal_TChiWZ_150_30","signal_TChiWZ_150_40","signal_TChiWZ_150_50","signal_TChiWZ_150_60","signal_TChiWZ_150_70","signal_TChiWZ_150_80","signal_TChiWZ_150_90",\
@@ -22,7 +24,13 @@ signals=[
 "signal_TChiWZ_300_1","signal_TChiWZ_300_100","signal_TChiWZ_300_125","signal_TChiWZ_300_150","signal_TChiWZ_300_160","signal_TChiWZ_300_170","signal_TChiWZ_300_180","signal_TChiWZ_300_200","signal_TChiWZ_300_210","signal_TChiWZ_300_220","signal_TChiWZ_300_230","signal_TChiWZ_300_240","signal_TChiWZ_300_25","signal_TChiWZ_300_250","signal_TChiWZ_300_260","signal_TChiWZ_300_270","signal_TChiWZ_300_280","signal_TChiWZ_300_285","signal_TChiWZ_300_290","signal_TChiWZ_300_292","signal_TChiWZ_300_295","signal_TChiWZ_300_297","signal_TChiWZ_300_299","signal_TChiWZ_300_75",\
 "signal_TChiWZ_325_1","signal_TChiWZ_325_100","signal_TChiWZ_325_125","signal_TChiWZ_325_150","signal_TChiWZ_325_175","signal_TChiWZ_325_185","signal_TChiWZ_325_195","signal_TChiWZ_325_205","signal_TChiWZ_325_215","signal_TChiWZ_325_225","signal_TChiWZ_325_235","signal_TChiWZ_325_245","signal_TChiWZ_325_25","signal_TChiWZ_325_255","signal_TChiWZ_325_265","signal_TChiWZ_325_275","signal_TChiWZ_325_285","signal_TChiWZ_325_295","signal_TChiWZ_325_50","signal_TChiWZ_325_75"
 ]
-signals=[x.lstrip('signal_') for x in signals]
+_signals=[x.lstrip('signal_') for x in _signals]
+signals=[]
+for mll in args.reweight.split(','):
+   if mll=='none':
+      signals += _signals
+   else:
+      signals += ['%s_%s'%(x,mll) for x in _signals]
 categories=[
 '2los/sr/low',
 '2los/sr/med',
@@ -81,7 +89,8 @@ class bare_production:
             self.cat = cat
 
       tasks=[]
-      for pr in signals+['background']:
+      prs = signals if args.reuseBackground else signals+['background']
+      for pr in prs:
          for yr in years:
             for cat in categories:
                tasks.append(task(pr,yr,cat))
@@ -163,24 +172,29 @@ class bare_production:
 
 
 class merge_and_fit:
-   def __init__(self,onlyFit=False):
+   def __init__(self,onlyFit=False, bkgdDir=None):
       self.onlyFit = onlyFit
+
 
       def runPoint(pr):
          ret=[]
          cards=[]
          out=[]
          badPoint = False
-         model,m1,m2 = pr.rstrip('+').split('_')
+         splitted = pr.rstrip('+').split('_')
+         model,m1,m2 = splitted[:3]
+         tags = splitted[3:]
+         if len(tags)>0:
+            model += '-'+'-'.join(splitted[3:])
          mass = '%s_%s'%(m1,m2)
          fullpoint = '%s_%s'%(model,mass)
          if not onlyFit:
             for (_cat,yr) in itertools.product(categories,years):
                cat = _cat.replace('/','_')
                lep,reg,bin = _cat.split('/')
-               f = '%s/bare/%s/%s/%s_%s/sos_%s.bare.root'%(odir,yr,cat,model,mass,cat)
-               f0 = '%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(odir,yr,cat,cat)
-               f2 = '%s_merged/bare/%s/%s/%s_%s/sos_%s.bare.root'%(odir,yr,cat,model,mass,cat)
+               f = '%s/bare/%s/%s/signal_%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
+               f0 = '%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(bkgdDir if bkgdDir else odir,yr,cat,cat)
+               f2 = '%s_merged/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
                if not (os.path.exists(f) and os.path.exists(f0)):
                   badPoint = True
                   break
@@ -194,7 +208,7 @@ class merge_and_fit:
                return []
 
          out.append('export ORIGDIR=\$(pwd)')
-         cdir = '%s_merged/cards/%s_%s'%(odir,model,mass)
+         cdir = '%s_merged/cards/%s'%(odir,fullpoint)
          out.append("mkdir -p %s && cd %s && set +e"%(cdir,cdir))
          flags = {
             'all': lambda (x,y): True,
@@ -221,4 +235,4 @@ class merge_and_fit:
 
 if __name__ == '__main__':
    if what=='bare': x = bare_production()
-   if what=='fit': x = merge_and_fit(onlyFit=args.onlyFit)
+   if what=='fit': x = merge_and_fit(onlyFit=args.onlyFit, bkgdDir=args.reuseBackground)

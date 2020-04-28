@@ -1,7 +1,5 @@
 ## TChiWZ Signal Points
 ## ------------------------------------
-#incl_signal	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-3l-signal.txt"
-#incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2017/mca-3l-signal.txt", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_150_120+"
 incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2017/mca-3l-signal.txt", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_150_120+\,signal_TChiWZ_175_125+\,signal_TChiWZ_150_90+\,signal_TChiWZ_150_110+\,signal_TChiWZ_150_100+"
 
 ## Prompt bkg
