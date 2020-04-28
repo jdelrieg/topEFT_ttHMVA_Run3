@@ -83,8 +83,8 @@ def base(selection):
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.032 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if not args.signal:
-        CORE+=" --xp signal.* "
+    if args.signal: CORE+=" --xp signal.*\(\?\<\!_pos\) " if args.reweight == "pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight == "neg" else " --xp signal.*\(_pos\|_neg\) "
+    else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
         if args.signal: CORE+=" --noStackSig --showIndivSigs "
