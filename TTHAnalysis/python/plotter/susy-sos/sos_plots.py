@@ -149,7 +149,7 @@ def runIt(GO,plotting,name):
         else:
             if args.signalMasses:
                 for pr in args.signalMasses.split(','):
-                    masspt+='_'.join(pr.split('_')[-3:])
+                    masspt+='_'.join(pr.split('_')[1:])
             else:
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
