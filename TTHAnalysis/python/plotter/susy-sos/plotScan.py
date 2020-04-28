@@ -294,7 +294,7 @@ def run(indirs,tag,label,outdir):
     print 'Found %d files'%len(files)
 
     lims = getLimitHists(files)
-    plotLimits([lims], label, outdir)
+    plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
     limCurves=[]

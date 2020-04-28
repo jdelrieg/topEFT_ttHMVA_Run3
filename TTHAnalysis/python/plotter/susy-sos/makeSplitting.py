@@ -192,7 +192,7 @@ class merge_and_fit:
             for (_cat,yr) in itertools.product(categories,years):
                cat = _cat.replace('/','_')
                lep,reg,bin = _cat.split('/')
-               f = '%s/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
+               f = '%s/bare/%s/%s/signal_%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
                f0 = '%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(bkgdDir if bkgdDir else odir,yr,cat,cat)
                f2 = '%s_merged/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
                if not (os.path.exists(f) and os.path.exists(f0)):

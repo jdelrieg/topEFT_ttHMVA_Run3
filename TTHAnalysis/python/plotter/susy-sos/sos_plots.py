@@ -148,7 +148,8 @@ def runIt(GO,plotting,name):
         if not args.signal: masspt='nosignal'
         else:
             if args.signalMasses:
-                masspt = '_'.join(args.signalMasses.split(','))
+                for pr in args.signalMasses.split(','):
+                    masspt+='_'.join(pr.split('_')[1:])
             else:
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
@@ -171,8 +172,8 @@ def runIt(GO,plotting,name):
         ret = ret.format(**{
             'barefile': '--infile' if args.infile else '--savefile',
             'justdump': '--justdump' if args.justdump else '',
-            'outdir': '/'.join([ODIR,YEAR,name,masspt]),
-            'procsel': ("--xp='^signal_(?!.*%s).*'"%args.signalMasses if args.allowRest else "-p %s"%args.signalMasses) if args.signalMasses else '',
+            'outdir': '/'.join([ODIR,YEAR,name,args.signalMasses.replace(',','_') if args.signalMasses else 'nosignal']),
+            'procsel': ("--xp='^signal(?!.*_%s).*'"%masspt if args.allowRest else "-p %s"%args.signalMasses) if args.signalMasses else '',
             'asimov' : "--asimov %s"%args.asimov if args.asimov else '',
             'GO': GO,
         })
