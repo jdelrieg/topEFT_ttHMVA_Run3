@@ -48,10 +48,6 @@ range_xhi=300.
 range_ylo=3.
 range_yhi=95.
 
-# histo limits
-mN1_lo=87.5
-mN1_hi=362.5
-
 if logy:
     range_yhi=350.
     leg_ylo=100.
@@ -70,8 +66,6 @@ def getLimitHists(files, tag):
         mass=os.path.basename(f).split('_')[3:5]
         massH=float(mass[0])
         massL=float(mass[0])-float(mass[1])
-        if massH>325: continue
-        if massL>110: continue
         with open(f) as fin:
             med=0
             p1s=0
@@ -95,22 +89,27 @@ def getLimitHists(files, tag):
     thisLimP1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vP1)
     thisLimM1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vM1)
 
-    vDmBins=vDm
-    vDmBins.sort()
-    vDmBins=list(sorted(set(vDmBins))[:11])
-    vDmBins.append(range_yhi)
+    g2lim = TGraph2D(len(thisLim))
+    g2limP1 = g2lim.Clone()
+    g2limM1 = g2lim.Clone()
+    for i,lim in enumerate(thisLim):
+        g2lim.SetPoint(i,lim[0],lim[1],lim[2])
+    for i,lim in enumerate(thisLimP1):
+        g2limP1.SetPoint(i,lim[0],lim[1],lim[2])
+    for i,lim in enumerate(thisLimM1):
+        g2limM1.SetPoint(i,lim[0],lim[1],lim[2])
+    for g in [g2lim,g2limP1,g2limM1]:
+        g.SetNpx(100)
+        g.SetNpy(100)
 
-    h2lim = TH2D("lim_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
-    h2limP1 = TH2D("limP1_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
-    h2limM1 = TH2D("limM1_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
+    h2lim = g2lim.GetHistogram().Clone()
+    h2limP1 = g2limP1.GetHistogram().Clone()
+    h2limM1 = g2limM1.GetHistogram().Clone()
 
-    for lim in thisLim:
-        h2lim.Fill(lim[0],lim[1],lim[2])
-    for lim in thisLimP1:
-        h2limP1.Fill(lim[0],lim[1],lim[2])
-    for lim in thisLimM1:
-        h2limM1.Fill(lim[0],lim[1],lim[2])
-        
+    h2lim.SetTitle('')
+    h2limP1.SetTitle('')
+    h2limM1.SetTitle('')
+
     #    h2lim.Print("all")
     #    h2lim.Smooth(1,"k3a")
     #    h2lim.Smooth(1,"kba")
@@ -183,11 +182,11 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     latex.SetTextAlign(11) 
     latex.SetTextSize(cmsTextSize*t)    
     latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
-    ax=h_bkgd.GetXaxis()
-    x1 = ax.GetBinLowEdge(ax.FindBin(range_xlo))
-    x2 = ax.GetBinUpEdge(ax.FindBin(range_xhi))
-    y1=leg_ylo
-    y2=range_yhi
+
+    x1 = range_xlo
+    x2 = range_xhi
+    y1 = leg_ylo
+    y2 = range_yhi
 
     if logy:
         y1 = ROOT.TMath.Log(y1)
