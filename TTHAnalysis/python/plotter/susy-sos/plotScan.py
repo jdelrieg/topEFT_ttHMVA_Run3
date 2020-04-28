@@ -10,12 +10,12 @@ parser.add_argument("--indir", default=[], action="append", required=True, help=
 parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
-parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['pos','neg']")
+parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=[None,'pos','neg']")
 args = parser.parse_args()
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.mll) == 0: args.mll = ['pos','neg']
+if len(args.mll) == 0: args.mll = [None,'pos','neg']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
 import ROOT
@@ -25,7 +25,6 @@ if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
-outdir="sos_outplot" ##output folder for plots
 logy=False
 #logy=True
 
@@ -44,9 +43,9 @@ leg_ylo=75.
 leg_nlines=3
 
 # Plot range
-range_xlo=95.
-range_xhi=270.
-range_ylo=1.
+range_xlo=100.
+range_xhi=300.
+range_ylo=3.
 range_yhi=95.
 
 # histo limits
@@ -71,6 +70,8 @@ def getLimitHists(files, tag):
         mass=os.path.basename(f).split('_')[3:5]
         massH=float(mass[0])
         massL=float(mass[0])-float(mass[1])
+        if massH>325: continue
+        if massL>110: continue
         with open(f) as fin:
             med=0
             p1s=0
@@ -147,12 +148,9 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetYaxis().SetLabelSize(0.042)
     h_bkgd.GetYaxis().SetTitleSize(0.052)
 
-    h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
     h_bkgd.Draw("colz" if nlim==1 else "axis")
-    h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
 
     colz = [ROOT.kRed,ROOT.kBlue]
-    colz = [ROOT.kBlue,ROOT.kRed]
     for iLim, limit_hists in enumerate(limits_hists):
         for lim in limit_hists:
             lim.SetContour(1,array.array('d',[1]))
@@ -224,7 +222,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1=TGraph(2)
     gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
     gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
-    gl1.SetLineColor(ROOT.kBlack)
+    gl1.SetLineColor(colz[0])
     gl1.SetLineStyle(1)
     gl1.SetLineWidth(2)
     gl1.Draw("lsame")
@@ -232,7 +230,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1p=TGraph(2)
     gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
     gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
-    gl1p.SetLineColor(ROOT.kBlack)
+    gl1p.SetLineColor(colz[0])
     gl1p.SetLineStyle(2)
     gl1p.SetLineWidth(1)
     gl1p.Draw("lsame")
@@ -240,12 +238,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1m=TGraph(2)
     gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
     gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
-    gl1m.SetLineColor(ROOT.kBlack)
+    gl1m.SetLineColor(colz[0])
     gl1m.SetLineStyle(2)
     gl1m.SetLineWidth(1)
     gl1m.Draw("lsame")
 
-    mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected exclusion #pm #sigma_{exp}")
+    mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
     mT3.SetTextAlign(12)
     mT3.SetTextFont(42)
     mT3.SetTextSize(0.040)
@@ -293,7 +291,7 @@ def run(indirs,tag,label,outdir):
     files = filter(lambda f: os.path.exists(f),files)
     print 'Found %d files'%len(files)
 
-    lims = getLimitHists(files)
+    lims = getLimitHists(files,tag)
     plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
@@ -301,7 +299,8 @@ def runMLL(indirs,tag,label,outdir):
     lim_labels=['N1*N2>0','N1*N2<0']
 
     for mll in args.mll:
-        files=glob.glob(indirs.format(MLL=mll, TAG=tag))
+        if not mll: continue
+        files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
         l = getLimitHists(files, mll)
         limCurves.append( l )
@@ -317,7 +316,8 @@ for sel in args.indir:
     name = sel.split("/")[-1]
     for tag in args.tag:
         print "For tag "+tag+":"
-        # run("%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(name,tag),outdir)
+        for mll in args.mll:
+            run("%s_merged/cards/TChiWZ%s_*"%(sel,'-%s'%mll if mll else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll else ''),outdir)
 
         card_prototype=sel+"_merged/cards/TChiWZ{MLL}_*/log_b_*_{TAG}.txt"
         runMLL(card_prototype,tag,'mll_'+tag,outdir)
