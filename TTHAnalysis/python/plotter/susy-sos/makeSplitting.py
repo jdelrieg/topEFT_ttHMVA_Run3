@@ -26,10 +26,11 @@ _signals=[
 ]
 _signals=[x.lstrip('signal_') for x in _signals]
 signals=[]
-mlls=args.reweight.split(',')
-if 'none' in mlls: signals += _signals
-if 'pos' in mlls: signals += [x.replace("TChiWZ","TChiWZpos") for x in _signals]
-if 'neg' in mlls: signals += [x.replace("TChiWZ","TChiWZneg") for x in _signals]
+for mll in args.reweight.split(','):
+   if mll=='none':
+      signals += _signals
+   else:
+      signals += ['%s_%s'%(x,mll) for x in _signals]
 categories=[
 '2los/sr/low',
 '2los/sr/med',
@@ -180,16 +181,19 @@ class merge_and_fit:
          cards=[]
          out=[]
          badPoint = False
-         model,m1,m2 = pr.rstrip('+').split('_')[:3]
+         splitted = pr.rstrip('+').split('_')
+         model,m1,m2 = splitted[:3]
+         if len(splitted)>3:
+            model += '-'+'-'.join(splitted[3:])
          mass = '%s_%s'%(m1,m2)
          fullpoint = '%s_%s'%(model,mass)
          if not onlyFit:
             for (_cat,yr) in itertools.product(categories,years):
                cat = _cat.replace('/','_')
                lep,reg,bin = _cat.split('/')
-               f = '%s/bare/%s/%s/%s_%s/sos_%s.bare.root'%(odir,yr,cat,model,mass,cat)
+               f = '%s/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,fullpoint,cat)
                f0 = '%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(bkgdDir if bkgdDir else odir,yr,cat,cat)
-               f2 = '%s_merged/bare/%s/%s/%s_%s/sos_%s.bare.root'%(odir,yr,cat,model,mass,cat)
+               f2 = '%s_merged/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,fullpoint,cat)
                if not (os.path.exists(f) and os.path.exists(f0)):
                   badPoint = True
                   break
@@ -203,7 +207,7 @@ class merge_and_fit:
                return []
 
          out.append('export ORIGDIR=\$(pwd)')
-         cdir = '%s_merged/cards/%s_%s'%(odir,model,mass)
+         cdir = '%s_merged/cards/%s'%(odir,fullpoint)
          out.append("mkdir -p %s && cd %s && set +e"%(cdir,cdir))
          flags = {
             'all': lambda (x,y): True,

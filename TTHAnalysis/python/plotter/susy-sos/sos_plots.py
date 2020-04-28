@@ -71,7 +71,7 @@ P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SO
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
-TREESALLSKIM = TREESALL
+TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
 
 def base(selection):
     plotting=''
@@ -156,7 +156,7 @@ def runIt(GO,plotting,name):
             for pr in args.signalMasses.split(','):
                 if 'TChiWZ' not in pr: raise
             FILENAME="SMS_TChiWZ"
-            GENMODELSTRING="( " + " || ".join(['GenModel_TChiWZ_ZToLL_%s'%('_'.join(pr.split('_')[-2:])) for pr in args.signalMasses.split(',')]) + " )"
+            GENMODELSTRING="( " + " || ".join(['GenModel_TChiWZ_ZToLL_%s'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
                 'TREESALLSKIM': TREESALLSKIM,
                 'nCores': nCores,
@@ -169,15 +169,11 @@ def runIt(GO,plotting,name):
 
         GO+=plotting
         ret = "python makeShapeCardsNew.py {barefile} {justdump} --outdir {outdir} {procsel} --all-processes --amc {asimov} {GO}"
-        sig_reformatted = args.signalMasses if args.signalMasses else ''
-        for suffix in ['pos','neg']:
-            if ('TChiWZ'+suffix) in sig_reformatted:
-                sig_reformatted = sig_reformatted.replace("TChiWZ"+suffix,"TChiWZ") + "_" + suffix
         ret = ret.format(**{
             'barefile': '--infile' if args.infile else '--savefile',
             'justdump': '--justdump' if args.justdump else '',
             'outdir': '/'.join([ODIR,YEAR,name,masspt]),
-            'procsel': ("--xp='^signal_(?!.*%s).*'"%sig_reformatted if args.allowRest else "-p %s"%sig_reformatted) if args.signalMasses else '',
+            'procsel': ("--xp='^signal_(?!.*%s).*'"%args.signalMasses if args.allowRest else "-p %s"%args.signalMasses) if args.signalMasses else '',
             'asimov' : "--asimov %s"%args.asimov if args.asimov else '',
             'GO': GO,
         })
