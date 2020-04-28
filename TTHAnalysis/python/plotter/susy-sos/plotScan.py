@@ -53,69 +53,44 @@ if logy:
     leg_ylo=100.
 
 class Limit:
-    def __init__(self,mass, Dm, med, p1s, m1s):
-        self.mass=mass
-        self.Dm=Dm
-        self.med=med
-        self.p1s=p1s
-        self.m1s=m1s
+    def __init__(self,mass, Dm, vals):
+        self.mass = mass
+        self.Dm = Dm
+        self.vals = vals
 
 def getLimitHists(files, tag):
     limits=[]
+    parser={
+        'Expected 50.0' : 0,
+        'Expected 84.0' : 1,
+        'Expected 16.0' : -1,
+    }
     for f in files:
         mass=os.path.basename(f).split('_')[3:5]
         massH=float(mass[0])
         massL=float(mass[0])-float(mass[1])
         with open(f) as fin:
-            med=0
-            p1s=0
-            m1s=0
+            vals={}
             for line in fin:
-                if "Expected 50.0" in line:
-                    med = float(line.split()[-1])
-                if "Expected 84.0" in line:
-                    p1s = float(line.split()[-1])
-                if "Expected 16.0" in line:
-                    m1s = float(line.split()[-1])
-            lim=Limit(massH, massL, med, p1s, m1s)
-            limits.append(lim)    
-    vm=map( lambda lim : lim.mass, limits)
-    vDm=map( lambda lim : lim.Dm, limits)
-    vMed=map( lambda lim : lim.med, limits)
-    vP1=map( lambda lim : lim.p1s, limits)
-    vM1=map( lambda lim : lim.m1s, limits)
+                for text,var in parser.iteritems():
+                    if text in line:
+                        vals[var] = float(line.split()[-1])
+            if len(vals)<len(parser): continue
+            lim=Limit(massH, massL, vals)
+            limits.append(lim)
 
-    thisLim=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vMed)
-    thisLimP1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vP1)
-    thisLimM1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vM1)
-
-    g2lim = TGraph2D(len(thisLim))
-    g2limP1 = g2lim.Clone()
-    g2limM1 = g2lim.Clone()
-    for i,lim in enumerate(thisLim):
-        g2lim.SetPoint(i,lim[0],lim[1],lim[2])
-    for i,lim in enumerate(thisLimP1):
-        g2limP1.SetPoint(i,lim[0],lim[1],lim[2])
-    for i,lim in enumerate(thisLimM1):
-        g2limM1.SetPoint(i,lim[0],lim[1],lim[2])
-    for g in [g2lim,g2limP1,g2limM1]:
+    hs={}
+    for var in parser.values():
+        g = TGraph2D(len(limits))
+        for i,lim in enumerate(limits):
+            g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
         g.SetNpx(100)
         g.SetNpy(100)
+        h = g.GetHistogram().Clone()
+        h.SetTitle('')
+        hs[var]=h
 
-    h2lim = g2lim.GetHistogram().Clone()
-    h2limP1 = g2limP1.GetHistogram().Clone()
-    h2limM1 = g2limM1.GetHistogram().Clone()
-
-    h2lim.SetTitle('')
-    h2limP1.SetTitle('')
-    h2limM1.SetTitle('')
-
-    #    h2lim.Print("all")
-    #    h2lim.Smooth(1,"k3a")
-    #    h2lim.Smooth(1,"kba")
-    #    h2lim.Smooth(1,"kba")
-
-    return h2lim, h2limP1, h2limM1
+    return hs
 
 
 def plotLimits(limits_hists, limit_labels, label, outdir):
@@ -151,12 +126,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     colz = [ROOT.kRed,ROOT.kBlue]
     for iLim, limit_hists in enumerate(limits_hists):
-        for lim in limit_hists:
+        for var,lim in limit_hists.iteritems():
             lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
 
-        h2lim, h2limP1, h2limM1 = limit_hists
+        h2lim, h2limP1, h2limM1 = limit_hists[0], limit_hists[1], limit_hists[-1]
         h2lim.SetLineWidth(2)
         h2limP1.SetLineWidth(1)
         h2limM1.SetLineWidth(1)
