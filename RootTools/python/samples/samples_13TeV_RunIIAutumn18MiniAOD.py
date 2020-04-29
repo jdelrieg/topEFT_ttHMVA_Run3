@@ -440,13 +440,18 @@ ZHTobb_ll, ZHTobb_ll_ext, ZHToTauTau,
 ##Signals for SUSY SOS
 ##TChiWZ
 SMS_TChiWZ=kreator.makeMCComponent("SMS_TChiWZ","/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-GridpackScan_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
+#SMS_TChiWZext=kreator.makeMCComponent("SMS_TChiWZext","/SMS-TChiWZ_ZToLL_mZMin-0p1_mC1-325to1000_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-GridpackScan_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
 SMS_HiggsinoN2N1=kreator.makeMCComponent("SMS_HiggsinoN2N1","/SMS-N2N1-higgsino_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-GridpackScan_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
 SMS_HiggsinoN2C1=kreator.makeMCComponent("SMS_HiggsinoN2C1","/SMS-N2C1-higgsino_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-GridpackScan_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
+SMS_T2tt=kreator.makeMCComponent("SMS_T2tt","/SMS-T2tt_dM-10to80_2Lfilter_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-PUFall18Fast_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
+SMS_HiggsinoPMSSM=kreator.makeMCComponent("SMS_HiggsinoPMSSM","/MSSM-higgsino_no1l_2lfilter_TuneCP2_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-PUFall18Fast_102X_upgrade2018_realistic_v15-v1/MINIAODSIM","CMS",".*root",1)
 ##FIXME! add other signal models
 SignalSUSY = [
     SMS_TChiWZ,
     SMS_HiggsinoN2N1,
     SMS_HiggsinoN2C1,
+    SMS_T2tt,
+    SMS_HiggsinoPMSSM,
 ]
 
 # low Mll samples
