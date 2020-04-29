@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--reweight", choices=["none","pos","neg"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
+parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
@@ -83,7 +83,7 @@ def base(selection):
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.032 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if args.signal: CORE+=" --xp signal.*\(\?\<\!_pos\) " if args.reweight == "pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight == "neg" else " --xp signal.*\(_pos\|_neg\) "
+    if args.signal: CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
