@@ -10,12 +10,12 @@ parser.add_argument("--indir", default=[], action="append", required=True, help=
 parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
-parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=[None,'pos','neg']")
+parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
 args = parser.parse_args()
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.mll) == 0: args.mll = [None,'pos','neg']
+if len(args.mll) == 0: args.mll = ['none','pos','neg']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
 import ROOT
@@ -84,8 +84,8 @@ def getLimitHists(files, tag):
         g = TGraph2D(len(limits))
         for i,lim in enumerate(limits):
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
-        g.SetNpx(100)
-        g.SetNpy(100)
+        g.SetNpx(200)
+        g.SetNpy(200)
         h = g.GetHistogram().Clone()
         h.SetTitle('')
         hs[var]=h
@@ -273,14 +273,15 @@ def runMLL(indirs,tag,label,outdir):
     lim_labels=['N1*N2>0','N1*N2<0']
 
     for mll in args.mll:
-        if not mll: continue
+        if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
         l = getLimitHists(files, mll)
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
 
-    plotLimits(limCurves, lim_labels, label+"_both", outdir)
+    if 'pos' in args.mll and 'neg' in args.mll:
+        plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
 outdir=args.outDir.rstrip("/")
@@ -291,7 +292,7 @@ for sel in args.indir:
     for tag in args.tag:
         print "For tag "+tag+":"
         for mll in args.mll:
-            run("%s_merged/cards/TChiWZ%s_*"%(sel,'-%s'%mll if mll else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll else ''),outdir)
+            run("%s_merged/cards/TChiWZ%s_*"%(sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         card_prototype=sel+"_merged/cards/TChiWZ{MLL}_*/log_b_*_{TAG}.txt"
         runMLL(card_prototype,tag,'mll_'+tag,outdir)
