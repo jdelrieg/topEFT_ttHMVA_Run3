@@ -1,0 +1,2 @@
+ScaleFactor1F: 1.671869
+ScaleFactor2F: 0.544068

@@ -27,6 +27,7 @@ categories=[
 '2los/sr/low',
 '2los/sr/med',
 '2los/sr/high',
+'2los/sr/ultra',
 '3l/sr/low',
 '3l/sr/med',
 '2los/cr_ss/med',
@@ -60,13 +61,13 @@ log             = {odir}/logs/log.$(Cluster).$(Process)
 {acctgroup}
 getenv = True
 
-request_cpus = 1
+request_cpus = 4
 queue Chunk matching {odir}/job_*_bkg.sh
 
 request_cpus = 1
 queue Chunk matching {odir}/job_*_sig.sh
 queue Chunk matching {odir}/job_*_fit.sh
-""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "{%s}"'%args.accountingGroup if args.accountingGroup else '')
+""".format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "%s"'%args.accountingGroup if args.accountingGroup else '')
    with open('%s/htcondor_submitter.sub'%odir,'w') as outf:
       outf.write(submitter)
 
@@ -108,7 +109,7 @@ class bare_production:
                prs = set([tk.pr for tk in job if (yr==tk.yr and _cat==tk.cat)])
                lep,reg,bin = _cat.split('/')
                if 'background' in prs:
-                  _printCmd(lep,reg,bin,'--data --nCores 1',yr,outfile)
+                  _printCmd(lep,reg,bin,'--data --nCores 4',yr,outfile)
                   expoutput.append('%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(odir,yr,cat,cat))
                prs.discard('background')
                if len(prs):
@@ -186,7 +187,7 @@ class merge_and_fit:
                else:
                   out.append("set -e; mkdir -p \$(dirname %s)"%f2)
                   out.append("hadd -f %s %s %s"%(f2,f,f0))
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards --unc --fakes=semidd --signal --signalMasses %s --allowRest --infile %s_merged/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,pr,odir,yr))
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,opts,pr,odir,yr))
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
                print 'Skipping %s because not all bare inputs are present'%pr
