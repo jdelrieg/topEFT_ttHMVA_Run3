@@ -141,7 +141,3 @@ int hashBasedRunPeriod2017(int isData, int run, int lumi, int event, int year){
   auto period = std::find_if(cumul.begin(),cumul.end(),[val](const float &y){return y>val;});
   return std::distance(cumul.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 );
 }
-
-float ZllBR(float dm){ // also include flavor-dependence here?
-    return 0.1;
-}
