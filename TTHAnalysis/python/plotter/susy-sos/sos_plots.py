@@ -135,11 +135,12 @@ def createPath(filename):
                 raise
 
 def runIt(GO,plotting,name):
-    if not args.doWhat == "cards" : name=name+"_"+args.fakes
-    if args.data and not args.doWhat == "cards" : name=name+"_data"
-    if args.norm: name=name+"_norm"
-
     if args.doWhat == "plots":  
+        name=name+"_"+args.fakes
+        if not args.reweight=="none": name=name+"_"+args.reweight
+        if args.data: name=name+"_data"
+        if args.norm: name=name+"_norm"
+
         GO+=plotting
         ret = submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ])]))
 
