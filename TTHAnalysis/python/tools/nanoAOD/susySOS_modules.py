@@ -377,6 +377,6 @@ def susySOS_sequence_TnP(year,collection): # TnP module should always be last
 
 # signal re-weighting
 from CMGTools.TTHAnalysis.tools.nanoAOD.mllReweight import mllReweight
-from CMGTools.TTHAnalysis.tools.vb_decaymodes import VB_DecayModes
+from CMGTools.TTHAnalysis.tools.nanoAOD.vb_decaymodes import VB_DecayModes
 
 sigRew = [mllReweight,VB_DecayModes]
