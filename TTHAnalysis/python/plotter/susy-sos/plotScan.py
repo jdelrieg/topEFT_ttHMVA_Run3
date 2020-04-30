@@ -39,14 +39,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=75.
+leg_ylo=60.
 leg_nlines=3
 
 # Plot range
 range_xlo=100.
 range_xhi=300.
 range_ylo=3.
-range_yhi=95.
+range_yhi=75.
 
 if logy:
     range_yhi=350.
