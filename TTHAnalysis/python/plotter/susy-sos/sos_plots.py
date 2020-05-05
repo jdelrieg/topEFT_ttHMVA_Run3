@@ -303,26 +303,24 @@ if __name__ == '__main__':
             if args.fakes == "semidd" or args.fakes == "dd": x = x.replace('susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd-DY.txt'%(YEAR))
             x = add(x,"-X ^ledlepPt$ ")
             x = add(x,"-I ^mtautau$ ")
-            x = add(x,"-E ^CRDYledlepPt$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ -E ^CRDYledlepPt_low$ ")
+            else: x = add(x,"-E ^CRDYledlepPt$ ")
 
         if 'cr_tt' in torun:
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
-            x = add(x,"-E ^CRTTledlepPt$ -E ^btag$ ")
+            x = add(x,"-E ^btag$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ -E ^CRTTledlepPt_low$ ")
+            else: x = add(x,"-E ^CRTTledlepPt$ ")
 
         if 'cr_vv' in torun:
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
             x = add(x,"-E ^CRVVledlepPt$ -E ^CRVVbveto$ -E ^CRVVmT$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ ")
 
         if 'cr_ss' in torun: # Only 'med' bin exists
             x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
-            x = add(x,"-X ^mT$")
+            x = add(x,"-X ^mT$ -X ^pt5sublep$ ")
             x = add(x,"-I ^OS$  ")
             if '1F_NoSF' in torun:
                 x = add(x, "-E ^1LNT$ -X ^twoTight$" )
