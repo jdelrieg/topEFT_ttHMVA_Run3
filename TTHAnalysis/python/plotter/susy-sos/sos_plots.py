@@ -345,14 +345,11 @@ if __name__ == '__main__':
         if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-3l-%s.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-3l-%s-dd.txt'%(YEAR))    
 
         if 'sr' in torun:
-            if not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-
-            if '_med' in torun: x = add(x,'-X ^maxMll$ ')
+            if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if args.fakes == "semidd": x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
 
         if 'appl' in torun:
-            if not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if '_med' in torun: x = add(x,'-X ^maxMll$ ')
+            if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             x = add(x,"-X ^threeTight$ ")
             if '1F_NoSF' in torun:
                 x = add(x, "-E ^1LNT$ ")
@@ -366,12 +363,12 @@ if __name__ == '__main__':
         if 'cr_wz' in torun:
             if args.fakes == "semidd": x = x.replace('susy-sos/mca/semidd_bkg/mca-3l-%s-semidd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-3l-%s-dd.txt'%(YEAR))    
             x = add(x,"-X ^minMll$ -X ^maxMll$ -X ^ledlepPt$ -X ^pt5sublep$ ")
-            x = add(x,"-E ^CRWZmll$ ")
-            if '_low' in torun: 
-                x = add(x,"-E ^CRWZPtLep_MuMu$ ")
+            if not '_low' in torun: x = add(x, "-E ^CRWZmll_low$ -E ^JPsiVeto$ -E ^mindR$ -E ^CRWZPtLep_HighMET$ ")
+            else: 
+                x = add(x,"-E ^CRWZmll$ -E ^CRWZPtLep_MuMu$ ")
                 x = x.replace('-E ^metlow_trig','-E ^metlow_trig_CR')
                 x = x.replace('triggerSF','triggerWZSF')
-            if '_med' in torun: x = add(x,"-E ^CRWZPtLep_HighMET$ ")
+
 
 
     if not args.data: x = add(x,'--xp data ')
