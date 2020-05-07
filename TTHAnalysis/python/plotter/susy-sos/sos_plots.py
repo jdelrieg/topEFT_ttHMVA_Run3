@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--reweight", choices=["none","pos","neg"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
+parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
@@ -83,8 +83,8 @@ def base(selection):
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.032 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if not args.signal:
-        CORE+=" --xp signal.* "
+    if args.signal: CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
+    else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
         if args.signal: CORE+=" --noStackSig --showIndivSigs "
@@ -135,11 +135,12 @@ def createPath(filename):
                 raise
 
 def runIt(GO,plotting,name):
-    if not args.doWhat == "cards" : name=name+"_"+args.fakes
-    if args.data and not args.doWhat == "cards" : name=name+"_data"
-    if args.norm: name=name+"_norm"
-
     if args.doWhat == "plots":  
+        name=name+"_"+args.fakes
+        if not args.reweight=="none": name=name+"_"+args.reweight
+        if args.data: name=name+"_data"
+        if args.norm: name=name+"_norm"
+
         GO+=plotting
         ret = submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ])]))
 
