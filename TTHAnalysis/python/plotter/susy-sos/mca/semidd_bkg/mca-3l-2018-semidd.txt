@@ -1,7 +1,6 @@
 ## TChiWZ Signal Points
 ## ------------------------------------
-#incl_signal	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-signal.txt"
-incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-signal.txt", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_100_99+\,signal_TChiWZ_150_120+"
+incl_signal     : +  ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-signal.txt"
 
 ## Prompt bkg
 ## ------------------------------------
@@ -9,7 +8,7 @@ incl_prompt	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-prompt.txt"
 
 ## Non prompt bkg
 ## ------------------------------------
-incl_mcfakes	: + ; IncludeMca="susy-sos/mca-includes/2018/3l_semiddbkg/mca-fakes-semiDD.txt"
+incl_fakes	: + ; IncludeMca="susy-sos/mca-includes/2018/3l_semiddbkg/mca-fakes-semiDD.txt"
 
 ## Rares bkg
 ## ------------------------------------
