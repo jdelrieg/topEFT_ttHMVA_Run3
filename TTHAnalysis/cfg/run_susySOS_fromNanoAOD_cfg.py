@@ -117,6 +117,7 @@ if year == 2018:
 
             ##signal SUSY
             "SMS_TChiWZ",
+            "SMS_TChiWZ_ext",
             "SMS_HiggsinoN2N1",
             "SMS_HiggsinoN2C1", 
             "SMS_T2tt",
@@ -235,6 +236,7 @@ elif year == 2017:
 
         ##signal SUSY
         "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
         "SMS_HiggsinoN2N1",
         "SMS_HiggsinoN2C1",
         "SMS_T2tt",
@@ -349,6 +351,7 @@ elif year == 2016:
 
         ##signal SUSY
         "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
         "SMS_HiggsinoN2N1",
         "SMS_HiggsinoN2C1",
         "SMS_T2tt",
