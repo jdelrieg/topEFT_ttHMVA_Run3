@@ -1,5 +1,4 @@
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
-import copy
 
 def redefineRunRange(selectedComponents,run_range):
     from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
@@ -78,16 +77,19 @@ def mergeExtensions(selectedComponents, verbose=False):
         if basename in compMap:
             f1, f2 = comp.files[:], compMap[basename].files
             e1, e2 = comp.dataset_entries, compMap[basename].dataset_entries
-            if verbose: print "Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(f1+f2), 0.001*e1, 0.001*e2, 0.001*(e1+e2))
-            compMap[basename].files = f1+f2
-            compMap[basename].dataset_entries = e1+e2
+            # for multiple jobs, take care to avoid double-merging
+            ftot=list(set(f1+f2))
+            etot = e1+e2
+            if len(ftot) == len(f1): etot = e1
+            elif len(ftot) == len(f2): etot = e2
+            if verbose: print "Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(ftot), 0.001*e1, 0.001*e2, 0.001*etot)
+            compMap[basename].files = ftot
+            compMap[basename].dataset_entries = etot
         else:
             if "_ext" in comp.name: 
                 if verbose: print "Rename %s to %s" % (comp.name, basename)
                 comp.name = basename
-            comp_merged=copy.copy(comp)
-            comp_merged.name = comp_merged.name+"_merged"
-            compMap[basename] = comp_merged
+            compMap[basename] = comp
     return compMap.values(), compMap
 
 def prescaleComponents(selectedComponents, factor):
