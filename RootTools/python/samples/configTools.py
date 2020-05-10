@@ -1,4 +1,5 @@
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+import copy
 
 def redefineRunRange(selectedComponents,run_range):
     from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
@@ -84,7 +85,9 @@ def mergeExtensions(selectedComponents, verbose=False):
             if "_ext" in comp.name: 
                 if verbose: print "Rename %s to %s" % (comp.name, basename)
                 comp.name = basename
-            compMap[basename] = comp
+            comp_merged=copy.copy(comp)
+            comp_merged.name = comp_merged.name+"_merged"
+            compMap[basename] = comp_merged
     return compMap.values(), compMap
 
 def prescaleComponents(selectedComponents, factor):
