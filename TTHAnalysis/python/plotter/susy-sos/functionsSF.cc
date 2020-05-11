@@ -641,8 +641,10 @@ unordered_map<int, TGraph*> SUSYHIT_Z_BR = {
 unordered_map<int, TGraph*> SUSYHIT_W_BR = {
 	{ 21, (TGraph*) BR_SH->Get("BR_Wud_SUSYHIT") },
 	{ 23, (TGraph*) BR_SH->Get("BR_Wus_SUSYHIT") },
+	{ 25, (TGraph*) BR_SH->Get("BR_Wub_SUSYHIT") },
 	{ 41, (TGraph*) BR_SH->Get("BR_Wcd_SUSYHIT") },
 	{ 43, (TGraph*) BR_SH->Get("BR_Wcs_SUSYHIT") },
+	{ 45, (TGraph*) BR_SH->Get("BR_Wcb_SUSYHIT") },
 	{ 1112, (TGraph*) BR_SH->Get("BR_Wev_SUSYHIT") },
 	{ 1314, (TGraph*) BR_SH->Get("BR_Wmv_SUSYHIT") },
 	{ 1516, (TGraph*) BR_SH->Get("BR_Wtv_SUSYHIT") }
@@ -658,8 +660,10 @@ unordered_map<int, TGraph*> TChiWZ_Z_BR = {
 unordered_map<int, TGraph*> TChiWZ_W_BR = {
 	{ 21, (TGraph*) BR_SOS->Get("BR_Wud_TChiWZ") },
 	{ 23, (TGraph*) BR_SOS->Get("BR_Wus_TChiWZ") },
+	{ 25, (TGraph*) BR_SOS->Get("BR_Wub_TChiWZ") },
 	{ 41, (TGraph*) BR_SOS->Get("BR_Wcd_TChiWZ") },
 	{ 43, (TGraph*) BR_SOS->Get("BR_Wcs_TChiWZ") },
+	{ 45, (TGraph*) BR_SOS->Get("BR_Wcb_TChiWZ") },
 	{ 1112, (TGraph*) BR_SOS->Get("BR_Wev_TChiWZ") },
 	{ 1314, (TGraph*) BR_SOS->Get("BR_Wmv_TChiWZ") },
 	{ 1516, (TGraph*) BR_SOS->Get("BR_Wtv_TChiWZ") }
@@ -671,6 +675,10 @@ float WZ_BR(float dm, int Z_decay, int W_decay){
 
     float Z_weight = SUSYHIT_Z_BR[Z_decay]->Eval(dm) / TChiWZ_Z_BR[Z_decay]->Eval(dm);
     float W_weight = SUSYHIT_W_BR[W_decay]->Eval(dm) / TChiWZ_W_BR[W_decay]->Eval(dm);
+
+    if (TChiWZ_W_BR[W_decay]->Eval(dm)==0){ // Very rare, but occurs since BR modulation was evaluted in TChiWZ for mN2=100GeV up to dM=40GeV
+    	W_weight=0;
+    }
 
     return Z_weight*W_weight;
 }
