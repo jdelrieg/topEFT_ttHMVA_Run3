@@ -47,8 +47,8 @@ class VB_DecayModes(Module):
         elif (15 in Z_daughters and -15 in Z_daughters):
             ret["Z_decays"]=1515
         else:
-            print("Found unknown Z decay!")
-            ret["Z_decays"]=0
+            raise RuntimeError("Did not find expect Z decays!")
+            # Reweighting is based on TChiWZ sample that only has leptonic Z-decays. If hadronic Z-decays are found, we cannot use this!
 
         if   ((6 in W_daughters and -5 in W_daughters) or (-6 in W_daughters and 5 in W_daughters)):
             ret["W_decays"]=65
@@ -75,10 +75,30 @@ class VB_DecayModes(Module):
         elif ((11 in W_daughters and -12 in W_daughters) or (-11 in W_daughters and 12 in W_daughters)):
             ret["W_decays"]=1112            
         else:
-            print("Found unknown W decay! ",W_daughters)
-            ret["W_decays"]=0
+            raise RuntimeError("Did not find expect W decays!")
 
         return ret
+
+
+    def BuildFamilyTree(self, i, allgenpart):
+        MotherIndex = i
+        AncestorFound=0
+        family_tree = []
+
+        # Continue as long as the ultimate mother is not yet found.
+        while not AncestorFound:
+            # Build the family tree
+            if allgenpart[MotherIndex].pdgId not in family_tree:
+                family_tree.append(allgenpart[MotherIndex].pdgId)
+                self.Log("Particle in family-tree:\t %d \t|\tid: %d   \t|\tpt: %f" % (MotherIndex, allgenpart[MotherIndex].pdgId, allgenpart[MotherIndex].pt), 3)
+
+            # Cycle back through the family tree
+            MotherIndex = allgenpart[MotherIndex].genPartIdxMother
+
+            # Check if the mother has a mother
+            AncestorFound = MotherIndex==-1         
+
+        return family_tree
 
 
     # logic of the algorithm
@@ -102,20 +122,29 @@ class VB_DecayModes(Module):
 
             # If we cannot determine the mother, continue;
             if gp.genPartIdxMother==-1:
-                continue
+                continue          
 
             # Z-Boson daughters
             if abs(all_genpart[gp.genPartIdxMother].pdgId)==23:
+                FamilyTree = self.BuildFamilyTree(index,all_genpart)
                 self.Log("Daughter of a Z-boson:\t %d \t|\tid: %d   \t|\tstatus: %d" % (index, gp.pdgId, gp.status),2)
-                Z_daughters.append(gp.pdgId)
+                
+                # If the grandmother is N2, we found the N2->N1+Z (->ll) decay
+                if len(FamilyTree)>2 and FamilyTree[2]==1000023:
+                    Z_daughters.append(gp.pdgId)
 
             # W-Boson daughters
             if abs(all_genpart[gp.genPartIdxMother].pdgId)==24:
+                FamilyTree = self.BuildFamilyTree(index,all_genpart)
                 self.Log("Daughter of a W-boson:\t %d \t|\tid: %d   \t|\tstatus: %d" % (index, gp.pdgId, gp.status),2)
-                W_daughters.append(gp.pdgId)
+
+                # If the grandmother is C1, we found the C1->N1+W (->ff) decay
+                if len(FamilyTree)>2 and abs(FamilyTree[2])==1000024:
+                    W_daughters.append(gp.pdgId)
 
         # END of for loop over all generator particles
       
+    
         # Prepare the output to fill the branches
         ret = self.Prepare_WZ_decays_returns(ret, Z_daughters, W_daughters)
     
