@@ -77,14 +77,10 @@ def mergeExtensions(selectedComponents, verbose=False):
         if basename in compMap:
             f1, f2 = comp.files[:], compMap[basename].files
             e1, e2 = comp.dataset_entries, compMap[basename].dataset_entries
-            # for multiple jobs, take care to avoid double-merging
-            ftot=list(set(f1+f2))
-            etot = e1+e2
-            if len(ftot) == len(f1): etot = e1
-            elif len(ftot) == len(f2): etot = e2
-            if verbose: print "Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(ftot), 0.001*e1, 0.001*e2, 0.001*etot)
-            compMap[basename].files = ftot
-            compMap[basename].dataset_entries = etot
+            if len(f1+f2) != len(set(f1+f2)): raise Exception("Attempting to merge overlapping datasets!")
+            if verbose: print "Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(f1+f2), 0.001*e1, 0.001*e2, 0.001*(e1+e2))
+            compMap[basename].files = f1+f2
+            compMap[basename].dataset_entries = e1+e2
         else:
             if "_ext" in comp.name: 
                 if verbose: print "Rename %s to %s" % (comp.name, basename)
