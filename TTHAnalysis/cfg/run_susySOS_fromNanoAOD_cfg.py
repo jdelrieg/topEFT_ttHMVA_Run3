@@ -117,7 +117,12 @@ if year == 2018:
 
             ##signal SUSY
             "SMS_TChiWZ",
-            
+            "SMS_TChiWZ_ext",
+            "SMS_HiggsinoN2N1",
+            "SMS_HiggsinoN2C1", 
+            "SMS_T2tt",
+            "SMS_HiggsinoPMSSM",
+           
 ###relics from tth             
 ###            "TT[WZ]_LO$",
 ###            "TTHnobb_pow$",
@@ -231,6 +236,11 @@ elif year == 2017:
 
         ##signal SUSY
         "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
+        "SMS_HiggsinoN2N1",
+        "SMS_HiggsinoN2C1",
+        "SMS_T2tt",
+        "SMS_HiggsinoPMSSM",
 
     ])
 
@@ -340,7 +350,12 @@ elif year == 2016:
         "WZTo3LNu_mllmin01",
 
         ##signal SUSY
-        "SMS_TChiWZ"
+        "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
+        "SMS_HiggsinoN2N1",
+        "SMS_HiggsinoN2C1",
+        "SMS_T2tt",
+        "SMS_HiggsinoPMSSM",
 
 ###        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
     ])
