@@ -24,6 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
+#parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","HiggsinoN2N1","HiggsinoN2C1"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
@@ -66,7 +67,8 @@ lumis = {
 LUMI= " -l %s "%(lumis[YEAR])
 submit = '{command}' 
 
-P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+#P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+P0="/afs/cern.ch/user/t/therwig/workspace/sos/eos_mirror/"
 
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
@@ -155,9 +157,16 @@ def runIt(GO,plotting,name):
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
             for pr in args.signalMasses.split(','):
-                if 'TChiWZ' not in pr: raise
+                if "TChiWZ" not in pr and "Higgsino" not in pr: raise
             FILENAME="SMS_TChiWZ"
-            GENMODELSTRING="( " + " || ".join(['GenModel_TChiWZ_ZToLL_%s'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+            GENMODEL = "GenModel_TChiWZ_ZToLL"
+            if "HiggsinoN2N1" in pr: 
+                FILENAME="SMS_HiggsinoN2N1"
+                GENMODEL = "GenModel_SMS-N2N1-higgsino"
+            if "HiggsinoN2C1" in pr: 
+                FILENAME="SMS_HiggsinoN2C1"
+                GENMODEL = "GenModel_SMS-N2C1-higgsino"            
+            GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
                 'TREESALLSKIM': TREESALLSKIM,
                 'nCores': nCores,
