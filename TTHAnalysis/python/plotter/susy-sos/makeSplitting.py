@@ -18,13 +18,14 @@ signals_TChiWZ=[
 signals_TChiWZ = ["signal_TChiWZ_"+s for s in signals_TChiWZ]
 
 signals_hinoN2N1 = ["100_50p00", "100_60p00", "100_70p00", "100_80p00", "100_85p00", "100_90p00", "100_92p50", "100_95p00", "100_97p00", "100_99p00", "120_100p00", "120_105p00", "120_110p00", "120_112p50", "120_115p00", "120_117p00", "120_119p00", "120_70p00", "120_80p00", "120_90p00", "140_100p00", "140_110p00", "140_120p00", "140_125p00", "140_130p00", "140_132p50", "140_135p00", "140_137p00", "140_139p00", "140_90p00", "160_110p00", "160_120p00", "160_130p00", "160_140p00", "160_145p00", "160_150p00", "160_152p50", "160_155p00", "160_157p00", "160_159p00", "180_130p00", "180_140p00", "180_150p00", "180_160p00", "180_165p00", "180_170p00", "180_172p50", "180_175p00", "180_177p00", "180_179p00", "200_150p00", "200_160p00", "200_170p00", "200_180p00", "200_185p00", "200_190p00", "200_192p50", "200_195p00", "200_197p00", "200_199p00", "220_170p00", "220_180p00", "220_190p00", "220_200p00", "220_205p00", "220_210p00", "220_212p50", "220_215p00", "220_217p00", "220_219p00", "240_190p00", "240_200p00", "240_210p00", "240_220p00", "240_225p00", "240_230p00", "240_232p50", "240_235p00", "240_237p00", "240_239p00", "250_200p00", "250_210p00", "250_220p00", "250_230p00", "250_235p00", "250_240p00", "250_242p50", "250_245p00", "250_247p00", "250_249p00"]
-signals_hinoN2N1 = ["signal_HiggsinoN2N1_"+s for s in signals_hinoN2N1]
+signals_hino = ["signal_Higgsino_"+s for s in signals_hinoN2N1]
+# signals_hinoN2N1 = ["signal_HiggsinoN2N1_"+s for s in signals_hinoN2N1]
 
-signals_hinoN2C1 = ["100_75p00", "100_80p00", "100_85p00", "100_90p00", "100_92p50", "100_95p00", "100_96p25", "100_97p50", "100_98p50", "100_99p50", "120_100p00", "120_105p00", "120_110p00", "120_112p50", "120_115p00", "120_116p25", "120_117p50", "120_118p50", "120_119p50", "120_95p00", "140_115p00", "140_120p00", "140_125p00", "140_130p00", "140_132p50", "140_135p00", "140_136p25", "140_137p50", "140_138p50", "140_139p50", "160_135p00", "160_140p00", "160_145p00", "160_150p00", "160_152p50", "160_155p00", "160_156p25", "160_157p50", "160_158p50", "160_159p50", "180_155p00", "180_160p00", "180_165p00", "180_170p00", "180_172p50", "180_175p00", "180_176p25", "180_177p50", "180_178p50", "180_179p50", "200_175p00", "200_180p00", "200_185p00", "200_190p00", "200_192p50", "200_195p00", "200_196p25", "200_197p50", "200_198p50", "200_199p50", "220_195p00", "220_200p00", "220_205p00", "220_210p00", "220_212p50", "220_215p00", "220_216p25", "220_217p50", "220_218p50", "220_219p50", "240_215p00", "240_220p00", "240_225p00", "240_230p00", "240_232p50", "240_235p00", "240_236p25", "240_237p50", "240_238p50", "240_239p50", "250_225p00", "250_230p00", "250_235p00", "250_240p00", "250_242p50", "250_245p00", "250_246p25", "250_247p50", "250_248p50", "250_249p50"]
-signals_hinoN2C1 = ["signal_HiggsinoN2C1_"+s for s in signals_hinoN2C1]
+# signals_hinoN2C1 = ["100_75p00", "100_80p00", "100_85p00", "100_90p00", "100_92p50", "100_95p00", "100_96p25", "100_97p50", "100_98p50", "100_99p50", "120_100p00", "120_105p00", "120_110p00", "120_112p50", "120_115p00", "120_116p25", "120_117p50", "120_118p50", "120_119p50", "120_95p00", "140_115p00", "140_120p00", "140_125p00", "140_130p00", "140_132p50", "140_135p00", "140_136p25", "140_137p50", "140_138p50", "140_139p50", "160_135p00", "160_140p00", "160_145p00", "160_150p00", "160_152p50", "160_155p00", "160_156p25", "160_157p50", "160_158p50", "160_159p50", "180_155p00", "180_160p00", "180_165p00", "180_170p00", "180_172p50", "180_175p00", "180_176p25", "180_177p50", "180_178p50", "180_179p50", "200_175p00", "200_180p00", "200_185p00", "200_190p00", "200_192p50", "200_195p00", "200_196p25", "200_197p50", "200_198p50", "200_199p50", "220_195p00", "220_200p00", "220_205p00", "220_210p00", "220_212p50", "220_215p00", "220_216p25", "220_217p50", "220_218p50", "220_219p50", "240_215p00", "240_220p00", "240_225p00", "240_230p00", "240_232p50", "240_235p00", "240_236p25", "240_237p50", "240_238p50", "240_239p50", "250_225p00", "250_230p00", "250_235p00", "250_240p00", "250_242p50", "250_245p00", "250_246p25", "250_247p50", "250_248p50", "250_249p50"]
+# signals_hinoN2C1 = ["signal_HiggsinoN2C1_"+s for s in signals_hinoN2C1]
 if args.signal=="Higgsino": args.reweight = "neg"
 
-_signals = signals_TChiWZ if args.signal=="TChiWZ" else (signals_hinoN2N1+signals_hinoN2C1)
+_signals = signals_TChiWZ if args.signal=="TChiWZ" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
 _signals=[x.lstrip('signal_') for x in _signals]
 signals=[]
 for mll in args.reweight.split(','):
@@ -32,6 +33,7 @@ for mll in args.reweight.split(','):
       signals += _signals
    else:
       signals += ['%s_%s'%(x,mll) for x in _signals]
+
 categories=[
 '2los/sr/low',
 '2los/sr/med',
@@ -96,9 +98,8 @@ class bare_production:
             for cat in categories:
                tasks.append(task(pr,yr,cat))
 
-      def _printCmd(lep,reg,bin,sigstring,yr,outfile=None):
-         
-         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --doWhat cards --justdump %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,opts,sigstring,odir,yr)
+      def _printCmd(lep,reg,bin,sigstring,rflag,yr,outfile=None):
+         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --doWhat cards --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,opts,sigstring,rflag,odir,yr)
          if outfile:
             cmd += " >> %s"%outfile
          os.system(cmd)
@@ -120,7 +121,7 @@ class bare_production:
                prs = set([tk.pr for tk in job if (yr==tk.yr and _cat==tk.cat)])
                lep,reg,bin = _cat.split('/')
                if 'background' in prs:
-                  _printCmd(lep,reg,bin,'--data --nCores 4',yr,outfile)
+                  _printCmd(lep,reg,bin,'--data --nCores 4',"",yr,outfile)
                   expoutput.append('%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(odir,yr,cat,cat))
                prs.discard('background')
                if len(prs):
@@ -132,7 +133,10 @@ class bare_production:
                         skim_instr='--inputDir \${MYTEMPSKIMDIR}'
                   else:
                      skim_instr='--preskim'
-                  _printCmd(lep,reg,bin,'%s --nCores 1 --signal --signalMasses '%skim_instr+','.join(['signal_%s'%pr for pr in prs if pr!='background']),yr,outfile)
+                  rwtflag = ""
+                  if list(prs)[0].endswith('_pos'): rwtflag = "--reweight pos"
+                  if list(prs)[0].endswith('_neg'): rwtflag = "--reweight neg"
+                  _printCmd(lep,reg,bin,'%s --nCores 1 --signal --signalMasses '%skim_instr+','.join(['signal_%s'%pr for pr in prs if pr!='background']),rwtflag,yr,outfile)
                   if len(prs)>1: raise
                   for _pr in prs: pr=_pr
                   expoutput.append('%s/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr,cat))
@@ -203,7 +207,10 @@ class merge_and_fit:
                else:
                   out.append("set -e; mkdir -p \$(dirname %s)"%f2)
                   out.append("hadd -f %s %s %s"%(f2,f,f0))
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,opts,pr,odir,yr))
+                  rwtflag = ""
+                  if pr.endswith('_pos'): rwtflag = "--reweight pos"
+                  if pr.endswith('_neg'): rwtflag = "--reweight neg"
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data --asimov background --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,opts,pr,odir,yr,rwtflag))
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
                print 'Skipping %s because not all bare inputs are present'%pr

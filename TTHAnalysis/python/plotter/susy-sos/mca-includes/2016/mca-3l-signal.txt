@@ -2,8 +2,8 @@ incl_signal_TChiWZ     : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-sign
 incl_signal_TChiWZ_pos : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-TChiWZ.txt", AddWeight="mll_rwt_pos", PostFix="_pos", FriendsSimple="{P}/signalWeights/", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_100_99+\,signal_TChiWZ_150_120+"
 incl_signal_TChiWZ_neg : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-TChiWZ.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/", Processes="signal_TChiWZ_200_192+\,signal_TChiWZ_225_210+\,signal_TChiWZ_225_217+\,signal_TChiWZ_175_170+\,signal_TChiWZ_150_145+\,signal_TChiWZ_100_95+\,signal_TChiWZ_100_97+\,signal_TChiWZ_100_99+\,signal_TChiWZ_150_120+"
 
-incl_signal_HiggsinoN2N1     : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2N1.txt", FriendsSimple="{P}/signalWeights/"
-incl_signal_HiggsinoN2N1_neg : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2N1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/"
+incl_signal_Higgsino     : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2N1.txt", FriendsSimple="{P}/signalWeights/"
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2N1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/"
 
-incl_signal_HiggsinoN2C1     : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2C1.txt", FriendsSimple="{P}/signalWeights/"
-incl_signal_HiggsinoN2C1_neg : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2C1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/"
+incl_signal_Higgsino     : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2C1.txt", FriendsSimple="{P}/signalWeights/"
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal-HiggsinoN2C1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/"

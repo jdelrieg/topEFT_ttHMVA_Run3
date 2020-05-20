@@ -32,7 +32,8 @@ parser.add_argument("--norm", action="store_true", default=False, help="Normaliz
 parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
-parser.add_argument("--lowmll_LowPt_bothlep", action="store_true", default=False, help="Flag to run with low mll & low lead/sublead lep pt cuts")
+#parser.add_argument("--lowmll_LowPt_bothlep", action="store_true", default=False, help="Flag to run with low mll & low lead/sublead lep pt cuts")
+parser.add_argument("--lowmll_LowPt_bothlep", action="store_true", default=True, help="Flag to run with low mll & low lead/sublead lep pt cuts")
 
 parser.add_argument("--doWhat", default="plots", help="Do 'plots' or 'cards'. Default = '%(default)s'")
 # only valid for doWhat=='cards'
@@ -160,13 +161,18 @@ def runIt(GO,plotting,name):
                 if "TChiWZ" not in pr and "Higgsino" not in pr: raise
             FILENAME="SMS_TChiWZ"
             GENMODEL = "GenModel_TChiWZ_ZToLL"
-            if "HiggsinoN2N1" in pr: 
-                FILENAME="SMS_HiggsinoN2N1"
-                GENMODEL = "GenModel_SMS-N2N1-higgsino"
-            if "HiggsinoN2C1" in pr: 
-                FILENAME="SMS_HiggsinoN2C1"
-                GENMODEL = "GenModel_SMS-N2C1-higgsino"            
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+            # if "HiggsinoN2N1" in pr: 
+            #     FILENAME="SMS_HiggsinoN2N1"
+            #     GENMODEL = "GenModel_SMS-N2N1-higgsino"
+            # if "HiggsinoN2C1" in pr: 
+            #     FILENAME="SMS_HiggsinoN2C1"
+            #     GENMODEL = "GenModel_SMS-N2C1-higgsino"            
+            if "Higgsino" in pr: 
+                FILENAME="SMS_Higgsino"
+                GENMODELSTRING = " || ".join(['AltBranch$(GenModel_SMS_N2C1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_SMS_N2N1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING = "( " + GENMODELSTRING + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
                 'TREESALLSKIM': TREESALLSKIM,
                 'nCores': nCores,
