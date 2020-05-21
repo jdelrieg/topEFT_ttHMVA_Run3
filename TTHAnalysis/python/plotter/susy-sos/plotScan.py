@@ -10,12 +10,12 @@ parser.add_argument("--indir", default=[], action="append", required=True, help=
 parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
-parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['pos','neg']")
+parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
 args = parser.parse_args()
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.mll) == 0: args.mll = ['pos','neg']
+if len(args.mll) == 0: args.mll = ['none','pos','neg']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
 import ROOT
@@ -25,7 +25,6 @@ if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
-outdir="sos_outplot" ##output folder for plots
 logy=False
 #logy=True
 
@@ -40,82 +39,58 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=75.
+leg_ylo=60.
 leg_nlines=3
 
 # Plot range
-range_xlo=95.
-range_xhi=270.
-range_ylo=1.
-range_yhi=95.
-
-# histo limits
-mN1_lo=87.5
-mN1_hi=362.5
+range_xlo=100.
+range_xhi=300.
+range_ylo=3.
+range_yhi=75.
 
 if logy:
     range_yhi=350.
     leg_ylo=100.
 
 class Limit:
-    def __init__(self,mass, Dm, med, p1s, m1s):
-        self.mass=mass
-        self.Dm=Dm
-        self.med=med
-        self.p1s=p1s
-        self.m1s=m1s
+    def __init__(self,mass, Dm, vals):
+        self.mass = mass
+        self.Dm = Dm
+        self.vals = vals
 
 def getLimitHists(files, tag):
     limits=[]
+    parser={
+        'Expected 50.0' : 0,
+        'Expected 84.0' : 1,
+        'Expected 16.0' : -1,
+    }
     for f in files:
         mass=os.path.basename(f).split('_')[3:5]
         massH=float(mass[0])
         massL=float(mass[0])-float(mass[1])
         with open(f) as fin:
-            med=0
-            p1s=0
-            m1s=0
+            vals={}
             for line in fin:
-                if "Expected 50.0" in line:
-                    med = float(line.split()[-1])
-                if "Expected 84.0" in line:
-                    p1s = float(line.split()[-1])
-                if "Expected 16.0" in line:
-                    m1s = float(line.split()[-1])
-            lim=Limit(massH, massL, med, p1s, m1s)
-            limits.append(lim)    
-    vm=map( lambda lim : lim.mass, limits)
-    vDm=map( lambda lim : lim.Dm, limits)
-    vMed=map( lambda lim : lim.med, limits)
-    vP1=map( lambda lim : lim.p1s, limits)
-    vM1=map( lambda lim : lim.m1s, limits)
+                for text,var in parser.iteritems():
+                    if text in line:
+                        vals[var] = float(line.split()[-1])
+            if len(vals)<len(parser): continue
+            lim=Limit(massH, massL, vals)
+            limits.append(lim)
 
-    thisLim=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vMed)
-    thisLimP1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vP1)
-    thisLimM1=map(lambda im, idm, ilim: (im,idm,ilim), vm,vDm,vM1)
+    hs={}
+    for var in parser.values():
+        g = TGraph2D(len(limits))
+        for i,lim in enumerate(limits):
+            g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
+        g.SetNpx(200)
+        g.SetNpy(200)
+        h = g.GetHistogram().Clone()
+        h.SetTitle('')
+        hs[var]=h
 
-    vDmBins=vDm
-    vDmBins.sort()
-    vDmBins=list(sorted(set(vDmBins))[:11])
-    vDmBins.append(range_yhi)
-
-    h2lim = TH2D("lim_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
-    h2limP1 = TH2D("limP1_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
-    h2limM1 = TH2D("limM1_"+tag,"",11, mN1_lo,mN1_hi,11,array.array('d', vDmBins))
-
-    for lim in thisLim:
-        h2lim.Fill(lim[0],lim[1],lim[2])
-    for lim in thisLimP1:
-        h2limP1.Fill(lim[0],lim[1],lim[2])
-    for lim in thisLimM1:
-        h2limM1.Fill(lim[0],lim[1],lim[2])
-        
-    #    h2lim.Print("all")
-    #    h2lim.Smooth(1,"k3a")
-    #    h2lim.Smooth(1,"kba")
-    #    h2lim.Smooth(1,"kba")
-
-    return h2lim, h2limP1, h2limM1
+    return hs
 
 
 def plotLimits(limits_hists, limit_labels, label, outdir):
@@ -147,19 +122,16 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetYaxis().SetLabelSize(0.042)
     h_bkgd.GetYaxis().SetTitleSize(0.052)
 
-    h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
     h_bkgd.Draw("colz" if nlim==1 else "axis")
-    h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
 
     colz = [ROOT.kRed,ROOT.kBlue]
-    colz = [ROOT.kBlue,ROOT.kRed]
     for iLim, limit_hists in enumerate(limits_hists):
-        for lim in limit_hists:
+        for var,lim in limit_hists.iteritems():
             lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
 
-        h2lim, h2limP1, h2limM1 = limit_hists
+        h2lim, h2limP1, h2limM1 = limit_hists[0], limit_hists[1], limit_hists[-1]
         h2lim.SetLineWidth(2)
         h2limP1.SetLineWidth(1)
         h2limM1.SetLineWidth(1)
@@ -185,11 +157,11 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     latex.SetTextAlign(11) 
     latex.SetTextSize(cmsTextSize*t)    
     latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
-    ax=h_bkgd.GetXaxis()
-    x1 = ax.GetBinLowEdge(ax.FindBin(range_xlo))
-    x2 = ax.GetBinUpEdge(ax.FindBin(range_xhi))
-    y1=leg_ylo
-    y2=range_yhi
+
+    x1 = range_xlo
+    x2 = range_xhi
+    y1 = leg_ylo
+    y2 = range_yhi
 
     if logy:
         y1 = ROOT.TMath.Log(y1)
@@ -224,7 +196,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1=TGraph(2)
     gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
     gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
-    gl1.SetLineColor(ROOT.kBlack)
+    gl1.SetLineColor(colz[0])
     gl1.SetLineStyle(1)
     gl1.SetLineWidth(2)
     gl1.Draw("lsame")
@@ -232,7 +204,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1p=TGraph(2)
     gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
     gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
-    gl1p.SetLineColor(ROOT.kBlack)
+    gl1p.SetLineColor(colz[0])
     gl1p.SetLineStyle(2)
     gl1p.SetLineWidth(1)
     gl1p.Draw("lsame")
@@ -240,12 +212,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1m=TGraph(2)
     gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
     gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
-    gl1m.SetLineColor(ROOT.kBlack)
+    gl1m.SetLineColor(colz[0])
     gl1m.SetLineStyle(2)
     gl1m.SetLineWidth(1)
     gl1m.Draw("lsame")
 
-    mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected exclusion #pm #sigma_{exp}")
+    mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
     mT3.SetTextAlign(12)
     mT3.SetTextFont(42)
     mT3.SetTextSize(0.040)
@@ -293,7 +265,7 @@ def run(indirs,tag,label,outdir):
     files = filter(lambda f: os.path.exists(f),files)
     print 'Found %d files'%len(files)
 
-    lims = getLimitHists(files)
+    lims = getLimitHists(files,tag)
     plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
@@ -301,13 +273,15 @@ def runMLL(indirs,tag,label,outdir):
     lim_labels=['N1*N2>0','N1*N2<0']
 
     for mll in args.mll:
-        files=glob.glob(indirs.format(MLL=mll, TAG=tag))
+        if mll=='none': continue
+        files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
         l = getLimitHists(files, mll)
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
 
-    plotLimits(limCurves, lim_labels, label+"_both", outdir)
+    if 'pos' in args.mll and 'neg' in args.mll:
+        plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
 outdir=args.outDir.rstrip("/")
@@ -317,7 +291,8 @@ for sel in args.indir:
     name = sel.split("/")[-1]
     for tag in args.tag:
         print "For tag "+tag+":"
-        # run("%s_merged/cards/TChiWZ_*"%sel,tag,"%s_%s"%(name,tag),outdir)
+        for mll in args.mll:
+            run("%s_merged/cards/TChiWZ%s_*"%(sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         card_prototype=sel+"_merged/cards/TChiWZ{MLL}_*/log_b_*_{TAG}.txt"
         runMLL(card_prototype,tag,'mll_'+tag,outdir)

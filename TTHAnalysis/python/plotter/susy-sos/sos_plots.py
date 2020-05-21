@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--reweight", choices=["none","pos","neg"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
+parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
@@ -81,8 +81,8 @@ def base(selection):
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.032 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if not args.signal:
-        CORE+=" --xp signal.* "
+    if args.signal: CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
+    else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
         if args.signal: CORE+=" --noStackSig --showIndivSigs "
@@ -133,11 +133,12 @@ def createPath(filename):
                 raise
 
 def runIt(GO,plotting,name):
-    if not args.doWhat == "cards" : name=name+"_"+args.fakes
-    if args.data and not args.doWhat == "cards" : name=name+"_data"
-    if args.norm: name=name+"_norm"
-
     if args.doWhat == "plots":  
+        name=name+"_"+args.fakes
+        if not args.reweight=="none": name=name+"_"+args.reweight
+        if args.data: name=name+"_data"
+        if args.norm: name=name+"_norm"
+
         GO+=plotting
         ret = submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ])]))
 
@@ -305,26 +306,24 @@ if __name__ == '__main__':
             if args.fakes == "semidd" or args.fakes == "dd": x = x.replace('susy-sos/mca/dd_bkg/mca-2los-%s-dd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-2los-%s-dd-DY.txt'%(YEAR))
             x = add(x,"-X ^ledlepPt$ ")
             x = add(x,"-I ^mtautau$ ")
-            x = add(x,"-E ^CRDYledlepPt$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ -E ^CRDYledlepPt_low$ ")
+            else: x = add(x,"-E ^CRDYledlepPt$ ")
 
         if 'cr_tt' in torun:
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
-            x = add(x,"-E ^CRTTledlepPt$ -E ^btag$ ")
+            x = add(x,"-E ^btag$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ -E ^CRTTledlepPt_low$ ")
+            else: x = add(x,"-E ^CRTTledlepPt$ ")
 
         if 'cr_vv' in torun:
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^ledlepPt$ -X ^bveto$ -X ^mT$ ")
             x = add(x,"-E ^CRVVledlepPt$ -E ^CRVVbveto$ -E ^CRVVmT$ ")
+            if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$ -E ^mindR$ ")
 
         if 'cr_ss' in torun: # Only 'med' bin exists
             x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
-            if '_med' in torun:
-                x = add(x,'-X ^pt5sublep$ ')
-            x = add(x,"-X ^mT$")
+            x = add(x,"-X ^mT$ -X ^pt5sublep$ ")
             x = add(x,"-I ^OS$  ")
             if '1F_NoSF' in torun:
                 x = add(x, "-E ^1LNT$ -X ^twoTight$" )
@@ -349,14 +348,11 @@ if __name__ == '__main__':
         if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-3l-%s.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-3l-%s-dd.txt'%(YEAR))    
 
         if 'sr' in torun:
-            if not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-
-            if '_med' in torun: x = add(x,'-X ^maxMll$ ')
+            if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if args.fakes == "semidd": x = add(x, "--mcc susy-sos/fakerate/%s/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(YEAR,args.lep,args.bin))
 
         if 'appl' in torun:
-            if not '_low' in torun: x = add(x, "-X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
-            if '_med' in torun: x = add(x,'-X ^maxMll$ ')
+            if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             x = add(x,"-X ^threeTight$ ")
             if '1F_NoSF' in torun:
                 x = add(x, "-E ^1LNT$ ")
@@ -370,12 +366,12 @@ if __name__ == '__main__':
         if 'cr_wz' in torun:
             if args.fakes == "semidd": x = x.replace('susy-sos/mca/semidd_bkg/mca-3l-%s-semidd.txt'%(YEAR),'susy-sos/mca/dd_bkg/mca-3l-%s-dd.txt'%(YEAR))    
             x = add(x,"-X ^minMll$ -X ^maxMll$ -X ^ledlepPt$ -X ^pt5sublep$ ")
-            x = add(x,"-E ^CRWZmll$ ")
-            if '_low' in torun: 
-                x = add(x,"-E ^CRWZPtLep_MuMu$ ")
+            if not '_low' in torun: x = add(x, "-E ^CRWZmll_low$ -E ^JPsiVeto$ -E ^mindR$ -E ^CRWZPtLep_HighMET$ ")
+            else: 
+                x = add(x,"-E ^CRWZmll$ -E ^CRWZPtLep_MuMu$ ")
                 x = x.replace('-E ^metlow_trig','-E ^metlow_trig_CR')
                 x = x.replace('triggerSF','triggerWZSF')
-            if '_med' in torun: x = add(x,"-E ^CRWZPtLep_HighMET$ ")
+
 
 
     if not args.data: x = add(x,'--xp data ')

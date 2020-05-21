@@ -734,9 +734,19 @@ EWKZToNuNu2Jets, EWKZToNuNu2Jets_ext,
 ##SUSY SOS signals
 #TChiWZ
 SMS_TChiWZ=kreator.makeMCComponent("SMS_TChiWZ","/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_GridpackScan_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM","CMS",".*root",1)
+SMS_TChiWZ_ext=kreator.makeMCComponent("SMS_TChiWZ_ext","/SMS-TChiWZ_ZToLL_mZMin-0p1_mC1-325to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_GridpackScan_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM","CMS",".*root",1)
+SMS_HiggsinoN2N1=kreator.makeMCComponent("SMS_HiggsinoN2N1","/SMS-N2N1-higgsino_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_GridpackScan_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM","CMS",".*root",1)
+SMS_HiggsinoN2C1=kreator.makeMCComponent("SMS_HiggsinoN2C1","/SMS-N2C1-higgsino_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_GridpackScan_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM","CMS",".*root",1)
+SMS_T2tt=kreator.makeMCComponent("SMS_T2tt","/SMS-T2tt_dM-10to80_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUSummer16v3Fast_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM","CMS",".*root",1)
+SMS_HiggsinoPMSSM=kreator.makeMCComponent("SMS_HiggsinoPMSSM","/MSSM-higgsino_no1l_2lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUSummer16v3Fast_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM","CMS",".*root",1)
 ##FIXME! add other signal models
 SignalSUSY = [
-SMS_TChiWZ
+    SMS_TChiWZ,
+    SMS_TChiWZ_ext,
+    SMS_HiggsinoN2N1,
+    SMS_HiggsinoN2C1,
+    SMS_T2tt,
+    SMS_HiggsinoPMSSM,
 ]
 
 # low Mll samples
