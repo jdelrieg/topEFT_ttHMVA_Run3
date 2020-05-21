@@ -51,7 +51,6 @@ mT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) < 70. && mt_2(LepGood2_pt
 SF		: abs(LepGood1_pdgId*LepGood2_pdgId)==169 || abs(LepGood1_pdgId*LepGood2_pdgId)==121
 ### Low MET
 mm		: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13
-### EWK OR Low MET
 pt5sublep	: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
 
 
@@ -87,10 +86,28 @@ CRVVmT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) > 90. || mt_2(LepGood
 oneNotTight	: !(LepGood1_isLepTight) || !(LepGood2_isLepTight)	; Disable=True
 
 
-###Low pT, low Mll
-
+#### Low pT, low Mll (med/high/ultra)
+### SR
+## Disable mll, ledlepPt, pt5sublep
 mll_low        : mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) > 1 && mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) < 50 ; Disable=True
 JPsiVeto        :  mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) < 3 || mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) > 3.2 ; Disable=True
 ledlepPt3p5        : ((fabs(LepGood1_pdgId)==13 && LepGood1_pt > 3.5) || (fabs(LepGood1_pdgId)==11 && LepGood1_pt > 5))  && LepGood1_pt < 30.0; Disable=True
 mindR           : deltaR(LepGood1_eta, LepGood1_phi, LepGood2_eta,LepGood2_phi)>0.3; Disable=True
 #mll1to4         :  mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) > 1 && mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) < 4 ; Disable=True
+
+### DY
+## On top of regular DY selection
+## Disable mll, pt5sublep
+## Enable mll_low, JPsiVeto, mindR
+CRDYledlepPt_low    : ((fabs(LepGood1_pdgId)==13 && LepGood1_pt > 3.5) || (fabs(LepGood1_pdgId)==11 && LepGood1_pt > 5))    ; Disable=True
+
+### TT
+## On top of regular TT selection
+## Disable mll, pt5sublep
+## Enable mll_low, JPsiVeto, mindR
+CRTTledlepPt_low    : ((fabs(LepGood1_pdgId)==13 && LepGood1_pt > 3.5) || (fabs(LepGood1_pdgId)==11 && LepGood1_pt > 5))    ; Disable=True
+
+### VV
+## On top of regular VV selection
+## Disable mll, pt5sublep
+## Enable mll_low, JPsiVeto, mindR
