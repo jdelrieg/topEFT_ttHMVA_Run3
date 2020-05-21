@@ -65,3 +65,5 @@ CMS_btag_hfstats2	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfs
 
 CMS_btag_cferr1		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
 CMS_btag_cferr2		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
+
+PU  : $allMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
