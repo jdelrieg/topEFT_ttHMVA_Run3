@@ -306,8 +306,8 @@ float triggerSF(float muDleg_SF, float _met, float _met_corr, int year, int nSig
 	return SF; 
 }
 
-float triggerWZSF(float muDleg_SF, float _met, float _met_corr, int year){
-	return 1.0;
+float triggerWZSF(float muDleg_SF, float _met, float _met_corr, int year, int nSigma = 0){
+	return (1 + nSigma * 0.02) * (1 + nSigma * 0.02);
 }
 
 
@@ -359,8 +359,8 @@ float triggerMCEff(float muDleg_MCEff, float _met, float _met_corr, int year, in
 	return MCEff; 
 }
 
-float triggerWZMCEff(float muDleg_MCEff, float _met, float _met_corr, int year){
-	return 1.0;
+float triggerWZMCEff(float muDleg_MCEff, float _met, float _met_corr, int year, int nSigma = 0){
+	return (1 + nSigma * 0.02) * (1 + nSigma * 0.02);
 }
 
 
