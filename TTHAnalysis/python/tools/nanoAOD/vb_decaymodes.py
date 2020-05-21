@@ -47,7 +47,7 @@ class VB_DecayModes(Module):
         elif (15 in Z_daughters and -15 in Z_daughters):
             ret["Z_decays"]=1515
         else:
-            raise RuntimeError("Did not find expect Z decays!")
+            raise RuntimeError("Did not find expected Z decays!")
             # Reweighting is based on TChiWZ sample that only has leptonic Z-decays. If hadronic Z-decays are found, we cannot use this!
 
         if   ((6 in W_daughters and -5 in W_daughters) or (-6 in W_daughters and 5 in W_daughters)):
@@ -75,11 +75,12 @@ class VB_DecayModes(Module):
         elif ((11 in W_daughters and -12 in W_daughters) or (-11 in W_daughters and 12 in W_daughters)):
             ret["W_decays"]=1112            
         else:
-            raise RuntimeError("Did not find expect W decays!")
+            raise RuntimeError("Did not find expected W decays!")
 
         return ret
 
-
+    # Function to determine the indices of all particles in the family tree of particle i, so that the returned list will be:
+    # [i, mother, grand-mother, ..., ancestor]
     def BuildFamilyTree(self, i, allgenpart):
         MotherIndex = i
         AncestorFound=0
@@ -101,7 +102,7 @@ class VB_DecayModes(Module):
         return family_tree
 
 
-    # logic of the algorithm
+    # Logic of the algorithm
     def run(self,event,Collection,VB_DM_name):
 
         # Put the generator particles in a list so we can loop over it
@@ -142,9 +143,6 @@ class VB_DecayModes(Module):
                 if len(FamilyTree)>2 and abs(FamilyTree[2])==1000024:
                     W_daughters.append(gp.pdgId)
 
-        # END of for loop over all generator particles
-      
-    
         # Prepare the output to fill the branches
         ret = self.Prepare_WZ_decays_returns(ret, Z_daughters, W_daughters)
     
@@ -159,22 +157,3 @@ class VB_DecayModes(Module):
 if __name__ == '__main__':
     import ROOT
     from sys import argv
-
-    # file = ROOT.TFile(argv[1])
-    # tree = file.Get("Events")
-
-    # branches=[]
-
-    # for b in tree.GetListOfBranches():
-    #     if "GenModel_TChiWZ_ZToLL_" in b.GetName():
-    #         # print b.GetName()
-    #         branches.append(b.GetName())
-
-    # for iev in xrange(tree.GetEntries()):
-    #     print "Event ",iev
-    #     tree.GetEntry(iev)
-
-    #     for k in range(len(branches)):
-    #         # print getattr(tree, branches[k])
-    #         if getattr(tree, branches[k])!=0:
-    #             print branches[k]
