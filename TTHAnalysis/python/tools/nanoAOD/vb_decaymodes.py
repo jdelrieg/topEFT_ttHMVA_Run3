@@ -8,6 +8,8 @@ class VB_DecayModes(Module):
     def __init__(self, label=""):
         self.namebranches = [   "Z_decays",
                                 "W_decays",
+                                "TopP_decays",
+                                "TopM_decays",
                             ]
         self.label = "" if (label in ["",None]) else ("_"+label)
         # self.inputlabel = '_'+recllabel
@@ -38,18 +40,21 @@ class VB_DecayModes(Module):
         if v<=verbosity:
             print(message)
 
-    def Prepare_WZ_decays_returns(self, ret, Z_daughters, W_daughters):
+    def Prepare_decays_returns(self, ret, Z_daughters, W_daughters, TopP_daughters, TopM_daughters):
 
+        # Block to handle events with one Z that is from N2 decay
         if (11 in Z_daughters and -11 in Z_daughters):
             ret["Z_decays"]=1111
         elif (13 in Z_daughters and -13 in Z_daughters):
             ret["Z_decays"]=1313
         elif (15 in Z_daughters and -15 in Z_daughters):
             ret["Z_decays"]=1515
-        else:
+        elif len(Z_daughters):
             raise RuntimeError("Did not find expected Z decays!")
             # Reweighting is based on TChiWZ sample that only has leptonic Z-decays. If hadronic Z-decays are found, we cannot use this!
+        else: ret["Z_decays"]=0
 
+        # Block to handle events with one W that is from C1 decay
         if   ((6 in W_daughters and -5 in W_daughters) or (-6 in W_daughters and 5 in W_daughters)):
             ret["W_decays"]=65
         elif ((6 in W_daughters and -3 in W_daughters) or (-6 in W_daughters and 3 in W_daughters)):
@@ -74,8 +79,16 @@ class VB_DecayModes(Module):
             ret["W_decays"]=1314
         elif ((11 in W_daughters and -12 in W_daughters) or (-11 in W_daughters and 12 in W_daughters)):
             ret["W_decays"]=1112            
-        else:
+        elif len(W_daughters):
             raise RuntimeError("Did not find expected W decays!")
+        else: ret["W_decays"]=0
+
+        # TODO
+        # Block to handle events with one top that is from stop decay
+        ret["TopP_decays"]=0
+        # Block to handle events with one anti-top that is from anti-stop decay
+        ret["TopM_decays"]=0
+
 
         return ret
 
@@ -113,6 +126,8 @@ class VB_DecayModes(Module):
         
         Z_daughters = []
         W_daughters = []
+        TopP_daughters = []
+        TopM_daughters = []
 
         # Loop over all generator particles
         for index,gp in enumerate(all_genpart):
@@ -143,8 +158,14 @@ class VB_DecayModes(Module):
                 if len(FamilyTree)>2 and abs(FamilyTree[2])==1000024:
                     W_daughters.append(gp.pdgId)
 
+                # If the grandmother is Top+/-, we found the (anti-)Stop->N1+Top->N1+b+W(->ff) decay
+                if len(FamilyTree)>2 and abs(FamilyTree[2])==1000006:
+                    TopP_daughters.append(gp.pdgId)
+                if len(FamilyTree)>2 and abs(FamilyTree[2])==-1000006:
+                    TopM_daughters.append(gp.pdgId)
+
         # Prepare the output to fill the branches
-        ret = self.Prepare_WZ_decays_returns(ret, Z_daughters, W_daughters)
+        ret = self.Prepare_decays_returns(ret, Z_daughters, W_daughters, TopP_daughters, TopM_daughters)
     
         # Put all ret branches together
         allret = {}
