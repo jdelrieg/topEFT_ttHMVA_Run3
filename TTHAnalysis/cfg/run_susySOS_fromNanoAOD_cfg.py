@@ -404,7 +404,7 @@ if getHeppyOption("nanoPreProcessor"):
     if getHeppyOption("FastSim"):
         suffix = 'fast'
     preproc_cfg = {2016: ("mc94X2016%s"%suffix,"data94X2016"),
-                   2017: ("mc94Xv2%"%suffix,"data94Xv2"),
+                   2017: ("mc94Xv2%s"%suffix,"data94Xv2"),
                    2018: ("mc102X%s"%suffix,"data102X_ABC","data102X_D")}
     preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_sos/CMSSW_10_2_18" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
