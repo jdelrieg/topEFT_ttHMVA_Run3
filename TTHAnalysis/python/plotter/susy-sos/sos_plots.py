@@ -137,6 +137,15 @@ def createPath(filename):
             if exc.errno != errno.EEXIST:
                 raise
 
+def formn2c1(old_str):
+    sn2, sc1 = old_str
+    n2 = float(sn2.replace('p','.'))
+    n1 = float(sc1.replace('p','.'))
+    c1 = n2 - 0.5*(n2-n1)
+    ret = [sn2,"{:.2f}".format(c1).replace('.','p')]
+    print ret
+    return ret
+
 def runIt(GO,plotting,name):
     if args.doWhat == "plots":  
         name=name+"_"+args.fakes
@@ -162,15 +171,9 @@ def runIt(GO,plotting,name):
             FILENAME="SMS_TChiWZ"
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
-            # if "HiggsinoN2N1" in pr: 
-            #     FILENAME="SMS_HiggsinoN2N1"
-            #     GENMODEL = "GenModel_SMS-N2N1-higgsino"
-            # if "HiggsinoN2C1" in pr: 
-            #     FILENAME="SMS_HiggsinoN2C1"
-            #     GENMODEL = "GenModel_SMS-N2C1-higgsino"            
             if "Higgsino" in pr: 
                 FILENAME="SMS_Higgsino"
-                GENMODELSTRING = " || ".join(['AltBranch$(GenModel_SMS_N2C1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING = " || ".join(['AltBranch$(GenModel_SMS_N2C1_higgsino_%s,0)'%('_'.join(formn2c1(pr.split('_')[2:4]))) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_SMS_N2N1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
