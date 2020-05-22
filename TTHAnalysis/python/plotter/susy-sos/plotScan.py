@@ -11,12 +11,15 @@ parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the 
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
 parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
+parser.add_argument("--model", default="TChiWZ", choices=["TChiWZ","Higgsino"], help="Signal model to consider")
 args = parser.parse_args()
+
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
 if len(args.mll) == 0: args.mll = ['none','pos','neg']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
+#if args.model == "Higgsino": args.mll = ['neg']
 
 import ROOT
 from ROOT import *
@@ -58,6 +61,9 @@ class Limit:
         self.Dm = Dm
         self.vals = vals
 
+def mass_from_str(s):
+    return float(s.replace('p','.'))
+
 def getLimitHists(files, tag):
     limits=[]
     parser={
@@ -67,8 +73,8 @@ def getLimitHists(files, tag):
     }
     for f in files:
         mass=os.path.basename(f).split('_')[3:5]
-        massH=float(mass[0])
-        massL=float(mass[0])-float(mass[1])
+        massH=mass_from_str(mass[0])
+        massL=mass_from_str(mass[0])-mass_from_str(mass[1])
         with open(f) as fin:
             vals={}
             for line in fin:
@@ -286,13 +292,16 @@ def runMLL(indirs,tag,label,outdir):
 
 outdir=args.outDir.rstrip("/")
 print "Scans will be saved in the folder '%s'..."%outdir
+
+rwt_comp = False
 for sel in args.indir:
     sel = sel.rstrip("/")
     name = sel.split("/")[-1]
     for tag in args.tag:
         print "For tag "+tag+":"
         for mll in args.mll:
-            run("%s_merged/cards/TChiWZ%s_*"%(sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
+            run("%s_merged/cards/%s%s_*"%(args.model,sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
-        card_prototype=sel+"_merged/cards/TChiWZ{MLL}_*/log_b_*_{TAG}.txt"
-        runMLL(card_prototype,tag,'mll_'+tag,outdir)
+        if rwt_comp:
+            card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log_b_*_{TAG}.txt"
+            runMLL(card_prototype,tag,'mll_'+tag,outdir)
