@@ -626,4 +626,68 @@ float lepMCEff(float _pt, float _eta, int pdgId, int year) {
 	return 1.0; //lepMCEff_toReco(_pt,_eta,pdgId,year) * lepMCEff_recoToTight(_pt,_eta,pdgId,year);
 }
 
+
+
+// BRANCHING RATIO CORRECTION FACTORS
+// -------------------------------------------------------------
+
+TFile*  BR_SH = new TFile(DATA_SF+"/BranchingRatioSF/WZ_BRs_SUSYHIT.root","read");
+TGraph* BR_SH_W_lep = (TGraph*) BR_SH->Get("BR_Wlv_SUSYHIT");
+
+unordered_map<int, TGraph*> SUSYHIT_Z_BR = {
+	{ 1111, (TGraph*) BR_SH->Get("BR_Zee_SUSYHIT") },
+	{ 1313, (TGraph*) BR_SH->Get("BR_Zmm_SUSYHIT") },
+	{ 1515, (TGraph*) BR_SH->Get("BR_Ztt_SUSYHIT") }
+};
+unordered_map<int, TGraph*> SUSYHIT_W_BR = {
+	// { 21, (TGraph*) BR_SH->Get("BR_Wud_SUSYHIT") },
+	// { 43, (TGraph*) BR_SH->Get("BR_Wcs_SUSYHIT") },
+	{ 1112, (TGraph*) BR_SH->Get("BR_Wev_SUSYHIT") },
+	{ 1314, (TGraph*) BR_SH->Get("BR_Wmv_SUSYHIT") },
+	{ 1516, (TGraph*) BR_SH->Get("BR_Wtv_SUSYHIT") }
+};
+
+TFile*  BR_SOS = new TFile(DATA_SF+"/BranchingRatioSF/WZ_BRs_TChiWZ.root","read");
+TGraph* BR_SOS_W_lep = (TGraph*) BR_SOS->Get("BR_Wlv_TChiWZ");
+
+unordered_map<int, TGraph*> TChiWZ_Z_BR = {
+	{ 1111, (TGraph*) BR_SOS->Get("BR_Zee_TChiWZ") },
+	{ 1313, (TGraph*) BR_SOS->Get("BR_Zmm_TChiWZ") },
+	{ 1515, (TGraph*) BR_SOS->Get("BR_Ztt_TChiWZ") }
+};
+unordered_map<int, TGraph*> TChiWZ_W_BR = {
+	// { 21, (TGraph*) BR_SOS->Get("BR_Wud_TChiWZ") },
+	// { 23, (TGraph*) BR_SOS->Get("BR_Wus_TChiWZ") },
+	// { 25, (TGraph*) BR_SOS->Get("BR_Wub_TChiWZ") },
+	// { 41, (TGraph*) BR_SOS->Get("BR_Wcd_TChiWZ") },
+	// { 43, (TGraph*) BR_SOS->Get("BR_Wcs_TChiWZ") },
+	// { 45, (TGraph*) BR_SOS->Get("BR_Wcb_TChiWZ") },
+	{ 1112, (TGraph*) BR_SOS->Get("BR_Wev_TChiWZ") },
+	{ 1314, (TGraph*) BR_SOS->Get("BR_Wmv_TChiWZ") },
+	{ 1516, (TGraph*) BR_SOS->Get("BR_Wtv_TChiWZ") }
+};
+
+float WZ_BR(float dm, int Z_decay, int W_decay){
+
+    if (dm>40) dm=40; // Computations only computed up to dM up to 40. Assume plateau for dM>40
+
+    float Z_weight = SUSYHIT_Z_BR[Z_decay]->Eval(dm) / TChiWZ_Z_BR[Z_decay]->Eval(dm);
+    float W_weight = 0;
+
+    int hadrW [6] = {21, 23, 25, 41, 43, 45};
+    bool isHadronicW = std::find(std::begin(hadrW), std::end(hadrW), W_decay) != std::end(hadrW);
+
+    // Only hadronic W decays corresponding to on-diagonal CKM elements are computed in SUSYHIT. 
+    // This weight does not remove e.g. W->us events, but reweights with the ratio of total hadronic decay widths.
+    if (!isHadronicW){
+    	W_weight = SUSYHIT_W_BR[W_decay]->Eval(dm) / TChiWZ_W_BR[W_decay]->Eval(dm);
+    }
+    else{
+		W_weight = (1-BR_SH_W_lep->Eval(dm)) / (1-BR_SOS_W_lep->Eval(dm));
+    }
+
+    return Z_weight*W_weight;
+}
+
+
 void functionsSF() {}
