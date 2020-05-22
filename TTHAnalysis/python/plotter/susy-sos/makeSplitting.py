@@ -46,8 +46,6 @@ categories=[
 '2los/cr_dy/med',
 '2los/cr_tt/low',
 '2los/cr_tt/med',
-'2los/cr_vv/low',
-'2los/cr_vv/med',
 '3l/cr_wz/low',
 '3l/cr_wz/med',
 ]            
