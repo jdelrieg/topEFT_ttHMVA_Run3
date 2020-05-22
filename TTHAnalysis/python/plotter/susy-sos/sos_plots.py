@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","T2tt"], help="Choose signal model")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","T2tt","Higgsino"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
@@ -65,7 +65,8 @@ lumis = {
 LUMI= " -l %s "%(lumis[YEAR])
 submit = '{command}' 
 
-P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+#P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+P0="/afs/cern.ch/work/t/therwig/sos/eos_mirror2/"
 
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
@@ -141,7 +142,6 @@ def formn2c1(old_str):
     n1 = float(sc1.replace('p','.'))
     c1 = n2 - 0.5*(n2-n1)
     ret = [sn2,"{:.2f}".format(c1).replace('.','p')]
-    print ret
     return ret
 
 def runIt(GO,plotting,name):
