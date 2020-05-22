@@ -54,40 +54,39 @@ class VB_DecayModes(Module):
             # Reweighting is based on TChiWZ sample that only has leptonic Z-decays. If hadronic Z-decays are found, we cannot use this!
         else: ret["Z_decays"]=0
 
-        # Block to handle events with one W that is from C1 decay
-        if   ((6 in W_daughters and -5 in W_daughters) or (-6 in W_daughters and 5 in W_daughters)):
-            ret["W_decays"]=65
-        elif ((6 in W_daughters and -3 in W_daughters) or (-6 in W_daughters and 3 in W_daughters)):
-            ret["W_decays"]=63    
-        elif ((6 in W_daughters and -1 in W_daughters) or (-6 in W_daughters and 1 in W_daughters)):
-            ret["W_decays"]=61
-        elif ((4 in W_daughters and -5 in W_daughters) or (-4 in W_daughters and 5 in W_daughters)):
-            ret["W_decays"]=45    
-        elif ((4 in W_daughters and -3 in W_daughters) or (-4 in W_daughters and 3 in W_daughters)):
-            ret["W_decays"]=43        
-        elif ((4 in W_daughters and -1 in W_daughters) or (-4 in W_daughters and 1 in W_daughters)):
-            ret["W_decays"]=41    
-        elif ((2 in W_daughters and -5 in W_daughters) or (-2 in W_daughters and 5 in W_daughters)):
-            ret["W_decays"]=25
-        elif ((2 in W_daughters and -3 in W_daughters) or (-2 in W_daughters and 3 in W_daughters)):
-            ret["W_decays"]=23
-        elif ((2 in W_daughters and -1 in W_daughters) or (-2 in W_daughters and 1 in W_daughters)):
-            ret["W_decays"]=21
-        elif ((15 in W_daughters and -16 in W_daughters) or (-15 in W_daughters and 16 in W_daughters)):
-            ret["W_decays"]=1516
-        elif ((13 in W_daughters and -14 in W_daughters) or (-13 in W_daughters and 14 in W_daughters)):
-            ret["W_decays"]=1314
-        elif ((11 in W_daughters and -12 in W_daughters) or (-11 in W_daughters and 12 in W_daughters)):
-            ret["W_decays"]=1112            
-        elif len(W_daughters):
-            raise RuntimeError("Did not find expected W decays!")
-        else: ret["W_decays"]=0
-
-        # TODO
-        # Block to handle events with one top that is from stop decay
-        ret["TopP_decays"]=0
-        # Block to handle events with one anti-top that is from anti-stop decay
-        ret["TopM_decays"]=0
+        # Block to handle events with:
+        # one W that is from C1 decay,
+        # one top that is from stop decay, or
+        # one anti-top that is from anti-stop decay
+        for part, dlist in [['W',W_daughters],['TopP',TopP_daughters],['TopM',TopM_daughters]]:
+            part_str = part + "_decays"
+            if   ((6 in dlist and -5 in dlist) or (-6 in dlist and 5 in dlist)):
+                ret[part_str]=65
+            elif ((6 in dlist and -3 in dlist) or (-6 in dlist and 3 in dlist)):
+                ret[part_str]=63    
+            elif ((6 in dlist and -1 in dlist) or (-6 in dlist and 1 in dlist)):
+                ret[part_str]=61
+            elif ((4 in dlist and -5 in dlist) or (-4 in dlist and 5 in dlist)):
+                ret[part_str]=45    
+            elif ((4 in dlist and -3 in dlist) or (-4 in dlist and 3 in dlist)):
+                ret[part_str]=43        
+            elif ((4 in dlist and -1 in dlist) or (-4 in dlist and 1 in dlist)):
+                ret[part_str]=41    
+            elif ((2 in dlist and -5 in dlist) or (-2 in dlist and 5 in dlist)):
+                ret[part_str]=25
+            elif ((2 in dlist and -3 in dlist) or (-2 in dlist and 3 in dlist)):
+                ret[part_str]=23
+            elif ((2 in dlist and -1 in dlist) or (-2 in dlist and 1 in dlist)):
+                ret[part_str]=21
+            elif ((15 in dlist and -16 in dlist) or (-15 in dlist and 16 in dlist)):
+                ret[part_str]=1516
+            elif ((13 in dlist and -14 in dlist) or (-13 in dlist and 14 in dlist)):
+                ret[part_str]=1314
+            elif ((11 in dlist and -12 in dlist) or (-11 in dlist and 12 in dlist)):
+                ret[part_str]=1112            
+            elif len(dlist):
+                raise RuntimeError("Did not find expected {} decays!".format(part))
+            else: ret[part_str]=0
 
 
         return ret
@@ -159,11 +158,12 @@ class VB_DecayModes(Module):
                     W_daughters.append(gp.pdgId)
 
                 # If the grandmother is Top+/-, we found the (anti-)Stop->N1+Top->N1+b+W(->ff) decay
-                if len(FamilyTree)>2 and abs(FamilyTree[2])==1000006:
+                if len(FamilyTree)>2 and FamilyTree[2]==1000006:
                     TopP_daughters.append(gp.pdgId)
-                if len(FamilyTree)>2 and abs(FamilyTree[2])==-1000006:
+                if len(FamilyTree)>2 and FamilyTree[2]==-1000006:
                     TopM_daughters.append(gp.pdgId)
 
+        # print TopP_daughters,TopM_daughters
         # Prepare the output to fill the branches
         ret = self.Prepare_decays_returns(ret, Z_daughters, W_daughters, TopP_daughters, TopM_daughters)
     

@@ -170,7 +170,7 @@ def runIt(GO,plotting,name):
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "Higgsino" in pr: 
-                FILENAME="SMS_Higgsino"
+                FILENAME="SMS_HiggsinoN2N1,SMS_HiggsinoN2C1"
                 GENMODELSTRING = " || ".join(['AltBranch$(GenModel_SMS_N2C1_higgsino_%s,0)'%('_'.join(formn2c1(pr.split('_')[2:4]))) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_SMS_N2N1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
