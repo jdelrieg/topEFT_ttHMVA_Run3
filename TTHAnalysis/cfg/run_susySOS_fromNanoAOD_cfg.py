@@ -117,7 +117,12 @@ if year == 2018:
 
             ##signal SUSY
             "SMS_TChiWZ",
-            
+            "SMS_TChiWZ_ext",
+            "SMS_HiggsinoN2N1",
+            "SMS_HiggsinoN2C1", 
+            "SMS_T2tt",
+            "SMS_HiggsinoPMSSM",
+           
 ###relics from tth             
 ###            "TT[WZ]_LO$",
 ###            "TTHnobb_pow$",
@@ -231,6 +236,11 @@ elif year == 2017:
 
         ##signal SUSY
         "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
+        "SMS_HiggsinoN2N1",
+        "SMS_HiggsinoN2C1",
+        "SMS_T2tt",
+        "SMS_HiggsinoPMSSM",
 
     ])
 
@@ -340,7 +350,12 @@ elif year == 2016:
         "WZTo3LNu_mllmin01",
 
         ##signal SUSY
-        "SMS_TChiWZ"
+        "SMS_TChiWZ",
+        "SMS_TChiWZ_ext",
+        "SMS_HiggsinoN2N1",
+        "SMS_HiggsinoN2C1",
+        "SMS_T2tt",
+        "SMS_HiggsinoPMSSM",
 
 ###        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
     ])
@@ -385,9 +400,12 @@ selectedComponents, _ = mergeExtensions(selectedComponents, verbose=True)
 # create and set preprocessor if requested
 if getHeppyOption("nanoPreProcessor"):
     from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor
-    preproc_cfg = {2016: ("mc94X2016","data94X2016"),
-                   2017: ("mc94Xv2","data94Xv2"),
-                   2018: ("mc102X","data102X_ABC","data102X_D")}
+    suffix = ''
+    if getHeppyOption("FastSim"):
+        suffix = 'fast'
+    preproc_cfg = {2016: ("mc94X2016%s"%suffix,"data94X2016"),
+                   2017: ("mc94Xv2%"%suffix,"data94Xv2"),
+                   2018: ("mc102X%s"%suffix,"data102X_ABC","data102X_D")}
     preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_sos/CMSSW_10_2_18" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
@@ -403,7 +421,7 @@ if getHeppyOption("nanoPreProcessor"):
         for comp in selectedComponents:
             comp.preprocessor = preproc_data if comp.isData else preproc_mc
     if year==2017:
-        preproc_mcv1 = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,"mc94Xv1"),cmsswArea=preproc_cmsswArea,keepOutput=True)
+        preproc_mcv1 = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,"mc94Xv1%s"%suffix),cmsswArea=preproc_cmsswArea,keepOutput=True)
         for comp in selectedComponents:
             if comp.isMC and "Fall17MiniAODv2" not in comp.dataset:
                 print "Warning: %s is MiniAOD v1, dataset %s" % (comp.name, comp.dataset)
