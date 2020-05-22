@@ -407,7 +407,6 @@ if getHeppyOption("nanoPreProcessor"):
                    2017: ("mc94Xv2%"%suffix,"data94Xv2"),
                    2018: ("mc102X%s"%suffix,"data102X_ABC","data102X_D")}
     preproc_cmsswArea = "/afs/cern.ch/user/p/peruzzi/work/cmgtools_sos/CMSSW_10_2_18" #MODIFY ACCORDINGLY
-    preproc_cmsswArea = "/afs/cern.ch/user/t/therwig/sos/CMSSW_10_2_18" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
         preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True, injectTriggerFilter=True, injectJSON=True)
