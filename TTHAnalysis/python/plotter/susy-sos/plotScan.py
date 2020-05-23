@@ -10,16 +10,16 @@ parser.add_argument("--indir", default=[], action="append", required=True, help=
 parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
-parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
-parser.add_argument("--model", default="TChiWZ", choices=["TChiWZ","Higgsino"], help="Signal model to consider")
+parser.add_argument("--reweight", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none']")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
 args = parser.parse_args()
 
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.mll) == 0: args.mll = ['none','pos','neg']
+if len(args.reweight) == 0: args.reweight = ['none']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
-#if args.model == "Higgsino": args.mll = ['neg']
+#if args.signalModel == "Higgsino": args.reweight = ['neg']
 
 import ROOT
 from ROOT import *
@@ -33,7 +33,9 @@ logy=False
 
 # Legend info
 moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-moreText2 = "median expected upper limit on cross section at 95% CL"
+if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+if args.signalModel=="Higgsino": moreText = "(pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} + pp #rightarrow #tilde{#chi}_{1}^{0}#tilde{#chi}_{2}^{0}), #tilde{#chi}_{2}^{0} #rightarrow Z#tilde{#chi}^{0}_{1}, #tilde{#chi}_{1}^{#pm} #rightarrow W#tilde{#chi}^{0}_{1} (BR=1), m_{#tilde{#chi}_{1}^{#pm}}=(m_{#tilde{#chi}_{2}^{0}}+m_{#tilde{#chi}^{0}_{1}})/2, NLO-NLL excl."
+moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
 cmsTextFont           = 52  
 cmsTextSize           = 0.55
@@ -42,14 +44,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=60.
+leg_ylo=80. if args.signalModel=="T2tt" else 50. if args.signalModel=="Higgsino" else 60.
 leg_nlines=3
 
 # Plot range
-range_xlo=100.
-range_xhi=300.
-range_ylo=3.
-range_yhi=75.
+range_xlo=300. if args.signalModel=="T2tt" else 100.
+range_xhi=1000. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
+range_ylo=10. if args.signalModel=="T2tt" else 3.
+range_yhi=100. if args.signalModel=="T2tt" else 70. if args.signalModel=="Higgsino" else 75.
 
 if logy:
     range_yhi=350.
@@ -278,7 +280,7 @@ def runMLL(indirs,tag,label,outdir):
     limCurves=[]
     lim_labels=['N1*N2>0','N1*N2<0']
 
-    for mll in args.mll:
+    for mll in args.reweight:
         if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
@@ -286,7 +288,7 @@ def runMLL(indirs,tag,label,outdir):
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
 
-    if 'pos' in args.mll and 'neg' in args.mll:
+    if 'pos' in args.reweight and 'neg' in args.reweight:
         plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
@@ -299,9 +301,9 @@ for sel in args.indir:
     name = sel.split("/")[-1]
     for tag in args.tag:
         print "For tag "+tag+":"
-        for mll in args.mll:
-            run("%s_merged/cards/%s%s_*"%(args.model,sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
+        for mll in args.reweight:
+            run("%s_merged/cards/%s%s_*"%(args.signalModel,sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         if rwt_comp:
-            card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log_b_*_{TAG}.txt"
+            card_prototype=sel+"_merged/cards/"+args.signalModel+"{MLL}_*/log_b_*_{TAG}.txt"
             runMLL(card_prototype,tag,'mll_'+tag,outdir)
