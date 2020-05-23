@@ -32,6 +32,7 @@ DYJetsToLL_M5to50_HT600toInf : DYJetsToLL_M5to50_HT600toInf : xsec
 SMS_TChiWZ : SMS_TChiWZ : xsec
 SMS_HiggsinoN2N1 : SMS_HiggsinoN2N1 : xsec
 SMS_HiggsinoN2C1 : SMS_HiggsinoN2C1 : xsec
+SMS_T2tt : SMS_T2tt : xsec
 TBar_tch : TBar_tch : xsec
 TBar_tWch_noFullyHad : TBar_tWch_noFullyHad : xsec
 TGJets_lep : TGJets_lep : xsec
