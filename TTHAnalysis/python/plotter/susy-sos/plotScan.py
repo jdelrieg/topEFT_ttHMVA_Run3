@@ -33,7 +33,7 @@ logy=False
 
 # Legend info
 moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow #tilde{#chi}_{1}^{#pm} b, #tilde{#chi}_{1}^{#pm} #rightarrow #tilde{#chi}^{0}_{1} W NLO-NLL excl."
 if args.signalModel=="Higgsino": moreText = "(pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} + pp #rightarrow #tilde{#chi}_{1}^{0}#tilde{#chi}_{2}^{0}), #tilde{#chi}_{2}^{0} #rightarrow Z#tilde{#chi}^{0}_{1}, #tilde{#chi}_{1}^{#pm} #rightarrow W#tilde{#chi}^{0}_{1} (BR=1), m_{#tilde{#chi}_{1}^{#pm}}=(m_{#tilde{#chi}_{2}^{0}}+m_{#tilde{#chi}^{0}_{1}})/2, NLO-NLL excl."
 moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
@@ -44,14 +44,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=80. if args.signalModel=="T2tt" else 50. if args.signalModel=="Higgsino" else 60.
+leg_ylo=65. if args.signalModel=="T2tt" else 55. if args.signalModel=="Higgsino" else 60.
 leg_nlines=3
 
 # Plot range
-range_xlo=300. if args.signalModel=="T2tt" else 100.
-range_xhi=1000. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
+range_xlo=297. if args.signalModel=="T2tt" else 100.
+range_xhi=653. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
 range_ylo=10. if args.signalModel=="T2tt" else 3.
-range_yhi=100. if args.signalModel=="T2tt" else 70. if args.signalModel=="Higgsino" else 75.
+range_yhi=80. if args.signalModel=="T2tt" else 70. if args.signalModel=="Higgsino" else 75.
 
 if logy:
     range_yhi=350.
@@ -302,7 +302,7 @@ for sel in args.indir:
     for tag in args.tag:
         print "For tag "+tag+":"
         for mll in args.reweight:
-            run("%s_merged/cards/%s%s_*"%(args.signalModel,sel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
+            run("%s_merged/cards/%s%s_*"%(sel,args.signalModel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         if rwt_comp:
             card_prototype=sel+"_merged/cards/"+args.signalModel+"{MLL}_*/log_b_*_{TAG}.txt"
