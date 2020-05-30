@@ -1,4 +1,4 @@
-import os, argparse, itertools
+import os, argparse, itertools, subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--duration", type=int, default=8, help="job duration in hours")
@@ -46,6 +46,8 @@ categories=[
 '2los/cr_dy/med',
 '2los/cr_tt/low',
 '2los/cr_tt/med',
+# '2los/cr_vv/low',
+# '2los/cr_vv/med',
 '3l/cr_wz/low',
 '3l/cr_wz/med',
 ]            
@@ -79,6 +81,11 @@ queue Chunk matching {odir}/job_*_fit.sh
 """.format(odir=odir, path=os.environ['CMSSW_BASE'], duration=duration, acctgroup = '+AccountingGroup = "%s"'%args.accountingGroup if args.accountingGroup else '')
    with open('%s/htcondor_submitter.sub'%odir,'w') as outf:
       outf.write(submitter)
+
+def bash(cmd):
+   pipe = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+   back = pipe.stdout.read().split("\n")#.strip()
+   return back
 
 class bare_production:
    def __init__(self):
@@ -175,11 +182,10 @@ class bare_production:
             os.system("echo %s >> %s/card_submission/job_%d_expoutput.txt"%(outf,odir,i))
 
 
-
 class merge_and_fit:
    def __init__(self,onlyFit=False, bkgdDir=None):
       self.onlyFit = onlyFit
-
+      self.missingFiles=[]
 
       def runPoint(pr):
          ret=[]
@@ -202,6 +208,7 @@ class merge_and_fit:
                f2 = '%s_merged/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
                if not (os.path.exists(f) and os.path.exists(f0)):
                   badPoint = True
+                  if not os.path.exists(f): self.missingFiles.append(f)
                   break
                else:
                   out.append("set -e; mkdir -p \$(dirname %s)"%f2)
@@ -241,6 +248,25 @@ class merge_and_fit:
          outlines = runPoint(pr)
          for line in outlines:
             os.system('echo "%s" >> %s/fit_submission/job_%d_fit.sh'%(line,odir,i))
+
+      # print the failed jobs to ease resubmission
+      if len(self.missingFiles):
+         print len(self.missingFiles), "missing signal files found"
+         resub=[]
+         for f in self.missingFiles:
+            signal = f.split('/')[-2]
+            year = f.split('/')[-4]
+            cmd = "grep -l '{}' {}/card_submission/job*sh".format(signal,odir)
+            jobs = bash(cmd)
+            for j in jobs:
+               if len(j):
+                  cmd = "grep '{}' {}".format(year,j)
+                  lines = bash(cmd)
+                  if len(lines)>1:
+                     resub.append(j)
+         print len(resub), "jobs to resubmit"
+         for r in resub: print r
+            
 
 if __name__ == '__main__':
    if what=='bare': x = bare_production()

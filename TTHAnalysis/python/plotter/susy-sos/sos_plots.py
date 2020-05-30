@@ -65,8 +65,7 @@ lumis = {
 LUMI= " -l %s "%(lumis[YEAR])
 submit = '{command}' 
 
-#P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
-P0="/afs/cern.ch/work/t/therwig/sos/eos_mirror2/"
+P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
 
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
