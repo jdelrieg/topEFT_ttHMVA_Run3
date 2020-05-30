@@ -6,9 +6,13 @@ SR_2l_col		: LepGood1_pt : [3.5,12,20,30]    ; XTitle="Leading lepton p_{T} [GeV
 SR_2l_ewk_fine  : mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)         : 10,0,50         ; XTitle="M(ll) [GeV]", Legend='TR', IncludeOverflows=True, LegendCutoff=0, MoreY=2, LegendCutoff=1e-3
 SR_2l_col_fine  : LepGood1_pt : 20,0,40         ; XTitle="Leading lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
 
+#SR_2l_ewk_vfine  : mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)         : 50,0,50         ; XTitle="M(ll) [GeV]", Legend='TR', IncludeOverflows=True, LegendCutoff=0, MoreY=2, LegendCutoff=1e-3
+
 ## Lepton variables
 lep1pt          : LepGood1_pt                           : 8,0,40  ; XTitle="Leading lepton p_{T} [GeV]"     , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10, MoreY=2
 lep2pt          : LepGood2_pt                           : 8,0,40  ; XTitle="Subleading lepton p_{T} [GeV]"  , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
+#lep1pt_fine     : LepGood1_pt                           : 40,0,40  ; XTitle="Leading lepton p_{T} [GeV]"     , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10, MoreY=2
+#lep2pt_fine     : LepGood2_pt                           : 40,0,40  ; XTitle="Subleading lepton p_{T} [GeV]"  , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
 lep1eta         : abs(LepGood1_eta)                     : 10,0,2.5 ; XTitle="Leading lepton #||{#eta}"      , Legend='TR', IncludeOverflows=False, MoreY=1.5
 lep2eta         : abs(LepGood2_eta)                     : 10,0,2.5 ; XTitle="Subleading lepton #||{#eta}"   , Legend='TR', IncludeOverflows=False, MoreY=1.5
 lep1phi         : LepGood1_phi                          : 20, -3.14, 3.14 ; XTitle="Leading lepton #phi" 
