@@ -650,7 +650,7 @@ class PlotMaker:
             for i,(cn,cv) in enumerate(allcuts[:-1]): # skip the last one which is equal to all cuts
                 cnsafe = "cut_%02d_%s" % (i, re.sub("[^a-zA-Z0-9_.]","",cn.replace(" ","_")))
                 sets.append((cnsafe,cn,cv))
-        elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 2)
+        elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 0) # temporary workaround to avoid multiple negative bin cropping
         for subname, title, cut in sets:
             print "cut set: ",title
             if elist: mca.applyCut(cut)
