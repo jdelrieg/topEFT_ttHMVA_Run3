@@ -29,7 +29,7 @@ logy=False
 
 # Legend info
 moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b #tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{#pm} #rightarrow W #tilde{#chi}^{0}_{1}, NLO-NLL excl."
+if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
 if args.signalModel=="Higgsino": moreText = "(pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} + pp #rightarrow #tilde{#chi}_{1}^{0}#tilde{#chi}_{2}^{0}), #tilde{#chi}_{2}^{0} #rightarrow Z#tilde{#chi}^{0}_{1}, #tilde{#chi}_{1}^{#pm} #rightarrow W#tilde{#chi}^{0}_{1} (BR=1), m_{#tilde{#chi}_{1}^{#pm}}=(m_{#tilde{#chi}_{2}^{0}}+m_{#tilde{#chi}^{0}_{1}})/2, NLO-NLL excl."
 moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
