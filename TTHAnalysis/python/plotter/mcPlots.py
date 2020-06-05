@@ -747,7 +747,7 @@ class PlotMaker:
                         v1 = _hf.Get('%s/%s'%(_hdname,k2))
                         if v1:
                             if 'TH1' not in pmap[k].ClassName(): raise RuntimeError('getHistosFromFile is only implemented for 1-D histograms')
-                            if pmap[k].GetNbinsX()!=v1.GetNbinsX(): raise RuntimeError('getHistosFromFile: found inconsistent number of bins for process %s (%d,%d)'%(k,pmap[k].GetNbinsX(),v1.GetNbinsX()))
+                            if pmap[k].GetNbinsX()!=v1.GetNbinsX(): print 'WARNING: getHistosFromFile: found inconsistent number of bins for process %s (%d,%d)'%(k,pmap[k].GetNbinsX(),v1.GetNbinsX())
                             print 'getHistosFromFile: imported histogram for process %s: integral %.2f -> %.2f'%(k,pmap[k].Integral(),v1.Integral())
                             pmap[k].Reset()
                             for i in xrange(pmap[k].GetNbinsX()):
