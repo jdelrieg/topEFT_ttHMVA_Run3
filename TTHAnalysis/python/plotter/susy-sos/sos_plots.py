@@ -30,6 +30,7 @@ parser.add_argument("--data", action="store_true", default=False, help="Include 
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
 parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
+parser.add_argument("--postfit", default=None, help="Read postfit plot from FitDiagnostics output, format file:shapes_fit_b for bkg-only, file:shapes_fit_s for s+b fit (must plot only the fitted variable)")
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
 
@@ -394,6 +395,7 @@ if __name__ == '__main__':
 
     if not args.data: x = add(x,'--xp data ')
     if args.unc: x = add(x,"--unc susy-sos/systsUnc.txt")
+    if args.postfit: x = add(x,"--getHistosFromFile %s/sos_%s_%s"%(args.postfit,conf,YEAR))
     if args.norm: x = add(x,"--sp '.*' --scaleSigToData ")
 
     if '_low' in torun :

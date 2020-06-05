@@ -650,7 +650,7 @@ class PlotMaker:
             for i,(cn,cv) in enumerate(allcuts[:-1]): # skip the last one which is equal to all cuts
                 cnsafe = "cut_%02d_%s" % (i, re.sub("[^a-zA-Z0-9_.]","",cn.replace(" ","_")))
                 sets.append((cnsafe,cn,cv))
-        elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 2)
+        elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 0) # temporary workaround to avoid multiple negative bin cropping
         for subname, title, cut in sets:
             print "cut set: ",title
             if elist: mca.applyCut(cut)
@@ -733,6 +733,37 @@ class PlotMaker:
                 elif self._options.preFitData and pspec.name == self._options.preFitData:
                     doNormFit(pspec,pmap,mca,saveScales=True)
                 #
+                if self._options.getHistosFromFile:
+                    if len(pspecs)>1: raise RuntimeError('getHistosFromFile: only works when plotting one histogram at a time')
+                    _hfname,_hdname = self._options.getHistosFromFile.split(":")
+                    _hf = ROOT.TFile.Open(_hfname)
+                    if not _hf: raise RuntimeError('getHistosFromFile: file %s not found'%_hfname)
+                    for k in pmap:
+                        k2=k
+                        if k == 'data' or pmap[k].Integral()<=0:
+                            continue
+                        elif k in ['signal','background']:
+                            k2='total_%s'%k
+                        v1 = _hf.Get('%s/%s'%(_hdname,k2))
+                        if v1:
+                            if 'TH1' not in pmap[k].ClassName(): raise RuntimeError('getHistosFromFile is only implemented for 1-D histograms')
+                            if pmap[k].GetNbinsX()!=v1.GetNbinsX(): print 'WARNING: getHistosFromFile: found inconsistent number of bins for process %s (%d,%d)'%(k,pmap[k].GetNbinsX(),v1.GetNbinsX())
+                            print 'getHistosFromFile: imported histogram for process %s: integral %.2f -> %.2f'%(k,pmap[k].Integral(),v1.Integral())
+                            pmap[k].Reset()
+                            for i in xrange(pmap[k].GetNbinsX()):
+                                pmap[k].SetBinContent(i+1,v1.GetBinContent(i+1))
+                                pmap[k].SetBinError(i+1,v1.GetBinError(i+1))
+                            for i in xrange(pmap[k].GetNbinsX(),v1.GetNbinsX()):
+                                if v1.GetBinContent(i+1)!=0: raise RuntimeError("getHistosFromFile: found non-zero content beyond the boundary of the target histogram for process %s"%k)
+                        else:
+                            print('getHistosFromFile: not found histogram for process %s, leaving it untouched'%k)
+                    if options.noStackSig:
+                        total_for_err = pmap['background']
+                        print('getHistosFromFile: will use total background for overall uncertainty')
+                    else:
+                        total_for_err = _hf.Get('%s/total'%(_hdname,k2)).Clone('total')
+                        print('getHistosFromFile: will use total signal+background for overall uncertainty')
+                #
                 for k,v in pmap.iteritems():
                     if hasattr(v,'writeToFile'):
                         v.writeToFile(dir)
@@ -743,6 +774,7 @@ class PlotMaker:
                 self.printOnePlot(mca,pspec,pmap,
                                   xblind=xblind,
                                   makeCanvas=makeCanvas,
+                                  mytotal = total_for_err if self._options.getHistosFromFile else None,
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
                 if getattr(mca,'_altPostFits',None):
@@ -796,6 +828,7 @@ class PlotMaker:
                 if outputName == None: outputName = pspec.name
                 stack = ROOT.THStack(outputName+"_stack",outputName)
                 if mytotal != None:
+                    print 'Using %s for total histogram, with an integral of %.2f'%(mytotal.GetName(),mytotal.Integral())
                     total = mytotal
                 else:
                     hists = [v for k,v in pmap.iteritems() if k != 'data'  and v.Integral() > 0 ]
@@ -1196,6 +1229,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
     parser.add_option("--cmssqrtS", dest="cmssqrtS", type="string", default="13 TeV", help="Sqrt of s to be written in the official CMS text.")
     parser.add_option("--printBin", dest="printBinning", type="string", default=None, help="Write 'Events/xx' instead of 'Events' on the y axis")
+    parser.add_option("--getHistosFromFile", dest="getHistosFromFile", type="string", default=None, help="Force-get a set of histograms from a file and use them in the plot")
 
 if __name__ == "__main__":
     from optparse import OptionParser
