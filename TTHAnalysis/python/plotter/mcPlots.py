@@ -753,6 +753,8 @@ class PlotMaker:
                             for i in xrange(pmap[k].GetNbinsX()):
                                 pmap[k].SetBinContent(i+1,v1.GetBinContent(i+1))
                                 pmap[k].SetBinError(i+1,v1.GetBinError(i+1))
+                            for i in xrange(pmap[k].GetNbinsX(),v1.GetNbinsX()):
+                                if v1.GetBinContent(i+1)!=0: raise RuntimeError("getHistosFromFile: found non-zero content beyond the boundary of the target histogram for process %s"%k)
                         else:
                             print('getHistosFromFile: not found histogram for process %s, leaving it untouched'%k)
                     if options.noStackSig:
