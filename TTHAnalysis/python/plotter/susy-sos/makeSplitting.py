@@ -226,14 +226,22 @@ class merge_and_fit:
          for tag,filt in flags.iteritems():
             cn = 'card_%s_%s.txt'%(fullpoint,tag)
             if not onlyFit: out.append("combineCards.py %s > %s"%(' '.join(['%s=%s'%(x,y) for x,y in filter(filt,cards)]), cn))
-            elif os.path.exists(cdir+'/'+cn): return []
+            elif not os.path.exists(cdir+'/'+cn): return []
+            out.append("text2workspace.py %s -o %s --channel-masks"%(cn,cn.replace('.txt','.root'))) # create the workspace
+            cn = cn.replace('.txt','.root') # switch to using the workspace
+            addopts_fitdiag = '--saveShapes --saveWithUncertainties --saveOverallShapes --saveNormalizations' if tag=='all' else '' # much slower, only run for the all-category fit
+
             if args.unblind:
-                out.append("combine -M AsymptoticLimits -n _%s_%s -m %s %s 2>&1 > log_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed
-                out.append("combine -M FitDiagnostics --setParameterRanges r=-10,10 -n _%s_%s -m %s %s 2>&1 > log_mlfit_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit
-            else:
-                out.append("combine -M AsymptoticLimits -t -1 --expectSignal 0 --run blind -n _%s_%s -m %s %s 2>&1 > log_b_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # bkg-only asimov
-                out.append("combine -M AsymptoticLimits -t -1 --expectSignal 1 --run blind -n _%s_%s -m %s %s 2>&1 > log_s_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # sig-injected asimov
-                out.append("combine -M FitDiagnostics --setParameterRanges r=-10,10 -t -1 -n _%s_%s -m %s %s 2>&1 > log_mlfit_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit
+                out.append("combine -M AsymptoticLimits -n _%s_%s_obs -m %s %s 2>&1 > log_limit_obs_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed + a-posteriori expected
+                out.append("combine -M FitDiagnostics %s --setParameterRanges r=-10,10 -n _%s_%s_obs -m %s %s 2>&1 > log_mlfit_obs_%s_%s.txt"%(fullpoint,addopts_fitdiag,tag,m1,cn,fullpoint,tag)) # ML fit
+                out.append("combine -M Significance --uncapped 1 -n _%s_%s_obs -m %s %s 2>&1 > log_signif_obs_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed asymptotic significance
+                out.append("combine -M Significance --uncapped 1 -t -1 --expectSignal 1 --toysFreq -n _%s_%s_exp_apost -m %s %s 2>&1 > log_signif_exp_apost_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-posteriori expected asymptotic significance
+
+            out.append("combine -M AsymptoticLimits --run blind -n _%s_%s_blind -m %s %s 2>&1 > log_limit_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected
+            out.append("combine -M FitDiagnostics -t -1 --expectSignal 0 --setParameterRanges r=-10,10 -n _%s_%s_aprio_bonly -m %s %s 2>&1 > log_mlfit_aprio_bonly_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=0
+#           out.append("combine -M FitDiagnostics -t -1 --expectSignal 1 --setParameterRanges r=-10,10 -n _%s_%s_aprio_siginj -m %s %s 2>&1 > log_mlfit_aprio_siginj%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=1
+            out.append("combine -M Significance --uncapped 1 -t -1 --expectSignal 1 -n _%s_%s_exp_aprio -m %s %s 2>&1 > log_signif_exp_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected asymptotic significance
+
          out.append("cd \${ORIGDIR}")
          return out
 
