@@ -40,20 +40,6 @@ class isrReweight( Module ):
         # testing only
         self.run_diagnostics = True
 
-        
-    def getISRweights(self, infile):
-        a =  {(0.,50.): 1., (50.,100.): 1.052, (100.,150.): 1.179, (150.,200.): 1.150, (200.,300.): 1.057, (300.,400.): 1.000, (400.,600.): 0.912, (600.,13000.): 0.783}
-        return a 
-
-    def getNormWeights(self, infile):
-        inf = open(infile,'r')
-        lines=inf.readlines()
-        ws={}
-        for l in lines:
-            #format: (m1, m2, w)
-            ws[ ( int(l.split()[0].split('_')[0]), int(l.split()[0].split('_')[1]))] =  float(l.split()[1])
-        return ws
-
     def getNormWeight(self, m1, m2):
         k = (m1, m2)
         if k in self.normWeights.keys():
