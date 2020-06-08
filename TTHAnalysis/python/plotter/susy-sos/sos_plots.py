@@ -69,7 +69,7 @@ P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SO
 
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
-TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties  --FMCs /afs/cern.ch/user/v/vtavolar/work/SusySOSSW_2_clean/nanoAOD/clean/CMSSW_10_4_0/src/CMGTools/TTHAnalysis/macros/isr2016_skim5 -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
+TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties  --FMCs /eos/user/v/vtavolar/SusySOS/nanoaods/isrWeights_2016 -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights"
 
 def base(selection):
