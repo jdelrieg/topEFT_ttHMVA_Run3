@@ -24,7 +24,6 @@ class isrReweight( Module ):
         oldks = self.weights.keys()
         for k in oldks:
             self.weights[eval(k)] = self.weights.pop(k)
-#        self.weights =  {(0.,50.): 1., (50.,100.): 1.052, (100.,150.): 1.179, (150.,200.): 1.150, (200.,300.): 1.057, (300.,400.): 1.000, (400.,600.): 0.912, (600.,13000.): 0.783}
 
         inf = open(normWfile,'r')
         lines=inf.readlines()
@@ -45,6 +44,7 @@ class isrReweight( Module ):
         if k in self.normWeights.keys():
             return self.normWeights[k]
         else:
+            print "WARNING! Normalization constant for ISR reweighting not found for mass combination (%s, %s). Assigning -1. " %(str(m1),str(m2))
             return -1
 
     def getISRw(self, pt):
