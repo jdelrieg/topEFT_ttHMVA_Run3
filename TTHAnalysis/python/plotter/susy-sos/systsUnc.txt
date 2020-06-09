@@ -70,3 +70,5 @@ CMS_btag_cferr1		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cfer
 CMS_btag_cferr2		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
 
 PU  : $allMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
+
+ISR_16   : signal_.* : .* : templateAsymm;  AddWeights=['isrWeight'\, '1./isrWeight']; year="2016"
