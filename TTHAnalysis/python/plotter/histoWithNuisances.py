@@ -73,7 +73,7 @@ class RooFitContext:
             self._density = False
             axis = histo.GetXaxis()
             w0 = axis.GetBinWidth(1)
-            for b in xrange(2,histo.GetNbinsX()):
+            for b in xrange(2,histo.GetNbinsX()+1):
                 if axis.GetBinWidth(b) != w0:
                     self._rebin = True
                     break
@@ -89,7 +89,7 @@ class RooFitContext:
         if not self._rebin: return histo
         if "TH1" not in histo.ClassName(): raise RuntimeError("Unsupported for non-TH1")
         ret = _cloneNoDir(self._xdummy, histo.GetName()+"_rebin")
-        for b in xrange(1,histo.GetNbinsX()):
+        for b in xrange(1,histo.GetNbinsX()+1):
             scale = histo.GetXaxis().GetBinWidth(b) if self._density else 1.0
             ret.SetBinContent(b, scale * histo.GetBinContent(b))
         return ret

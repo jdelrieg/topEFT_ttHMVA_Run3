@@ -7,11 +7,12 @@ import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--indir", default=[], action="append", required=True, help="Choose the input directories")
-parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
+parser.add_argument("--outdir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
 parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
 parser.add_argument("--model", default="TChiWZ", choices=["TChiWZ","Higgsino"], help="Signal model to consider")
+parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
 
@@ -74,8 +75,9 @@ def getLimitHists(files, tag):
         'Expected 84.0' : 1,
         'Expected 16.0' : -1,
     }
+    if args.unblind: parser.update({'Observed Limit': 2})
     for f in files:
-        mass=os.path.basename(f).split('_')[3:5]
+        mass=os.path.basename(f).split('_')[-3:-1]
         massH=mass_from_str(mass[0])
         massL=mass_from_str(mass[0])-mass_from_str(mass[1])
         with open(f) as fin:
@@ -144,6 +146,10 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
             lim.SetLineColor(colz[iLim])
 
         h2lim, h2limP1, h2limM1 = limit_hists[0], limit_hists[1], limit_hists[-1]
+        if args.unblind:
+            h2limObs = limit_hists[2]
+            h2limObs.SetLineWidth(2)
+            h2limObs.SetLineColor(ROOT.kBlack)
         h2lim.SetLineWidth(2)
         h2limP1.SetLineWidth(1)
         h2limM1.SetLineWidth(1)
@@ -229,11 +235,27 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1m.SetLineWidth(1)
     gl1m.Draw("lsame")
 
+    if args.unblind:
+        gl1Obs=TGraph(2)
+        gl1Obs.SetPoint(0, x1+74.5, ylines[2]+fudge)
+        gl1Obs.SetPoint(1, x1+82.5, ylines[2]+fudge)
+        gl1Obs.SetLineColor(ROOT.kBlack)
+        gl1Obs.SetLineStyle(1)
+        gl1Obs.SetLineWidth(2)
+        gl1Obs.Draw("lsame")
+
     mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
     mT3.SetTextAlign(12)
     mT3.SetTextFont(42)
     mT3.SetTextSize(0.040)
     mT3.Draw()
+
+    if args.unblind:
+        mT3a=ROOT.TLatex(x1+86.5,ylines[2], "Observed")
+        mT3a.SetTextAlign(12)
+        mT3a.SetTextFont(42)
+        mT3a.SetTextSize(0.040)
+        mT3a.Draw()
 
     if len(limit_labels):
         XOFF = 100.
@@ -274,9 +296,10 @@ def run(indirs,tag,label,outdir):
     limCurves=[]
     print 'looking for files like',indirs
     dirs=glob.glob(indirs)
-    files = ['%s/log_b_%s_%s.txt'%(d,os.path.basename(d),tag) for d in dirs]
+    files = ['%s/log%s_%s_%s.txt'%(d,"" if args.unblind else "_b",os.path.basename(d),tag) for d in dirs]
     files = filter(lambda f: os.path.exists(f),files)
     print 'Found %d files'%len(files)
+    if len(files)==0: raise RuntimeError("No files found")
 
     lims = getLimitHists(files,tag)
     plotLimits([lims], [], label, outdir)
@@ -289,6 +312,7 @@ def runMLL(indirs,tag,label,outdir):
         if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
+        if len(files)==0: raise RuntimeError("No files found")
         l = getLimitHists(files, mll)
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
@@ -297,7 +321,7 @@ def runMLL(indirs,tag,label,outdir):
         plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
-outdir=args.outDir.rstrip("/")
+outdir=args.outdir.rstrip("/")
 print "Scans will be saved in the folder '%s'..."%outdir
 
 rwt_comp = False
@@ -310,5 +334,5 @@ for sel in args.indir:
             run("%s_merged/cards/%s%s_*"%(sel,args.model,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         if rwt_comp:
-            card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log_b_*_{TAG}.txt"
+            card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log%s_*_{TAG}.txt"%("" if args.unblind else "_b")
             runMLL(card_prototype,tag,'mll_'+tag,outdir)
