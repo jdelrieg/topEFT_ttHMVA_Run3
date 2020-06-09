@@ -761,7 +761,12 @@ class PlotMaker:
                         total_for_err = pmap['background']
                         print('getHistosFromFile: will use total background for overall uncertainty')
                     else:
-                        total_for_err = _hf.Get('%s/total'%(_hdname,k2)).Clone('total')
+                        total_for_err = pmap['background'].Clone('total')
+                        total_for_err.Reset();
+                        v1 = _hf.Get('%s/total'%_hdname).Clone('total')
+                        for i in xrange(total_for_err.GetNbinsX()):
+                            total_for_err.SetBinContent(i+1,v1.GetBinContent(i+1))
+                            total_for_err.SetBinError(i+1,v1.GetBinError(i+1))
                         print('getHistosFromFile: will use total signal+background for overall uncertainty')
                 #
                 for k,v in pmap.iteritems():
