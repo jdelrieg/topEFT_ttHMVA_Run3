@@ -87,6 +87,6 @@ PU  : $allMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightD
 Prefire_16 : $allMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2016"
 Prefire_17 : $allMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2017"
 
-ISR_16   : signal_.* : .* : templateAsymm;  AddWeights=['isrWeight'\, '1./isrWeight'], year="2016"
-ISR_17   : signal_.* : .* : normSymm: 1.01  ; year="2017"
-ISR_18   : signal_.* : .* : normSymm: 1.01  ; year="2018"
+ISR_16   : signal_TChiWZ.* : .* : templateAsymm;  AddWeights=['isrWeight'\, '1./isrWeight'], year="2016"
+ISR_17   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2017"
+ISR_18   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2018"
