@@ -54,6 +54,7 @@ class mllReweight( Module ):
             self.wrappedOutputTree.branch(self.label+"_mN1",'F')
             self.wrappedOutputTree.branch(self.label+"_mN2",'F')
             self.wrappedOutputTree.branch(self.label+"_mC1",'F')
+            self.wrappedOutputTree.branch(self.label+"_mC1m",'F')
             self.wrappedOutputTree.branch(self.label+"_mT" ,'F')
             self.wrappedOutputTree.branch(self.label+"_nlep",'F')
 
@@ -110,6 +111,7 @@ class mllReweight( Module ):
     def analyze(self, event):
         mN1=0
         mC1=0
+        mC1m=0
         mN2=0
         mT=0 # stop
         # find the initial N1, N2 from the truth particles
@@ -118,16 +120,17 @@ class mllReweight( Module ):
         for ip,p in enumerate(genParts):
             # find N1, N2
             if (not mN1 and abs(p.pdgId) == self.barcodeN1 
-                and abs(p.genPartIdxMother) != self.barcodeN1):
+                and abs(genParts[p.genPartIdxMother].pdgId) != self.barcodeN1):
                 mN1 = int(p.mass+1e-5)
             if (not mN2 and abs(p.pdgId) == self.barcodeN2 
-                and abs(p.genPartIdxMother) != self.barcodeN2):
+                and abs(genParts[p.genPartIdxMother].pdgId) != self.barcodeN2):
                 mN2 = int(p.mass+1e-5) 
-            if (not mC1 and abs(p.pdgId) == self.barcodeC1 
-                and abs(p.genPartIdxMother) != self.barcodeC1):
-                mC1 = int(p.mass+1e-5) 
+            if (abs(p.pdgId) == self.barcodeC1 
+                and abs(genParts[p.genPartIdxMother].pdgId) != self.barcodeC1):
+                if p.pdgId>0: mC1 = int(p.mass+1e-5) 
+                if p.pdgId<0: mC1m= int(p.mass+1e-5) # For T2bW where mC1+!=mC1-
             if (not mT and abs(p.pdgId) == self.barcodeT
-                and abs(p.genPartIdxMother) != self.barcodeT):
+                and abs(genParts[p.genPartIdxMother].pdgId) != self.barcodeT):
                 mT = int(p.mass+1e-5) 
             # find leptons
             if abs(p.pdgId) in self.lepIDs:
@@ -154,6 +157,7 @@ class mllReweight( Module ):
             self.wrappedOutputTree.fillBranch(self.label+"_mN1", mN1)
             self.wrappedOutputTree.fillBranch(self.label+"_mN2", mN2)
             self.wrappedOutputTree.fillBranch(self.label+"_mC1", mC1)
+            self.wrappedOutputTree.fillBranch(self.label+"_mC1m", mC1)
             self.wrappedOutputTree.fillBranch(self.label+"_mT" , mT)
         wPos, wNeg = self.GetWeights(mll, mN1, mN2)
         self.wrappedOutputTree.fillBranch(self.label+"_pos", wPos)
