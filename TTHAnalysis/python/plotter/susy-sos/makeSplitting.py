@@ -243,6 +243,7 @@ class merge_and_fit:
                   if pr.endswith('_pos'): signal_flags += " --reweight pos"
                   if pr.endswith('_neg'): signal_flags += " --reweight neg"
                   out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
+                  out.append("rm %s"%f2) # remove temporary file
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
                print 'Skipping %s because not all bare inputs are present'%pr
@@ -274,6 +275,8 @@ class merge_and_fit:
             out.append("combine -M FitDiagnostics -t -1 --expectSignal 0 --setParameterRanges r=-10,10 -n _%s_%s_aprio_bonly -m %s %s 2>&1 > log_mlfit_aprio_bonly_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=0
 #           out.append("combine -M FitDiagnostics -t -1 --expectSignal 1 --setParameterRanges r=-10,10 -n _%s_%s_aprio_siginj -m %s %s 2>&1 > log_mlfit_aprio_siginj%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=1
             out.append("combine -M Significance --uncapped 1 -t -1 --expectSignal 1 -n _%s_%s_exp_aprio -m %s %s 2>&1 > log_signif_exp_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected asymptotic significance
+
+            if tag!='all': out.append("rm %s"%cn) # remove the workspace
 
          out.append("cd \${ORIGDIR}")
          return out
