@@ -8,8 +8,8 @@ parser.add_argument("--addopts", default=None, help="additional options to sos_p
 parser.add_argument("--onlyFit", action='store_true', default=False, help="only rerun fits")
 parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
 parser.add_argument("--reuseBackground", default=None, help="outDir from previous run for re-using backgrounds")
-parser.add_argument("--reweight", default="none,pos,neg", help="Comma-separated list of scenarios to consider: none, pos, neg")
-parser.add_argument("--signal", choices=["TChiWZ","Higgsino"], help="Signal model to consider")
+parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
@@ -24,9 +24,31 @@ signals_hino = ["signal_Higgsino_"+s for s in signals_hinoN2N1]
 
 # signals_hinoN2C1 = ["100_75p00", "100_80p00", "100_85p00", "100_90p00", "100_92p50", "100_95p00", "100_96p25", "100_97p50", "100_98p50", "100_99p50", "120_100p00", "120_105p00", "120_110p00", "120_112p50", "120_115p00", "120_116p25", "120_117p50", "120_118p50", "120_119p50", "120_95p00", "140_115p00", "140_120p00", "140_125p00", "140_130p00", "140_132p50", "140_135p00", "140_136p25", "140_137p50", "140_138p50", "140_139p50", "160_135p00", "160_140p00", "160_145p00", "160_150p00", "160_152p50", "160_155p00", "160_156p25", "160_157p50", "160_158p50", "160_159p50", "180_155p00", "180_160p00", "180_165p00", "180_170p00", "180_172p50", "180_175p00", "180_176p25", "180_177p50", "180_178p50", "180_179p50", "200_175p00", "200_180p00", "200_185p00", "200_190p00", "200_192p50", "200_195p00", "200_196p25", "200_197p50", "200_198p50", "200_199p50", "220_195p00", "220_200p00", "220_205p00", "220_210p00", "220_212p50", "220_215p00", "220_216p25", "220_217p50", "220_218p50", "220_219p50", "240_215p00", "240_220p00", "240_225p00", "240_230p00", "240_232p50", "240_235p00", "240_236p25", "240_237p50", "240_238p50", "240_239p50", "250_225p00", "250_230p00", "250_235p00", "250_240p00", "250_242p50", "250_245p00", "250_246p25", "250_247p50", "250_248p50", "250_249p50"]
 # signals_hinoN2C1 = ["signal_HiggsinoN2C1_"+s for s in signals_hinoN2C1]
-#if args.signal=="Higgsino": args.reweight = "neg"
+#if args.signalModel=="Higgsino": args.reweight = "neg"
 
-_signals = signals_TChiWZ if args.signal=="TChiWZ" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
+signals_T2tt=[
+"250_170","250_180","250_190","250_200","250_210","250_220","250_230","250_240","275_195","275_205","275_215","275_225","275_235","275_245","275_255","275_265",\
+"300_220","300_230","300_240","300_250","300_260","300_270","300_280","300_290","325_245","325_255","325_265","325_275","325_285","325_295","325_305","325_315",\
+"350_270","350_280","350_290","350_300","350_310","350_320","350_330","350_340","375_295","375_305","375_315","375_325","375_335","375_345","375_355","375_365",\
+"400_320","400_330","400_340","400_350","400_360","400_370","400_380","400_390","425_345","425_355","425_365","425_375","425_385","425_395","425_405","425_415",\
+"450_370","450_380","450_390","450_400","450_410","450_420","450_430","450_440","475_395","475_405","475_415","475_425","475_435","475_445","475_455","475_465",\
+"500_420","500_430","500_440","500_450","500_460","500_470","500_480","500_490","525_445","525_455","525_465","525_475","525_485","525_495","525_505","525_515",\
+"550_470","550_480","550_490","550_500","550_510","550_520","550_530","550_540","575_495","575_505","575_515","575_525","575_535","575_545","575_555","575_565",\
+"600_520","600_530","600_540","600_550","600_560","600_570","600_580","600_590","625_545","625_555","625_565","625_575","625_585","625_595","625_605","625_615",\
+"650_570","650_580","650_590","650_600","650_610","650_620","650_630","650_640","675_595","675_605","675_615","675_625","675_635","675_645","675_655","675_665",\
+"700_620","700_630","700_640","700_650","700_660","700_670","700_680","700_690"]
+#,"725_645","725_655","725_665","725_675","725_685","725_695","725_705","725_715",\
+#"750_670","750_680","750_690","750_700","750_710","750_720","750_730","750_740","775_695","775_705","775_715","775_725","775_735","775_745","775_755","775_765",\
+#"800_720","800_730","800_740","800_750","800_760","800_770","800_780","800_790","825_745","825_755","825_765","825_775","825_785","825_795","825_805","825_815",\
+#"850_770","850_780","850_790","850_800","850_810","850_820","850_830","850_840","875_795","875_805","875_815","875_825","875_835","875_845","875_855","875_865",\
+#"900_820","900_830","900_840","900_850","900_860","900_870","900_880","900_890","925_845","925_855","925_865","925_875","925_885","925_895","925_905","925_915",\
+#"950_870","950_880","950_890","950_900","950_910","950_920","950_930","950_940","975_895","975_905","975_915","975_925","975_935","975_945","975_955","975_965",\
+#"1000_920","1000_930","1000_940","1000_950","1000_960","1000_970","1000_980","1000_990","1025_1005","1025_1015","1025_945","1025_955","1025_965","1025_975","1025_985","1025_995",\
+#"1050_1000","1050_1010","1050_1020","1050_1030","1050_1040","1050_970","1050_980","1050_990","1075_1005","1075_1015","1075_1025","1075_1035","1075_1045","1075_1055","1075_1065","1075_995",\
+#"1100_1020","1100_1030","1100_1040","1100_1050","1100_1060","1100_1070","1100_1080","1100_1090"]
+signals_T2tt = ["signal_T2tt_"+s for s in signals_T2tt]
+
+_signals = signals_TChiWZ if args.signalModel=="TChiWZ" else signals_T2tt if args.signalModel=="T2tt" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
 _signals=[x.lstrip('signal_') for x in _signals]
 signals=[]
 for mll in args.reweight.split(','):
@@ -36,22 +58,26 @@ for mll in args.reweight.split(','):
       signals += ['%s_%s'%(x,mll) for x in _signals]
 
 categories=[
-'2los/sr/low',
-'2los/sr/med',
-'2los/sr/high',
-'2los/sr/ultra',
-'3l/sr/low',
-'3l/sr/med',
 '2los/cr_ss/med',
 '2los/cr_dy/low',
 '2los/cr_dy/med',
 '2los/cr_tt/low',
 '2los/cr_tt/med',
-# '2los/cr_vv/low',
-# '2los/cr_vv/med',
 '3l/cr_wz/low',
-'3l/cr_wz/med',
+'3l/cr_wz/med'
 ]            
+if args.signalModel!="T2tt":
+   categories.append('2los/sr/low')
+   categories.append('2los/sr/med')
+   categories.append('2los/sr/high')
+   categories.append('2los/sr/ultra')
+   categories.append('3l/sr/low')
+   categories.append('3l/sr/med')
+else:
+   categories.append('2los/sr_col/low')
+   categories.append('2los/sr_col/med')
+   categories.append('2los/sr_col/high')
+   categories.append('2los/sr_col/ultra')
 
 what=args.what
 odir=args.outDir.rstrip("/")
@@ -105,7 +131,7 @@ class bare_production:
                tasks.append(task(pr,yr,cat))
 
       def _printCmd(lep,reg,bin,sigstring,rflag,yr,outfile=None):
-         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --doWhat cards --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,opts,sigstring,rflag,odir,yr)
+         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,args.signalModel,opts,sigstring,rflag,odir,yr)
          if outfile:
             cmd += " >> %s"%outfile
          os.system(cmd)
@@ -139,8 +165,7 @@ class bare_production:
                         skim_instr='--inputDir \${MYTEMPSKIMDIR}'
                   else:
                      skim_instr='--preskim'
-                  signal_flags="--signalModel TChiWZ"
-                  if "iggsino" in list(prs)[0]: signal_flags="--signalModel Higgsino"
+                  signal_flags="--signalModel %s"%(args.signalModel)
                   if list(prs)[0].endswith('_pos'): signal_flags += " --reweight pos"
                   if list(prs)[0].endswith('_neg'): signal_flags += " --reweight neg"
                   _printCmd(lep,reg,bin,'%s --nCores 1 --signal --signalMasses '%skim_instr+','.join(['signal_%s'%pr for pr in prs if pr!='background']),signal_flags,yr,outfile)
@@ -214,8 +239,7 @@ class merge_and_fit:
                else:
                   out.append("set -e; mkdir -p \$(dirname %s)"%f2)
                   out.append("hadd -f %s %s %s"%(f2,f,f0))
-                  signal_flags="--signalModel TChiWZ"
-                  if "iggsino" in pr: signal_flags="--signalModel Higgsino"
+                  signal_flags="--signalModel %s"%(args.signalModel)
                   if pr.endswith('_pos'): signal_flags += " --reweight pos"
                   if pr.endswith('_neg'): signal_flags += " --reweight neg"
                   out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))

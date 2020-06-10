@@ -10,33 +10,29 @@ parser.add_argument("--indir", default=[], action="append", required=True, help=
 parser.add_argument("--outdir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
-parser.add_argument("--mll", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none','pos','neg']")
-parser.add_argument("--model", default="TChiWZ", choices=["TChiWZ","Higgsino"], help="Signal model to consider")
+parser.add_argument("--reweight", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none']")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
 
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.mll) == 0: args.mll = ['none','pos','neg']
+if len(args.reweight) == 0: args.reweight = ['none']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
-#if args.model == "Higgsino": args.mll = ['neg']
+#if args.signalModel == "Higgsino": args.reweight = ['neg']
 
 import ROOT
 from ROOT import *
-
-if len(args.indir) == 0: raise RuntimeError("No input directories given!")
-if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
-if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 
 logy=False
 #logy=True
 
 # Legend info
-if args.model == "TChiWZ":
-    moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.model == "Higgsino":
-    moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
+moreText = ""
+if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
 moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
 cmsTextFont           = 52  
@@ -46,14 +42,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=60.
+leg_ylo=65. if args.signalModel=="T2tt" else 55. if args.signalModel=="Higgsino" else 60.
 leg_nlines=3
 
 # Plot range
-range_xlo=100.
-range_xhi=300.
-range_ylo=3.
-range_yhi=75.
+range_xlo=297. if args.signalModel=="T2tt" else 100.
+range_xhi=653. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
+range_ylo=10. if args.signalModel=="T2tt" else 3.
+range_yhi=80. if args.signalModel=="T2tt" else 70. if args.signalModel=="Higgsino" else 75.
 
 if logy:
     range_yhi=350.
@@ -181,16 +177,13 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)
     h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
-    if args.model == "TChiWZ":
-        h_bkgd.GetXaxis().SetTitle("m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
-    elif args.model == "Higgsino":
-        h_bkgd.GetXaxis().SetTitle("m_{#tilde{#chi}_{2}^{0}} [GeV]")
+    h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel=="T2tt" else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
     h_bkgd.GetXaxis().SetLabelFont(42)
     h_bkgd.GetXaxis().SetTitleFont(42)
     h_bkgd.GetXaxis().SetLabelSize(0.042)
     h_bkgd.GetXaxis().SetTitleSize(0.052)
 
-    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
+    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel=="T2tt" else "#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
     h_bkgd.GetYaxis().SetTitleOffset(1.10)
     h_bkgd.GetYaxis().SetLabelFont(42)
     h_bkgd.GetYaxis().SetTitleFont(42)
@@ -373,7 +366,7 @@ def runMLL(indirs,tag,label,outdir):
     limCurves=[]
     lim_labels=['N1*N2>0','N1*N2<0']
 
-    for mll in args.mll:
+    for mll in args.reweight:
         if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
@@ -382,7 +375,7 @@ def runMLL(indirs,tag,label,outdir):
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
 
-    if 'pos' in args.mll and 'neg' in args.mll:
+    if 'pos' in args.reweight and 'neg' in args.reweight:
         plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
@@ -395,8 +388,8 @@ for sel in args.indir:
     name = sel.split("/")[-1]
     for tag in args.tag:
         print "For tag "+tag+":"
-        for mll in args.mll:
-            run("%s_merged/cards/%s%s_*"%(sel,args.model,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
+        for mll in args.reweight:
+            run("%s_merged/cards/%s%s_*"%(sel,args.signalModel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         if rwt_comp:
             card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log%s_*_{TAG}.txt"%("" if args.unblind else "_b")
