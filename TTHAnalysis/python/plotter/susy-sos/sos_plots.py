@@ -89,7 +89,7 @@ def base(selection):
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
-        if args.signal: CORE+=" --noStackSig --showIndivSigs "
+        if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
     if selection=='2los':
