@@ -30,6 +30,7 @@ parser.add_argument("--data", action="store_true", default=False, help="Include 
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
 parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
+parser.add_argument("--postfit", default=None, help="Read postfit plot from FitDiagnostics output, format file:shapes_fit_b for bkg-only, file:shapes_fit_s for s+b fit (must plot only the fitted variable)")
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
 
@@ -88,7 +89,7 @@ def base(selection):
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
-        if args.signal: CORE+=" --noStackSig --showIndivSigs "
+        if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
     if selection=='2los':
@@ -99,7 +100,7 @@ def base(selection):
             elif args.bin == "low": plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
             else: plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
 
-        wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR)
+        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)' ".format("L1PreFiringWeight_Nom*" if YEAR=="2016" or YEAR=="2017" else "")
         GO="%s -W %s --binname sos_%s "%(GO,wBG,conf)
 
     elif selection=='3l':
@@ -109,7 +110,7 @@ def base(selection):
             if args.bin == "low": plotting+="  minMllSFOS [4,10,20,30,50] "
             else: plotting+="  minMllSFOS [1,4,10,20,30,50] "
         
-        wBG = " 'puWeight*eventBTagSF*triggerSF(muDleg_SF(%s,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), %s)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,%s)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,%s)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,%s)' "%(YEAR,YEAR,YEAR,YEAR,YEAR)
+        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,year)' ".format("L1PreFiringWeight_Nom*" if YEAR=="2016" or YEAR=="2017" else "")
         GO="%s -W %s --binname sos_%s "%(GO,wBG,conf)
 
     else:
@@ -142,7 +143,6 @@ def formn2c1(old_str):
     n1 = float(sc1.replace('p','.'))
     c1 = n2 - 0.5*(n2-n1)
     ret = [sn2,"{:.2f}".format(c1).replace('.','p')]
-    print ret
     return ret
 
 def runIt(GO,plotting,name):
@@ -171,7 +171,7 @@ def runIt(GO,plotting,name):
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "Higgsino" in pr: 
-                FILENAME="SMS_Higgsino"
+                FILENAME="SMS_HiggsinoN2N1,SMS_HiggsinoN2C1"
                 GENMODELSTRING = " || ".join(['AltBranch$(GenModel_SMS_N2C1_higgsino_%s,0)'%('_'.join(formn2c1(pr.split('_')[2:4]))) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_SMS_N2N1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
@@ -243,7 +243,7 @@ def binChoice(x,torun):
     if metBinTrig=='': print "\n--- NO TRIGGER APPLIED! ---\n"
     return x2
 
-allow_unblinding = False
+allow_unblinding = True
 
 
 if __name__ == '__main__':
@@ -399,6 +399,7 @@ if __name__ == '__main__':
 
     if not args.data: x = add(x,'--xp data ')
     if args.unc: x = add(x,"--unc susy-sos/systsUnc.txt")
+    if args.postfit: x = add(x,"--getHistosFromFile %s/sos_%s_%s"%(args.postfit,conf,YEAR))
     if args.norm: x = add(x,"--sp '.*' --scaleSigToData ")
 
     if '_low' in torun :

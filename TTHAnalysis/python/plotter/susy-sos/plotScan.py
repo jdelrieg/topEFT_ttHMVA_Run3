@@ -7,11 +7,12 @@ import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--indir", default=[], action="append", required=True, help="Choose the input directories")
-parser.add_argument("--outDir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
+parser.add_argument("--outdir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
 parser.add_argument("--reweight", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none']")
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
+parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
 
@@ -28,9 +29,10 @@ logy=False
 #logy=True
 
 # Legend info
-moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-if args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-if args.signalModel=="Higgsino": moreText = "(pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} + pp #rightarrow #tilde{#chi}_{1}^{0}#tilde{#chi}_{2}^{0}), #tilde{#chi}_{2}^{0} #rightarrow Z#tilde{#chi}^{0}_{1}, #tilde{#chi}_{1}^{#pm} #rightarrow W#tilde{#chi}^{0}_{1} (BR=1), m_{#tilde{#chi}_{1}^{#pm}}=(m_{#tilde{#chi}_{2}^{0}}+m_{#tilde{#chi}^{0}_{1}})/2, NLO-NLL excl."
+moreText = ""
+if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
 moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
 cmsTextFont           = 52  
@@ -53,40 +55,102 @@ if logy:
     range_yhi=350.
     leg_ylo=100.
 
+def mass_from_str(s):
+    return float(s.replace('p','.'))
+
 class Limit:
+    def __init__(self,fname):
+        self.obs = None
+        self.exp = {}
+        if not os.path.exists(fname): return
+        f = ROOT.TFile.Open(fname)
+        if f:
+            tree = f.Get('limit')
+            if not tree: return
+            self.exp = {}
+            translate = {0.02500000037252903: -2, 0.1599999964237213: -1, 0.50: 0, 0.8399999737739563: 1, 0.9750000238418579: 2}
+            for ev in tree:
+                if ev.quantileExpected==-1:
+                    self.obs = ev.limit
+                else:
+                    self.exp[translate[ev.quantileExpected]] = ev.limit
+
+class MLFit:
+    def __init__(self,fname,frname):
+        self.nuisances = {}
+        self.mu = None
+        if not os.path.exists(fname): return
+        f = ROOT.TFile.Open(fname)
+        if f:
+            pars = f.Get(frname)
+            if not pars: return
+            pars_f = pars.floatParsFinal()
+            for i in xrange(pars_f.getSize()):
+                x = pars_f[i]
+                if x.GetName()!='r':
+                    self.nuisances[x.GetName()] = (x.getVal(),x.getError())
+                else:
+                    self.mu = (x.getVal(), x.getError(), (x.getErrorLo(),x.getErrorHi()))
+
+class Significance:
+    def __init__(self,fname):
+        self.val = None
+        if not os.path.exists(fname): return
+        f = ROOT.TFile.Open(fname)
+        if f:
+            tree = f.Get('limit')
+            if not tree: return
+            for ev in tree:
+                if ev.quantileExpected==-1: self.val = ev.limit
+
+class SignalPoint:
+    def __init__(self,indir,tag='all',blind=False):
+        self.modname = indir.split('/')[-1]
+        self.m1, self.m2 = map(lambda x: mass_from_str(x), self.modname.split('_')[-2:])
+        self.indir = indir
+        self.tag = tag
+        self.blind = blind
+        self.parse()
+
+    def parse(self):
+#        self.limit_aprio = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
+#        self.signif_aprio = Significance(self.indir+'/higgsCombine_%s_%s_exp_aprio.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
+#        self.mlfit_aprio_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_b')
+#        self.mlfit_aprio_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_s')
+        if not self.blind:
+            self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
+#            self.signif = Significance(self.indir+'/higgsCombine_%s_%s_obs.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
+#            self.signif_apost = Significance(self.indir+'/higgsCombine_%s_%s_exp_apost.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
+#            self.mlfit_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_b')
+#            self.mlfit_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_s')
+
+class LimitPoint:
     def __init__(self,mass, Dm, vals):
         self.mass = mass
         self.Dm = Dm
         self.vals = vals
 
-def mass_from_str(s):
-    return float(s.replace('p','.'))
-
 def getLimitHists(files, tag):
     limits=[]
-    parser={
-        'Expected 50.0' : 0,
-        'Expected 84.0' : 1,
-        'Expected 16.0' : -1,
-    }
     for f in files:
-        mass=os.path.basename(f).split('_')[3:5]
-        massH=mass_from_str(mass[0])
-        massL=mass_from_str(mass[0])-mass_from_str(mass[1])
-        with open(f) as fin:
-            vals={}
-            for line in fin:
-                for text,var in parser.iteritems():
-                    if text in line:
-                        vals[var] = float(line.split()[-1])
-            if len(vals)<len(parser): continue
-            lim=Limit(massH, massL, vals)
-            limits.append(lim)
+        mass = '%d_%d'%(f.m1,f.m2)
+        massH = f.m1
+        massL = f.m1-f.m2
+        vals = {}
+        if f.limit.exp:
+            vals.update(f.limit.exp)
+        if f.limit.obs:
+            vals[9] = f.limit.obs
+        lim = LimitPoint(massH, massL, vals)
+        limits.append(lim)
 
     hs={}
-    for var in parser.values():
+    vars_to_plot = [0,1,-1,2,-2]
+    if args.unblind: vars_to_plot.append(9)
+    for var in vars_to_plot:
         g = TGraph2D(len(limits))
         for i,lim in enumerate(limits):
+            if len(lim.vals)<len(vars_to_plot): continue
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
         g.SetNpx(200)
         g.SetNpy(200)
@@ -119,7 +183,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetXaxis().SetLabelSize(0.042)
     h_bkgd.GetXaxis().SetTitleSize(0.052)
 
-    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel=="T2tt" else "#Delta m(#tilde{#chi}_{1}^{#pm}, #tilde{#chi}_{1}^{0}) [GeV]")
+    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel=="T2tt" else "#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
     h_bkgd.GetYaxis().SetTitleOffset(1.10)
     h_bkgd.GetYaxis().SetLabelFont(42)
     h_bkgd.GetYaxis().SetTitleFont(42)
@@ -135,12 +199,20 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
 
-        h2lim, h2limP1, h2limM1 = limit_hists[0], limit_hists[1], limit_hists[-1]
+        h2lim, h2limP1, h2limM1, h2limP2, h2limM2 = limit_hists[0], limit_hists[1], limit_hists[-1], limit_hists[2], limit_hists[-2]
+        if args.unblind:
+            h2limObs = limit_hists[9]
+            h2limObs.SetLineWidth(2)
+            h2limObs.SetLineColor(ROOT.kBlack)
         h2lim.SetLineWidth(2)
         h2limP1.SetLineWidth(1)
         h2limM1.SetLineWidth(1)
         h2limP1.SetLineStyle(2)
         h2limM1.SetLineStyle(2)
+        h2limP2.SetLineWidth(1)
+        h2limM2.SetLineWidth(1)
+        h2limP2.SetLineStyle(3)
+        h2limM2.SetLineStyle(3)
 
     c1.SetLogz()
     c1.SetLogy(logy)
@@ -221,11 +293,27 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1m.SetLineWidth(1)
     gl1m.Draw("lsame")
 
+    if args.unblind:
+        gl1Obs=TGraph(2)
+        gl1Obs.SetPoint(0, x1+74.5, ylines[2]+fudge)
+        gl1Obs.SetPoint(1, x1+82.5, ylines[2]+fudge)
+        gl1Obs.SetLineColor(ROOT.kBlack)
+        gl1Obs.SetLineStyle(1)
+        gl1Obs.SetLineWidth(2)
+        gl1Obs.Draw("lsame")
+
     mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
     mT3.SetTextAlign(12)
     mT3.SetTextFont(42)
     mT3.SetTextSize(0.040)
     mT3.Draw()
+
+    if args.unblind:
+        mT3a=ROOT.TLatex(x1+86.5,ylines[2], "Observed")
+        mT3a.SetTextAlign(12)
+        mT3a.SetTextFont(42)
+        mT3a.SetTextSize(0.040)
+        mT3a.Draw()
 
     if len(limit_labels):
         XOFF = 100.
@@ -263,13 +351,15 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
 
 def run(indirs,tag,label,outdir):
-    limCurves=[]
     dirs=glob.glob(indirs)
-    files = ['%s/log_b_%s_%s.txt'%(d,os.path.basename(d),tag) for d in dirs]
-    files = filter(lambda f: os.path.exists(f),files)
-    print 'Found %d files'%len(files)
+    points = {}
+    for d in dirs:
+        x = SignalPoint(d,tag)
+        if x: points[(x.m1,x.m2)] = x
+    print 'Found %d files'%len(points)
+    if len(points)==0: raise RuntimeError("No points found")
 
-    lims = getLimitHists(files,tag)
+    lims = getLimitHists(points.values(),tag)
     plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
@@ -280,6 +370,7 @@ def runMLL(indirs,tag,label,outdir):
         if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
         print 'Found %d files'%len(files)
+        if len(files)==0: raise RuntimeError("No files found")
         l = getLimitHists(files, mll)
         limCurves.append( l )
         plotLimits([l], [lim_labels[mll=='neg']], "%s_%s_only"%(label,mll), outdir)
@@ -288,7 +379,7 @@ def runMLL(indirs,tag,label,outdir):
         plotLimits(limCurves, lim_labels, label+"_both", outdir)
 
 
-outdir=args.outDir.rstrip("/")
+outdir=args.outdir.rstrip("/")
 print "Scans will be saved in the folder '%s'..."%outdir
 
 rwt_comp = False
@@ -301,5 +392,5 @@ for sel in args.indir:
             run("%s_merged/cards/%s%s_*"%(sel,args.signalModel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 
         if rwt_comp:
-            card_prototype=sel+"_merged/cards/"+args.signalModel+"{MLL}_*/log_b_*_{TAG}.txt"
+            card_prototype=sel+"_merged/cards/"+args.model+"{MLL}_*/log%s_*_{TAG}.txt"%("" if args.unblind else "_b")
             runMLL(card_prototype,tag,'mll_'+tag,outdir)
