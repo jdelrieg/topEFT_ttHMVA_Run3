@@ -243,7 +243,7 @@ def binChoice(x,torun):
     if metBinTrig=='': print "\n--- NO TRIGGER APPLIED! ---\n"
     return x2
 
-allow_unblinding = False
+allow_unblinding = True
 
 
 if __name__ == '__main__':
