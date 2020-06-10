@@ -178,7 +178,7 @@ class VB_DecayModes(Module):
         for br in self.namebranches:
             allret[br+self.label] = ret[br]
 
-    return allret
+        return allret
 
 
 if __name__ == '__main__':
