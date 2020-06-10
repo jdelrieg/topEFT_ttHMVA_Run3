@@ -56,6 +56,8 @@ if logy:
     range_yhi=350.
     leg_ylo=100.
 
+def mass_from_str(s):
+    return float(s.replace('p','.'))
 
 class Limit:
     def __init__(self,fname):
@@ -105,7 +107,7 @@ class Significance:
 class SignalPoint:
     def __init__(self,indir,tag='all',blind=False):
         self.modname = indir.split('/')[-1]
-        self.m1, self.m2 = map(lambda x: int(x), self.modname.split('_')[-2:])
+        self.m1, self.m2 = map(lambda x: mass_from_str(x), self.modname.split('_')[-2:])
         self.indir = indir
         self.tag = tag
         self.blind = blind
