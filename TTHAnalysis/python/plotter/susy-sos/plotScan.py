@@ -131,9 +131,6 @@ class LimitPoint:
         self.Dm = Dm
         self.vals = vals
 
-def mass_from_str(s):
-    return float(s.replace('p','.'))
-
 def getLimitHists(files, tag):
     limits=[]
     for f in files:
