@@ -166,7 +166,7 @@ def runIt(GO,plotting,name):
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
             for pr in args.signalMasses.split(','):
-                if "TChiWZ" not in pr and "Higgsino" not in pr and "T2tt" not in pr: raise RuntimeError('Unrecognised signal model')
+                if "TChiWZ" not in pr and "Higgsino" not in pr and "T2tt" not in pr and "T2bW" not in pr: raise RuntimeError('Unrecognised signal model')
             FILENAME="SMS_TChiWZ"
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
@@ -178,6 +178,10 @@ def runIt(GO,plotting,name):
             if "T2tt" in pr:
                 FILENAME="SMS_T2tt"
                 GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
+                GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+            if "T2bW" in pr:
+                FILENAME="SMS_T2bW"
+                GENMODEL = "GenModel_T2bW_X05_dM_10to80_genHT_160_genMET_80"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
                 'TREESALLSKIM': TREESALL if args.signalModel=="T2tt" else TREESALLSKIM, # To be fixed
