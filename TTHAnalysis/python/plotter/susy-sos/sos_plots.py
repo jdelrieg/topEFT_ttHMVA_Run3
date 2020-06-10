@@ -72,6 +72,8 @@ if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
+if YEAR == "2016":
+    TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
 
 def base(selection):
     plotting=''
