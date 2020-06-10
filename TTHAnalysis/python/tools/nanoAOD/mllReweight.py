@@ -25,8 +25,9 @@ class mllReweight( Module ):
         self.mZ=91.2
         self.barcodeN1=1000022
         self.barcodeN2=1000023
+        self.barcodeC1=1000024
+        self.barcodeT =1000006
         self.lepIDs=[11,13,15]
-        #self.barcodeC1=1000024
 
         # Weights only relevant for the far-off-shell case.
         # Integral diverges over the Z pole, so specify the 
@@ -52,6 +53,8 @@ class mllReweight( Module ):
             self.wrappedOutputTree.branch(self.label+"_dm",'F')
             self.wrappedOutputTree.branch(self.label+"_mN1",'F')
             self.wrappedOutputTree.branch(self.label+"_mN2",'F')
+            self.wrappedOutputTree.branch(self.label+"_mC1",'F')
+            self.wrappedOutputTree.branch(self.label+"_mT" ,'F')
             self.wrappedOutputTree.branch(self.label+"_nlep",'F')
 
     def GetNormFunction(self, name, formula, mN1, mN2):
@@ -106,7 +109,9 @@ class mllReweight( Module ):
 
     def analyze(self, event):
         mN1=0
+        mC1=0
         mN2=0
+        mT=0 # stop
         # find the initial N1, N2 from the truth particles
         genParts = Collection(event, 'GenPart')
         n2_lep_vecs=[]
@@ -118,6 +123,12 @@ class mllReweight( Module ):
             if (not mN2 and abs(p.pdgId) == self.barcodeN2 
                 and abs(p.genPartIdxMother) != self.barcodeN2):
                 mN2 = int(p.mass+1e-5) 
+            if (not mC1 and abs(p.pdgId) == self.barcodeC1 
+                and abs(p.genPartIdxMother) != self.barcodeC1):
+                mC1 = int(p.mass+1e-5) 
+            if (not mT and abs(p.pdgId) == self.barcodeT
+                and abs(p.genPartIdxMother) != self.barcodeT):
+                mT = int(p.mass+1e-5) 
             # find leptons
             if abs(p.pdgId) in self.lepIDs:
                 if p.genPartIdxMother>=0 and abs(genParts[p.genPartIdxMother].pdgId) in self.lepIDs:
@@ -142,6 +153,8 @@ class mllReweight( Module ):
             self.wrappedOutputTree.fillBranch(self.label+"_dm", mN2-mN1)
             self.wrappedOutputTree.fillBranch(self.label+"_mN1", mN1)
             self.wrappedOutputTree.fillBranch(self.label+"_mN2", mN2)
+            self.wrappedOutputTree.fillBranch(self.label+"_mC1", mC1)
+            self.wrappedOutputTree.fillBranch(self.label+"_mT" , mT)
         wPos, wNeg = self.GetWeights(mll, mN1, mN2)
         self.wrappedOutputTree.fillBranch(self.label+"_pos", wPos)
         self.wrappedOutputTree.fillBranch(self.label+"_neg", wNeg)

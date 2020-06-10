@@ -6,10 +6,15 @@ SR_3l_mll4  : minMllSFOS : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', 
 SR_3l_mll4_log  : minMllSFOS : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', LegendCutoff=0, MoreY=2, Logy
 SR_3l_fine  : minMllSFOS : 12, 4, 124 ; XTitle="M(ll) [GeV]", IncludeOverflows=True, MoreY=2
 
+#SR_3l_vfine  : minMllSFOS : 50, 0, 50 ; XTitle="M(ll) [GeV]", IncludeOverflows=True, MoreY=2
+
 ## Lepton variables
 lep1pt          : LepGood1_pt                           : 20,0,40  ; XTitle="Leading lepton p_{T} [GeV]"     , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
 lep2pt          : LepGood2_pt                           : 20,0,40  ; XTitle="Subleading lepton p_{T} [GeV]"  , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
 lep3pt          : LepGood3_pt                           : 20,0,40  ; XTitle="Trailing lepton p_{T} [GeV]"    , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
+#lep1pt_fine     : LepGood1_pt                           : 40,0,40  ; XTitle="Leading lepton p_{T} [GeV]"     , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
+#lep2pt_fine     : LepGood2_pt                           : 40,0,40  ; XTitle="Subleading lepton p_{T} [GeV]"  , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
+#lep3pt_fine     : LepGood3_pt                           : 40,0,40  ; XTitle="Trailing lepton p_{T} [GeV]"    , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10
 lep1eta         : abs(LepGood1_eta)                     : 10,0,2.5 ; XTitle="Leading lepton #||{#eta}"       , Legend='TR', IncludeOverflows=False, MoreY=1.5
 lep2eta         : abs(LepGood2_eta)                     : 10,0,2.5 ; XTitle="Subleading lepton #||{#eta}"    , Legend='TR', IncludeOverflows=False, MoreY=1.5
 lep3eta         : abs(LepGood3_eta)                     : 10,0,2.5 ; XTitle="Trailing lepton #||{#eta}"      , Legend='TR', IncludeOverflows=False, MoreY=1.5
