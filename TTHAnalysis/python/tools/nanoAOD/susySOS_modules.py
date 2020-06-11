@@ -384,3 +384,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.mllReweight import mllReweight
 from CMGTools.TTHAnalysis.tools.nanoAOD.vb_decaymodes import VB_DecayModes
 
 sigRew = [mllReweight,VB_DecayModes]
+
+from CMGTools.TTHAnalysis.tools.nanoAOD.isrReweight import isrReweight
+
+isrReweight2016 = lambda :  isrReweight(isrWfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/isrReweights_corrections_TChiWZ_2016.json" , normWfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/isrReweight_normalizedConsts_TChiWZ_2016.txt")
