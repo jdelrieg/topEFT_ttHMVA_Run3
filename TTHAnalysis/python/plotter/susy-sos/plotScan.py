@@ -42,14 +42,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=50.
+leg_ylo=40. if args.signalModel=="Higgsino" else 50.
 leg_nlines=3
 
 # Plot range
 range_xlo=297. if args.signalModel=="T2tt" else 100.
 range_xhi=653. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
-range_ylo=10. if args.signalModel=="T2tt" else 3.5
-range_yhi=61.5
+range_ylo=10. if args.signalModel=="T2tt" else 3. if args.signalModel=="Higgsino" else 3.5
+range_yhi=50. if args.signalModel=="Higgsino" else 61.5
 
 if logy:
     range_yhi=350.
