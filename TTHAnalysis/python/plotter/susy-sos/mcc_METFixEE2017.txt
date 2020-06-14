@@ -1,1 +1,2 @@
 MET_(\w+) : METFixEE2017_\1 ; AlsoData
+genMETFixEE2017_(\w+) : genMET_\1 ; AlsoData
