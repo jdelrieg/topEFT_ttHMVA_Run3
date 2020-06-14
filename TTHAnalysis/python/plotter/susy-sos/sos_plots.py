@@ -92,15 +92,17 @@ def base(selection):
         if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
+    wPrefire = ""   
+    if args.signalModel not in ["T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
     if selection=='2los':
         GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
         if args.doWhat in ["cards"]:
-            if args.reg == "sr_col": plotting+=" LepGood1_pt [3.5,12,20,30] "
+            if args.reg == "sr_col": plotting+=" LepGood1_pt [3.5,8,12,16,20,25,30] "
             elif args.bin == "low": plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [4,10,20,30,50] "
             else: plotting+=" 'mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass)' [1,4,10,20,30,50] "
 
-        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)' ".format("L1PreFiringWeight_Nom*" if YEAR=="2016" or YEAR=="2017" else "")
+        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta), MET_pt, metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,MET_pt,MET_phi), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)' ".format(wPrefire)
         GO="%s -W %s --binname sos_%s "%(GO,wBG,conf)
 
     elif selection=='3l':
@@ -184,7 +186,7 @@ def runIt(GO,plotting,name):
                 GENMODEL = "GenModel_T2bW_X05_dM_10to80_genHT_160_genMET_80"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
-                'TREESALLSKIM': TREESALL if args.signalModel=="T2tt" else TREESALLSKIM, # To be fixed
+                'TREESALLSKIM': TREESALLSKIM,
                 'nCores': nCores,
                 'YEAR': YEAR,
                 'FILENAME': FILENAME,
