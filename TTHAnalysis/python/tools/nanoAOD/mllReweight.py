@@ -157,7 +157,7 @@ class mllReweight( Module ):
             self.wrappedOutputTree.fillBranch(self.label+"_mN1", mN1)
             self.wrappedOutputTree.fillBranch(self.label+"_mN2", mN2)
             self.wrappedOutputTree.fillBranch(self.label+"_mC1", mC1)
-            self.wrappedOutputTree.fillBranch(self.label+"_mC1m", mC1)
+            self.wrappedOutputTree.fillBranch(self.label+"_mC1m", mC1m)
             self.wrappedOutputTree.fillBranch(self.label+"_mT" , mT)
         wPos, wNeg = self.GetWeights(mll, mN1, mN2)
         self.wrappedOutputTree.fillBranch(self.label+"_pos", wPos)
