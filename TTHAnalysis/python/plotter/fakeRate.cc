@@ -529,9 +529,48 @@ float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
 void fakeRate() {}
 
 
+float fakeRatePromptRateWeight_2l_kl(float l1fr, float l1pr, bool l1pass,
+                            float l2fr, float l2pr, bool l2pass,
+                            int selhyp=-1, int selfs=11)
+{
+    // selhyp: -1 = all with at least one fake; 00 = double-fakes; 01 = l1 is fake, 10 = l2 is fake
+    // selfs : 11 = pass-pass, 00 = fail-fail, 10 = pass-fail, 01 = fail-pass
+    // The math is:
+    // 1) 1/(p - f)   for each lepton
+    // 2) to predict the yield before selection in a given configuration of prompt and fake, get a factor
+    //         pass -> prompt :  ( 1 - f )
+    //         pass -> fake   : -( 1 - p )
+    //         fail -> prompt : -    f
+    //         fail -> fake   :      p
+    //  3) then add the various p, (1-p), f, (1-f) depending on what you want to predict
+    float f[2] = { l1fr, l2fr };
+    float p[2] = { l1pr, l2pr };
+    bool pass[2] = { l1pass, l2pass };
 
-float fakeRatePromptRateWeight_2l_ij(float l1pt, float l1eta, int l1pdgId, bool l1pass,
-                            float l2pt, float l2eta, int l2pdgId, bool l2pass, int iFR, int iPR, int selhyp=-1, int selfs=11)
+    int hypots[4] = { 0, 1, 10, 11 };
+    double weight = 0;
+    for (int h : hypots) {
+        if (!(selhyp == h || (selhyp == -1 && h != 11))) continue;
+        double myw = 1.0;
+        for (int i = 0; i < 2; ++i) {
+            int target = (i == 1 ? h % 10 : h / 10); // 1 if prompt, 0 if fake
+            // (1)
+            myw *= 1.0/(p[i]-f[i]);
+            // (2)
+            if (pass[i]) myw *= (target ? (1-f[i]) : -(1-p[i]) );
+            else         myw *= (target ?   -f[i]  :   p[i]    );
+            // (3)
+            int shouldpass = (i == 1 ? selfs % 10 : selfs / 10); // 1 if I'm predicting a passing, 0 if I'm predicting a failing
+            if (shouldpass) myw *= (target ?    p[i]    :     f[i]   );
+            else            myw *= (target ? (1 - p[i]) : (1 - f[i]) );
+        }
+        weight += myw;
+    }
+    return weight;
+}
+
+float fakeRatePromptRateWeight_2l_ij(float l1pt, float l1eta, int l1pdgId, int l1pass,
+                            float l2pt, float l2eta, int l2pdgId, int l2pass, int iFR, int iPR, int selhyp=-1, int selfs=11)
 {
     // selhyp: -1 = all with at least one fake; 00 = double-fakes; 01 = l1 is fake, 10 = l2 is fake
     // selfs : 11 = pass-pass, 00 = fail-fail, 10 = pass-fail, 01 = fail-pass
@@ -546,7 +585,7 @@ float fakeRatePromptRateWeight_2l_ij(float l1pt, float l1eta, int l1pdgId, bool 
     float pt[2] = { l1pt, l2pt };
     float eta[2] = { std::abs(l1eta), std::abs(l2eta) };
     int id[2]  = { std::abs(l1pdgId), std::abs(l2pdgId) };
-    bool pass[2] = { l1pass, l2pass };
+    int pass[2] = { l1pass, l2pass };
     float p[2], f[2];
     for (int i = 0; i < 2; ++i) {
         TH2 *hist = (id[i] == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
