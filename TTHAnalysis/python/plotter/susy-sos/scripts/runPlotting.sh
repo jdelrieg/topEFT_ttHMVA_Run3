@@ -24,7 +24,7 @@ done
 while ! [ -z "$7" ]; do
     EXTRAS="$EXTRAS $7"; shift;
 done
-COMMAND="$( python susy-sos/sos_plots.py $DIR $YEAR --lep $LEP --reg $REG --bin $BIN $FLAGS ) $EXTRAS"
+COMMAND="$( python susy-sos/sos_plots.py $DIR --year $YEAR --lep $LEP --reg $REG --bin $BIN $FLAGS ) $EXTRAS"
 
 echo "Region:"
 echo $YEAR $LEP $REG $BIN
