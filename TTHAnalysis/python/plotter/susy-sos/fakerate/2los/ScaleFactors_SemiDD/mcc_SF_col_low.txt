@@ -1,0 +1,6 @@
+ScaleFactor1F_16: 1.808179
+ScaleFactor2F_16: 2.129106
+ScaleFactor1F_17: 2.588118
+ScaleFactor2F_17: 7.892315
+ScaleFactor1F_18: 2.319112
+ScaleFactor2F_18: 3.962902
