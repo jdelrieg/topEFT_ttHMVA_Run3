@@ -4,14 +4,13 @@ function do_help() {
     printf "Use this to generate a directory named <year> with mca files
 Fetches info from the path ./metadata
 Usage:
-$(basename $0) --year <year> --md <metadata-dir> [--make-draft] [--one-file]
+$(basename $0) --md <metadata-dir> [--make-draft] [--one-file]
 "
     exit 0
 }
 
 while [ ! -z "$1" ]; do
     [ "$1" == "--help" ] && do_help
-    [ "$1" == "--year" ] && { year=$2; shift 2; continue; }
     [ "$1" == "--md" ] && { metadata=$PWD/$2; shift 2; continue; }
     [ "$1" == "--make-draft" ] && { mkdraft=true; shift; continue; }
     [ "$1" == "--one-file" ] && { onefile=true; shift; continue; }
@@ -23,8 +22,7 @@ done
 ## check args and build env
 { [ -z "$CMSSW_BASE" ] || ! [[ $PWD =~ .*$(echo $CMSSW_BASE | sed s/.*$USER//).* ]]; } && { echo "Run cmsenv"; exit 1; }
 cd $CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/mca-includes
-[ -z "$year" ] && { echo "specify year using '--year <year>'"; exit 1; }
-[ -z "$mkdraft" ] && { mkdraft=false; dirout=$year; } || { dirout=${year}_draft; rm -rf $dirout; }
+[ -z "$mkdraft" ] && { mkdraft=false; dirout=.; } || { dirout=draft; rm -rf $dirout; }
 [ -z "$onefile" ] && onefile=false
 [ -z "$metadata" ] && { echo "Please provide the metadata dir using --md <metadata>"; exit 1; }
 [ -z "$buildfiles" ] && { echo "Getting the filelist to create from the matadata/ dir."; buildfiles=$metadata/filesToChange_fakes.txt; }
@@ -61,7 +59,7 @@ cat $buildfiles | while read line; do
     ## check validity of line
     [[ $line =~ ^$ ]] && continue
     file=$(echo $line | sed -r "s/^([^,]*),.*/\1/")
-    buildfile=$dirout/$(echo $file | sed s@.*mca\-includes/YEAR/@@)
+    buildfile=$dirout/$(echo $file | sed s@.*mca\-includes/@@)
 
     ## create file
     ! [ -z "$buildfile" ] && echo "-----> file: $buildfile" || { echo "buildfile var is empty"; exit 2; }
@@ -71,7 +69,7 @@ cat $buildfiles | while read line; do
     touch $buildfile # be sure that you can access the file in hand
 
     ## find source file
-    srcfile=$year/$(echo $buildfile | sed "s@$dirout/@@; s@\.tmp@@")
+    srcfile=$(echo $buildfile | sed "s@$dirout/@@; s@\.tmp@@")
     echo "-----> srcfile: $srcfile"
 
     ## get analysis
@@ -88,11 +86,11 @@ cat $buildfiles | while read line; do
     oldifs=$IFS && IFS='@'
 
     ## write file
-    echo "## file: $(echo $file | sed s/YEAR/$year/)" >> $buildfile
-    echo >> $buildfile
+    #echo "## file: $(echo $file)" >> $buildfile
+    #echo >> $buildfile
     for cut in $cuts; do
 	echo "-----> cut: $cut";
-	weight=$(echo $cut | sed -r "s/^(.[^ ]*) .*/\1/")
+    weight=$(echo $cut | sed -r "s/^(.[^ ]*) .*/\1/" | sed "s/_SHYEAR//")
 	echo "## weight: $weight" >> $buildfile
 
 	## get extra info from the src file
@@ -106,34 +104,29 @@ cat $buildfiles | while read line; do
 	echo $color
 	$(echo $label | wc | awk '{if ($1>1) print "true"; else print "false"}') && uselookup=true || uselookup=false
 
-	yearfound=false
 	for sample in $samples; do
-	    ## go to the samples for the correct year
-	    if ! $yearfound; then
-		echo $sample | grep $year > /dev/null && yearfound=true
-		continue # in any case go to the next line
-	    fi
+        ## get the year
+        [[ $sample =~ 201[678] ]] && { year=$sample; shyear=${year: -2}; printf "\n## $year\n"  >> $buildfile; continue; }
 	    ## skip these lines
 	    { [ "$sample" == "----" ] || [[ $sample =~ ^$ ]]; } && continue
-	    ## if reach next year break
-	    { $yearfound && [[ $sample =~ 201[678] ]]; } && break
 
 	    ## check if the sample is commented out and modify cut
 	    [[ $sample =~ ^\#[^\#]* ]] && { # if the sample is commented out, move '#' before line
 		sample=$(echo $sample | sed s/^#//)
 		name="#$name"
 	    }
-	    cutmodded=$(echo $cut|sed "s@/YEAR/@/$year/@")
-	    # echo $cutmodded
 
-	    ## if label is not unique, get info for label from the look up function
+	    #echo $cut
+        cutmodded=$(echo $cut| sed "s@SHYEAR@$shyear@"| sed "s@/YEAR/@/$year/@")
+        #echo $cutmodded
+        # if label is not unique, get info for label from the look up function
 	    $uselookup && label=$(getLabel $sample)
 
 	    ## print the line
 	    if echo $cutmodded | grep "; *$" > /dev/null; then
-		printf "%-25s:%-30s:%s %s,%s\n" $name $sample $cutmodded $label $color >> $buildfile
+            printf "%-25s:%-30s:%s %s,%s,years=\"%s\"\n" $name $sample $cutmodded $label $color $year >> $buildfile
 	    else
-		printf "%-25s:%-30s:%s,%s,%s\n" $name $sample $cutmodded $label $color >> $buildfile
+            printf "%-25s:%-30s:%s,%s,%s,years=\"%s\"\n" $name $sample $cutmodded $label $color $year >> $buildfile
 	    fi
 
 	    ## clean '#' for the next use
