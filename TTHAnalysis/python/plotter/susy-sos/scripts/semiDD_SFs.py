@@ -28,4 +28,5 @@ with open(fileName) as fp:
 if data==0 or fakes==0: SF = 0
 else: SF = (data - (bkg - fakes)) / fakes
 SF_string = "ScaleFactor1F" if "1F" in args.reg else "ScaleFactor2F" if "2F" in args.reg else "ScaleFactor3F"
+SF_string = SF_string+"_"+str(args.year)[-2:]
 subprocess.call(["echo", "%s: %f"%(SF_string,SF)])
