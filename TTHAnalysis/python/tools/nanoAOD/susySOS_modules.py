@@ -363,6 +363,9 @@ from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWei
 eventBTagWeight_16 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_2016LegacySF_V1.csv", discrname="btagDeepB")
 eventBTagWeight_17 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V4_B_F.csv", discrname="btagDeepB")
 eventBTagWeight_18 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_102XSF_V1.csv", discrname="btagDeepB")
+eventBTagWeight_16Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_16SL_18_3_2019.csv", discrname="btagDeepB")
+eventBTagWeight_17Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_17SL_18_3_2019.csv", discrname="btagDeepB")
+eventBTagWeight_18Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_18SL_7_5_2019.csv", discrname="btagDeepB")
 
 
 ### TnP stuff
