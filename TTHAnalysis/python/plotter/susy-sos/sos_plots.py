@@ -410,7 +410,7 @@ if __name__ == '__main__':
 
     if not args.data: x = add(x,'--xp data ')
     if args.unc: x = add(x,"--unc susy-sos/systsUnc.txt")
-    if args.postfit: x = add(x,"--getHistosFromFile %s/sos_%s_%s"%(args.postfit,conf,YEAR))
+    if args.postfit: x = add(x,"--getHistosFromFile %s/sos_%s"%(args.postfit,conf))+("_%s "%YEARS[0] if len(YEARS)==1 else "")
     if args.norm: x = add(x,"--sp '.*' --scaleSigToData ")
 
     if '_low' in torun :
