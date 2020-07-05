@@ -11,7 +11,7 @@ parser.add_argument("--outdir", default="susy-sos/scanPlots/", help="Choose the 
 parser.add_argument("--tag", default=[], action="append", help="Choose the tags to plot. Default=['all','2lep','3lep']")
 parser.add_argument("--savefmts", default=[], action="append", help="Choose save formats for plots. Default=['.pdf','.png','.jpg','.root','.C']")
 parser.add_argument("--reweight", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none']")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
@@ -31,7 +31,7 @@ logy=False
 # Legend info
 moreText = ""
 if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel=="T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel in ["T2tt","T2bW"]: moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
 elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
 moreText2 = "median expected upper limit on signal strength at 95% CL"
 cmsText               = "#bf{CMS} Preliminary"
@@ -42,14 +42,14 @@ lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=65. if args.signalModel=="T2tt" else 55. if args.signalModel=="Higgsino" else 60.
+leg_ylo=65. if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 50.
 leg_nlines=3
 
 # Plot range
-range_xlo=297. if args.signalModel=="T2tt" else 100.
-range_xhi=653. if args.signalModel=="T2tt" else 250. if args.signalModel=="Higgsino" else 300.
-range_ylo=10. if args.signalModel=="T2tt" else 3.
-range_yhi=80. if args.signalModel=="T2tt" else 70. if args.signalModel=="Higgsino" else 75.
+range_xlo=297. if args.signalModel in ["T2tt","T2bW"] else 100.
+range_xhi=653. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 300.
+range_ylo=10. if args.signalModel in ["T2tt","T2bW"] else 3. if args.signalModel=="Higgsino" else 3.5
+range_yhi=80. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 61.5
 
 if logy:
     range_yhi=350.
@@ -104,21 +104,22 @@ class Significance:
                 if ev.quantileExpected==-1: self.val = ev.limit
 
 class SignalPoint:
-    def __init__(self,indir,tag='all',blind=False):
+    def __init__(self,indir,tag='all',unblind=False):
         self.modname = indir.split('/')[-1]
         self.m1, self.m2 = map(lambda x: mass_from_str(x), self.modname.split('_')[-2:])
         self.indir = indir
         self.tag = tag
-        self.blind = blind
+        self.unblind = unblind
         self.parse()
 
     def parse(self):
+        self.limit = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))      
 #        self.limit_aprio = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
 #        self.signif_aprio = Significance(self.indir+'/higgsCombine_%s_%s_exp_aprio.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #        self.mlfit_aprio_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_b')
 #        self.mlfit_aprio_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_s')
-        if not self.blind:
-            self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
+        if self.unblind:
+             self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
 #            self.signif = Significance(self.indir+'/higgsCombine_%s_%s_obs.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #            self.signif_apost = Significance(self.indir+'/higgsCombine_%s_%s_exp_apost.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #            self.mlfit_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_b')
@@ -143,7 +144,6 @@ def getLimitHists(files, tag):
             vals[9] = f.limit.obs
         lim = LimitPoint(massH, massL, vals)
         limits.append(lim)
-
     hs={}
     vars_to_plot = [0,1,-1,2,-2]
     if args.unblind: vars_to_plot.append(9)
@@ -152,12 +152,11 @@ def getLimitHists(files, tag):
         for i,lim in enumerate(limits):
             if len(lim.vals)<len(vars_to_plot): continue
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
-        g.SetNpx(200)
-        g.SetNpy(200)
+        g.SetNpx(300)
+        g.SetNpy(300)
         h = g.GetHistogram().Clone()
         h.SetTitle('')
         hs[var]=h
-
     return hs
 
 
@@ -177,13 +176,13 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)
     h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
-    h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel=="T2tt" else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
+    h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
     h_bkgd.GetXaxis().SetLabelFont(42)
     h_bkgd.GetXaxis().SetTitleFont(42)
     h_bkgd.GetXaxis().SetLabelSize(0.042)
     h_bkgd.GetXaxis().SetTitleSize(0.052)
 
-    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel=="T2tt" else "#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
+    h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel in ["T2tt","T2bW"] else "#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
     h_bkgd.GetYaxis().SetTitleOffset(1.10)
     h_bkgd.GetYaxis().SetLabelFont(42)
     h_bkgd.GetYaxis().SetTitleFont(42)
@@ -293,6 +292,22 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     gl1m.SetLineWidth(1)
     gl1m.Draw("lsame")
 
+    gl2p=TGraph(2)
+    gl2p.SetPoint(0, x1+4.5, ylines[2]+2*spread+fudge)
+    gl2p.SetPoint(1, x1+12.5,ylines[2]+2*spread+fudge)
+    gl2p.SetLineColor(colz[0])
+    gl2p.SetLineStyle(3)
+    gl2p.SetLineWidth(1)
+    gl2p.Draw("lsame")
+
+    gl2m=TGraph(2)
+    gl2m.SetPoint(0, x1+4.5, ylines[2]-2*spread+fudge)
+    gl2m.SetPoint(1, x1+12.5,ylines[2]-2*spread+fudge)
+    gl2m.SetLineColor(colz[0])
+    gl2m.SetLineStyle(3)
+    gl2m.SetLineWidth(1)
+    gl2m.Draw("lsame")
+
     if args.unblind:
         gl1Obs=TGraph(2)
         gl1Obs.SetPoint(0, x1+74.5, ylines[2]+fudge)
@@ -354,11 +369,10 @@ def run(indirs,tag,label,outdir):
     dirs=glob.glob(indirs)
     points = {}
     for d in dirs:
-        x = SignalPoint(d,tag)
+        x = SignalPoint(d,tag,args.unblind)
         if x: points[(x.m1,x.m2)] = x
     print 'Found %d files'%len(points)
     if len(points)==0: raise RuntimeError("No points found")
-
     lims = getLimitHists(points.values(),tag)
     plotLimits([lims], [], label, outdir)
 
