@@ -114,7 +114,7 @@ def base(selection):
             if args.bin == "low": plotting+="  minMllSFOS [4,10,20,30,50] "
             else: plotting+="  minMllSFOS [1,4,10,20,30,50] "
         
-        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,year)' ".format("L1PreFiringWeight_Nom*" if YEAR=="2016" or YEAR=="2017" else "")
+        wBG = " '{}puWeight*eventBTagSF*triggerSF(muDleg_SF(year,LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,0,LepGood3_pt,LepGood3_eta,lepton_permut(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId,LepGood2_pdgId,LepGood3_pdgId)), year)*lepSF(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,year)*lepSF(LepGood2_pt,LepGood2_eta,LepGood2_pdgId,year)*lepSF(LepGood3_pt,LepGood3_eta,LepGood3_pdgId,year)' ".format(wPrefire)
         GO="%s -W %s --binname sos_%s "%(GO,wBG,conf)
 
     else:

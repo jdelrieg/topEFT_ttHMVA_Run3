@@ -113,13 +113,12 @@ class SignalPoint:
         self.parse()
 
     def parse(self):
-        self.limit = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))      
-#        self.limit_aprio = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
+        self.limit = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
 #        self.signif_aprio = Significance(self.indir+'/higgsCombine_%s_%s_exp_aprio.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #        self.mlfit_aprio_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_b')
 #        self.mlfit_aprio_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_s')
         if self.unblind:
-             self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
+            self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
 #            self.signif = Significance(self.indir+'/higgsCombine_%s_%s_obs.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #            self.signif_apost = Significance(self.indir+'/higgsCombine_%s_%s_exp_apost.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
 #            self.mlfit_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_b')
