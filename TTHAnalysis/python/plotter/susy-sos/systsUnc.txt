@@ -84,8 +84,8 @@ CMS_btag_cferr2		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cfer
 
 PU  : $allMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 
-Prefire_16 : $allMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2016"
-Prefire_17 : $allMC : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2017"
+Prefire_16 : $allMCFullSIM : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2016"
+Prefire_17 : $allMCFullSIM : .* : templateAsymm; AddWeights=['L1PreFiringWeight_Up/L1PreFiringWeight_Nom'\,'L1PreFiringWeight_Dn/L1PreFiringWeight_Nom'], year="2017"
 
 ISR_16   : signal_TChiWZ.* : .* : templateAsymm;  AddWeights=['if3(isrWeight>=0\,isrWeight\,1)'\, '1./if3(isrWeight>=0\,isrWeight\,1)'], year="2016"
 ISR_17   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2017"
