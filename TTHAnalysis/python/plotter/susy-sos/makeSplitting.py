@@ -59,7 +59,7 @@ for mll in args.reweight.split(','):
       signals += ['%s_%s'%(x,mll) for x in _signals]
 
 categories=[
-'2los/cr_ss/med/dd',
+'2los/cr_ss/med/semidd',
 '2los/cr_dy/low/dd',
 '2los/cr_dy/med/dd',
 '2los/cr_tt/low/dd',
