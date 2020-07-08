@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Choose signal model")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
@@ -94,8 +94,8 @@ def base(selection):
         if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
-    wPrefire = ""
-    if args.signalModel!="T2tt" and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
+    wPrefire = ""   
+    if args.signalModel not in ["T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
     if selection=='2los':
         GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
@@ -170,7 +170,7 @@ def runIt(GO,plotting,name):
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
             for pr in args.signalMasses.split(','):
-                if "TChiWZ" not in pr and "Higgsino" not in pr and "T2tt" not in pr: raise RuntimeError('Unrecognised signal model')
+                if "TChiWZ" not in pr and "Higgsino" not in pr and "T2tt" not in pr and "T2bW" not in pr: raise RuntimeError('Unrecognised signal model')
             FILENAME="SMS_TChiWZ"
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
@@ -182,6 +182,10 @@ def runIt(GO,plotting,name):
             if "T2tt" in pr:
                 FILENAME="SMS_T2tt"
                 GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
+                GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+            if "T2bW" in pr:
+                FILENAME="SMS_T2bW"
+                GENMODEL = "GenModel_T2bW_X05_dM_10to80_genHT_160_genMET_80"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/{YEAR}/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{
                 'TREESALLSKIM': TREESALLSKIM,

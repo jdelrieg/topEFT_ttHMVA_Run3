@@ -113,7 +113,6 @@ class VB_DecayModes(Module):
 
         return family_tree
 
-
     # Logic of the algorithm
     def run(self,event,Collection,VB_DM_name):
 
@@ -154,10 +153,17 @@ class VB_DecayModes(Module):
                 self.Log("Daughter of a W-boson:\t %d \t|\tid: %d   \t|\tstatus: %d" % (index, gp.pdgId, gp.status),2)
 
                 # If the grandmother is C1, we found the C1->N1+W (->ff) decay
+                # Note that this decay also happens in T2bW (Stop->N1+C1(->N1+W (->ff)))
                 if len(FamilyTree)>2 and abs(FamilyTree[2])==1000024:
-                    W_daughters.append(gp.pdgId)
+                    if 1000006 in FamilyTree:
+                        TopP_daughters.append(gp.pdgId)
+                    elif -1000006 in FamilyTree:
+                        TopM_daughters.append(gp.pdgId)
+                    else:
+                        W_daughters.append(gp.pdgId)
 
                 # If the grandmother is Top+/-, we found the (anti-)Stop->N1+Top->N1+b+W(->ff) decay
+                # Used for T2tt
                 if len(FamilyTree)>2 and FamilyTree[2]==1000006:
                     TopP_daughters.append(gp.pdgId)
                 if len(FamilyTree)>2 and FamilyTree[2]==-1000006:
@@ -172,7 +178,7 @@ class VB_DecayModes(Module):
         for br in self.namebranches:
             allret[br+self.label] = ret[br]
 
-	return allret
+        return allret
 
 
 if __name__ == '__main__':

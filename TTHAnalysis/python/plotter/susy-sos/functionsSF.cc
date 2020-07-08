@@ -668,13 +668,15 @@ unordered_map<int, TGraph*> TChiWZ_W_BR = {
 };
 
 
-float TT_BR(float dmTN, int TopP_decay, int TopM_decay){
-    // BR correction for TT pair production with T > N1 + (t > b W*)
-    float dmW = dmTN - 5.280; // subtract B meson mass to approximate W virtuality
-    if (dmW>40) dmW=40;
+float WW_BR(float dmC1pN1, float dmC1mN1, int TopP_decay, int TopM_decay){
+    // BR correction for TT pair production with T > b + (C1 > N1 W*) 
 
-    float TopP_weight = 1.;
-    float TopM_weight = 1.;
+    // Computations only computed up to dM up to 40. Assume plateau for dM>40
+    if (dmC1pN1>40) dmC1pN1=40;
+    if (dmC1mN1>40) dmC1mN1=40;
+
+    float Wp_weight = 1.;
+    float Wm_weight = 1.;
 
     int hadrW [6] = {21, 23, 25, 41, 43, 45};
     bool isHadWP = std::find(std::begin(hadrW), std::end(hadrW), TopP_decay) != std::end(hadrW);
@@ -682,17 +684,24 @@ float TT_BR(float dmTN, int TopP_decay, int TopM_decay){
 
     if (TopP_decay != 0 && TopM_decay != 0) {
         if (!isHadWP) {
-            TopP_weight = SUSYHIT_W_BR[TopP_decay]->Eval(dmW) / TChiWZ_W_BR[TopP_decay]->Eval(dmW);
+            Wp_weight = SUSYHIT_W_BR[TopP_decay]->Eval(dmC1pN1) / TChiWZ_W_BR[TopP_decay]->Eval(dmC1pN1);
         } else {
-            TopP_weight = (1-BR_SH_W_lep->Eval(dmW)) / (1-BR_SOS_W_lep->Eval(dmW));
+            Wp_weight = (1-BR_SH_W_lep->Eval(dmC1pN1)) / (1-BR_SOS_W_lep->Eval(dmC1pN1));
         }
         if (!isHadWM) {
-            TopM_weight = SUSYHIT_W_BR[TopM_decay]->Eval(dmW) / TChiWZ_W_BR[TopM_decay]->Eval(dmW);
+            Wm_weight = SUSYHIT_W_BR[TopM_decay]->Eval(dmC1mN1) / TChiWZ_W_BR[TopM_decay]->Eval(dmC1mN1);
         } else {
-            TopM_weight = (1-BR_SH_W_lep->Eval(dmW)) / (1-BR_SOS_W_lep->Eval(dmW));
+            Wm_weight = (1-BR_SH_W_lep->Eval(dmC1mN1)) / (1-BR_SOS_W_lep->Eval(dmC1mN1));
         }
     }
-    return TopP_weight * TopM_weight;
+
+    return Wp_weight*Wm_weight;
+}
+
+float TT_BR(float dmTN, int TopP_decay, int TopM_decay){
+    // BR correction for TT pair production with T > N1 + (t > b W*)
+    float dmC1N1 = dmTN - 5.280; // subtract B meson mass to approximate W virtuality
+    return WW_BR(dmC1N1, dmC1N1, TopP_decay, TopM_decay);
 }
 
 float WZ_BR(float dmZ, float dmW, int Z_decay, int W_decay){

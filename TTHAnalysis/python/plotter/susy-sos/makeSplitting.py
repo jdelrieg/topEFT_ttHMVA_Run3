@@ -9,7 +9,7 @@ parser.add_argument("--onlyFit", action='store_true', default=False, help="only 
 parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
 parser.add_argument("--reuseBackground", default=None, help="outDir from previous run for re-using backgrounds")
 parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
@@ -26,7 +26,7 @@ signals_hino = ["signal_Higgsino_"+s for s in signals_hinoN2N1]
 # signals_hinoN2C1 = ["signal_HiggsinoN2C1_"+s for s in signals_hinoN2C1]
 #if args.signalModel=="Higgsino": args.reweight = "neg"
 
-signals_T2tt=[
+signals_stop=[
 "250_170","250_180","250_190","250_200","250_210","250_220","250_230","250_240","275_195","275_205","275_215","275_225","275_235","275_245","275_255","275_265",\
 "300_220","300_230","300_240","300_250","300_260","300_270","300_280","300_290","325_245","325_255","325_265","325_275","325_285","325_295","325_305","325_315",\
 "350_270","350_280","350_290","350_300","350_310","350_320","350_330","350_340","375_295","375_305","375_315","375_325","375_335","375_345","375_355","375_365",\
@@ -46,9 +46,10 @@ signals_T2tt=[
 #"1000_920","1000_930","1000_940","1000_950","1000_960","1000_970","1000_980","1000_990","1025_1005","1025_1015","1025_945","1025_955","1025_965","1025_975","1025_985","1025_995",\
 #"1050_1000","1050_1010","1050_1020","1050_1030","1050_1040","1050_970","1050_980","1050_990","1075_1005","1075_1015","1075_1025","1075_1035","1075_1045","1075_1055","1075_1065","1075_995",\
 #"1100_1020","1100_1030","1100_1040","1100_1050","1100_1060","1100_1070","1100_1080","1100_1090"]
-signals_T2tt = ["signal_T2tt_"+s for s in signals_T2tt]
+signals_T2tt = ["signal_T2tt_"+s for s in signals_stop]
+signals_T2bW = ["signal_T2bW_"+s for s in signals_stop]
 
-_signals = signals_TChiWZ if args.signalModel=="TChiWZ" else signals_T2tt if args.signalModel=="T2tt" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
+_signals = signals_TChiWZ if args.signalModel=="TChiWZ" else signals_T2tt if args.signalModel=="T2tt" else signals_T2bW if args.signalModel=="T2bW" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
 _signals=[x.lstrip('signal_') for x in _signals]
 signals=[]
 for mll in args.reweight.split(','):
@@ -65,8 +66,9 @@ categories=[
 '2los/cr_tt/med',
 '3l/cr_wz/low',
 '3l/cr_wz/med'
-]            
-if args.signalModel!="T2tt":
+]           
+          
+if args.signalModel not in ["T2tt","T2bW"]:
    categories.append('2los/sr/low')
    categories.append('2los/sr/med')
    categories.append('2los/sr/high')
