@@ -1,6 +1,7 @@
 import ROOT, argparse, math
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--dir", default="", required=True, help="Directory with saved toys")
 parser.add_argument("--asimov", default="fit_s", choices=["fit_b","fit_s","prefit"], help="Signal model to consider")
 parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
@@ -34,10 +35,10 @@ procs = ["prompt_dy","prompt_tt","prompt_vv","prompt_wz","Rares","Convs","FRfake
 catDirs = {}
 toyHists = {}
 Ntoys = 200
-outFile = ROOT.TFile("plotAllYearsWithPostFitToys.root","recreate")
+outFile = ROOT.TFile(args.dir+"plotAllYearsWithPostFitToys.root","recreate")
 rootDir = outFile.mkdir("shapes_"+args.asimov)
 for itoy in range(Ntoys):
-    toyFile = ROOT.TFile("toys_"+args.asimov+str(itoy)+".root","read")
+    toyFile = ROOT.TFile(args.dir+"toys_"+args.asimov+str(itoy)+".root","read")
     outFile.cd()
     for category in categories:
         catDirName = "sos_"+category
