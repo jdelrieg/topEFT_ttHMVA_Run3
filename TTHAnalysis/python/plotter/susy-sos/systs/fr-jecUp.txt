@@ -1,5 +1,7 @@
-change: MET_pt\b: MET_pt_jesTotalUp
-change: MET_phi\b: MET_phi_jesTotalUp
+change: MET_pt_nom\b: MET_pt_jesTotalUp
+change: MET_phi_nom\b: MET_phi_jesTotalUp
+change: METFixEE2017_pt_nom\b: METFixEE2017_pt_jesTotalUp
+change: METFixEE2017_phi_nom\b: METFixEE2017_phi_jesTotalUp
 change: htJet25j_Recl\b: htJet25j_jesTotalUp_Recl
 change: nBJetLoose25_Recl\b: nBJetLoose25_jesTotalUp_Recl
 change: nBJetMedium25_Recl\b: nBJetMedium25_jesTotalUp_Recl

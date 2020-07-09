@@ -47,5 +47,6 @@ HLT_MuMuMET\b		: AltBranch$(HLT_DoubleMu3_DZ_PFMET50_PFMHT60,0)	; AlsoData
 HLT_HighMET\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,0) || AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,0)	; AlsoData
 PrefireWeight       : AltBranch$(L1PreFiringWeight_Nom,1) ; AlsoData
 ### 2017
-MET_(\w+) : METFixEE2017_\1 ; AlsoData, year=2017
-genMETFixEE2017_(\w+) : genMET_\1 ; AlsoData, year=2017
+MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2016
+MET_(?![0-9])(\w+) : METFixEE2017_\1_nom ; AlsoData, year=2017
+MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2018
