@@ -363,10 +363,11 @@ from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWei
 eventBTagWeight_16 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_2016LegacySF_V1.csv", discrname="btagDeepB")
 eventBTagWeight_17 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V4_B_F.csv", discrname="btagDeepB")
 eventBTagWeight_18 = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_102XSF_V1.csv", discrname="btagDeepB")
-eventBTagWeight_16Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_16SL_18_3_2019.csv", discrname="btagDeepB")
-eventBTagWeight_17Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_17SL_18_3_2019.csv", discrname="btagDeepB")
-eventBTagWeight_18Fast = lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_18SL_7_5_2019.csv", discrname="btagDeepB")
 
+from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend as BTagEventWeightFriendFast
+eventBTagWeight_16Fast = lambda : BTagEventWeightFriendFast(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_2016LegacySF_V1.csv", csvfastsim=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_16SL_18_3_2019.csv", eff_rootfile=os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/data/btag/bTagEffs.root", algo='deepcsv', btag_branch="btagDeepB", year=2016)
+eventBTagWeight_17Fast = lambda : BTagEventWeightFriendFast(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V4_B_F.csv", csvfastsim=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_17SL_18_3_2019.csv", eff_rootfile=os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/data/btag/bTagEffs.root", algo='deepcsv', btag_branch="btagDeepB", year=2017)
+eventBTagWeight_18Fast = lambda : BTagEventWeightFriendFast(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_102XSF_V1.csv", csvfastsim=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/deepcsv_13TEV_18SL_7_5_2019.csv", eff_rootfile=os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/data/btag/bTagEffs.root", algo='deepcsv', btag_branch="btagDeepB", year=2018)
 
 ### TnP stuff
 susySOS_TnP_cut =  ("Sum$(Muon_pt > 3.0 && fabs(Muon_eta) < 2.4 && Muon_looseId == 1) >= 2 || Sum$(Electron_pt > 5.0 && fabs(Electron_eta) < 2.5) >= 2")
