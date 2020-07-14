@@ -3,29 +3,34 @@ import os.path, types
 from array import array
 from math import log, exp
 
-from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop, Module, Collection
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop#, Module, Collection
 from BTagScaleFactors import BTagScaleFactors
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 
 class BTagEventWeightFriend:
     def __init__(self,
                  csvfile,
                  csvfastsim=None,
                  eff_rootfile=None,
+                 year=None,
                  algo='csv',
                  btag_branch='btagCSV',
                  flavor_branch='hadronFlavour',
                  label='eventBTagSF',
-                 recllabel='Recl',
+                 recllabel='_Recl',
                  mcOnly=True):
 
         self.reader = BTagScaleFactors('btagsf',
                                        csvfile=csvfile,
                                        csvfastsim=csvfastsim,
                                        eff_rootfile=eff_rootfile,
+                                       year=year,
                                        algo=algo,
                                        verbose=0)
 
-        self.jec_systs = ["", "_jecUp", "_jecDown"]
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.recllabel = recllabel
         self.label = label
         self.btag_branch = btag_branch
@@ -39,20 +44,29 @@ class BTagEventWeightFriend:
         self.btag_systs += ["up_%s"  %s for s in self.reader.iterative_systs]
         self.btag_systs += ["down_%s"%s for s in self.reader.iterative_systs]
 
-        # Take only central, up_correlated, and down_correlated for fastsim
+        # Take only central, up, and down for fastsim
         if self.is_fastsim:
-            self.btag_systs = ["central", "up_correlated", "down_correlated"]
+            self.btag_systs = ["central", "up", "down"]
 
 
         # JEC to use for each syst:
         # Central one for all btag variations except up_jes and down_jes
         self.jec_syst_to_use = {}
         for btag_syst in self.btag_systs:
-            self.jec_syst_to_use[btag_syst] = ""
-        self.jec_syst_to_use["up_jes"] = "_jecUp"
-        self.jec_syst_to_use["down_jes"] = "_jecDown"
+            self.jec_syst_to_use[btag_syst] = 0
+        self.jec_syst_to_use["up_jes"] = 1
+        self.jec_syst_to_use["down_jes"] = -1
 
         self.branches = self.listBranches()
+
+    def beginJob(self):
+        pass
+    def endJob(self):
+        pass
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        declareOutput(self, wrappedOutputTree, self.branches)
+    def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        pass
 
     def listBranches(self):
         out = []
@@ -77,7 +91,7 @@ class BTagEventWeightFriend:
             return jets
 
 
-    def event_weight_from_discr_shape(self, jets,
+    def event_weight_from_discr_shape(self, jets, jetcorr,
                                       syst="central",
                                       flavorAttr=None,
                                       btagAttr=None):
@@ -86,15 +100,15 @@ class BTagEventWeightFriend:
         if not btagAttr:   btagAttr=self.btag_branch
 
         weight = 1.0
-        for jet in jets:
+        for i,jet in enumerate(jets):
             flavor  = getattr(jet, flavorAttr)
             btagval = getattr(jet, btagAttr)
-            weight *= self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+            weight *= self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
                                   flavor=flavor, val=btagval,
                                   syst=syst, shape_corr=True)
         return weight
 
-    def fastsim_event_weight(self, jets,
+    def fastsim_event_weight(self, jets, jetcorr,
                              syst="central",
                              flavorAttr=None,
                              btagAttr=None,
@@ -109,7 +123,7 @@ class BTagEventWeightFriend:
 
         pmc = 1.0
         pdata = 1.0
-        for jet in jets:
+        for i,jet in enumerate(jets):
             flavor  = getattr(jet, flavorAttr)
             btagval = getattr(jet, btagAttr)
             tagged = (btagval >= self.reader.working_points[wp])
@@ -117,7 +131,7 @@ class BTagEventWeightFriend:
             fastsim_syst = syst
             if 'correlated' in syst:
                 fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
-            sf_fastsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+            sf_fastsim = self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
                                             flavor=flavor, val=btagval,
                                             syst=fastsim_syst, mtype='fastsim')
 
@@ -131,7 +145,7 @@ class BTagEventWeightFriend:
             if not tagged:
                 efficiency = 1.0 - efficiency
 
-            sf_fullsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+            sf_fullsim = self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
                                             flavor=flavor, val=btagval,
                                             syst=syst, mtype='auto')
 
@@ -146,20 +160,39 @@ class BTagEventWeightFriend:
 
 
 
-    def __call__(self, event):
+    #def __call__(self, event):
+    def analyze(self, event):
         ret = {k:1.0 for k in self.branches}
-        if self.mcOnly and event.isData: return ret
+        #if self.mcOnly and event.isData: return ret
+
+        jetscoll = {}
+        for _var in self.systsJEC:
+ #           jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
+            jets = [j for j in Collection(event,"JetSel"+self.recllabel)]
+            jetptcut = 25
+            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
+            if (_var==0): jetcorr = [1 for x in jets]
+            elif (_var==1): jetcorr = [ x.pt_jesTotalUp/x.pt if x.pt != 0 else 1 for x in jets]
+            elif (_var==-1): jetcorr = [ x.pt_jesTotalDown/x.pt  if x.pt != 0 else 1 for x in jets]
+            jetscoll[_var]=(jets,jetcorr)
 
         for syst in self.btag_systs:
-            jets = self.getJetCollection(event, jec_syst=self.jec_syst_to_use[syst])
+            #jets = self.getJetCollection(event, jec_syst=self.jec_syst_to_use[syst])
+
+            _var=self.jec_syst_to_use[syst]
 
             label = "%s_%s" % (self.label, syst)
             if syst == 'central': label = self.label
 
+            jets,jetcorr = jetscoll[_var]
             if not self.is_fastsim:
-                ret[label] = self.event_weight_from_discr_shape(jets, syst=syst)
+                weight = self.event_weight_from_discr_shape(jets,jetcorr, syst=syst)
             else:
-                ret[label] = self.fastsim_event_weight(jets, syst=syst, wp='L')
+                weight = self.fastsim_event_weight(jets,jetcorr, syst=syst, wp='L')
+            self.wrappedOutputTree.fillBranch(label,weight)
+            ret[label] = weight
         return ret
 
 if __name__ == '__main__':
