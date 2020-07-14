@@ -82,7 +82,7 @@ class BTagScaleFactors(object):
         self.csvfile = csvfile
         self.csvfastsim = csvfastsim
         self.eff_rootfile = eff_rootfile
-        self.verbose = 1#verbose
+        self.verbose = verbose
         self.algo = algo.lower()
 
         if not self.algo in ['csv', 'cmva', 'deepcsv']:

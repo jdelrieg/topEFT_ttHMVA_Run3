@@ -16,6 +16,7 @@ class BTagEventWeightFriend:
                  eff_rootfile=None,
                  year=None,
                  algo='csv',
+                 wp='M',
                  btag_branch='btagCSV',
                  flavor_branch='hadronFlavour',
                  label='eventBTagSF',
@@ -31,6 +32,7 @@ class BTagEventWeightFriend:
                                        verbose=0)
 
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.wp = wp
         self.recllabel = recllabel
         self.label = label
         self.btag_branch = btag_branch
@@ -132,7 +134,7 @@ class BTagEventWeightFriend:
             if 'correlated' in syst:
                 fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
             sf_fastsim = self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
-                                            flavor=flavor, val=btagval,
+                                            flavor=flavor, val=btagval, wp=wp,
                                             syst=fastsim_syst, mtype='fastsim')
 
             efficiency = self.reader.get_tagging_efficiency(jet, wp)
@@ -146,7 +148,7 @@ class BTagEventWeightFriend:
                 efficiency = 1.0 - efficiency
 
             sf_fullsim = self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
-                                            flavor=flavor, val=btagval,
+                                            flavor=flavor, val=btagval, wp=wp,
                                             syst=syst, mtype='auto')
 
             pmc *= efficiency
@@ -188,9 +190,9 @@ class BTagEventWeightFriend:
 
             jets,jetcorr = jetscoll[_var]
             if not self.is_fastsim:
-                weight = self.event_weight_from_discr_shape(jets,jetcorr, syst=syst)
+                weight = self.event_weight_from_discr_shape(jets,jetcorr, syst=syst, wp=self.wp)
             else:
-                weight = self.fastsim_event_weight(jets,jetcorr, syst=syst, wp='L')
+                weight = self.fastsim_event_weight(jets,jetcorr, syst=syst, wp=self.wp)
             self.wrappedOutputTree.fillBranch(label,weight)
             ret[label] = weight
         return ret
