@@ -1,0 +1,20 @@
+Rares   : T_tWch_noFullyHad             : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : TBar_tWch_noFullyHad          : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : TTWToLNu_fxfx                 : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares", years="2018"
+Rares   : TTWToLNu                      : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares", years="2016"
+Rares   : TTJets_SingleLeptonFromT      : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : TTJets_SingleLeptonFromTbar   : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : TTZToLLNuNu_amc               : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares", years="2017\,2018"
+Rares   : TTZToLLNuNu                   : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares", years="2016"
+Rares   : TTZToLLNuNu_m1to10            : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : TZQToLL                       : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : tWll                          : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : WWW_ll                        : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : WWZ                           : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : WZZ                           : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares   : ZZZ                           : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares"
+
+#Rares  : TTHnobb_pow                   : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares" # In samples file but not produced --> Minor
+#Rares  : TTTT                          : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares" # In samples file but not produced --> Minor
+#Rares  : VHToNonbb                     : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0    ; FillColor=ROOT.kMagenta+2, Label="Rares" # In samples file but not produced
+

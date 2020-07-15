@@ -1,4 +1,0 @@
-Convs  : TGJets_lep         : xsec  : (LepGood1_mcPromptGamma==1 || LepGood2_mcPromptGamma==1 || LepGood3_mcPromptGamma==1) ; FillColor=ROOT.kOrange, Label="Conv"
-Convs  : TTGJets            : xsec  : (LepGood1_mcPromptGamma==1 || LepGood2_mcPromptGamma==1 || LepGood3_mcPromptGamma==1) ; FillColor=ROOT.kOrange, Label="Conv"
-Convs  : WGToLNuG_amcatnlo  : xsec  : (LepGood1_mcPromptGamma==1 || LepGood2_mcPromptGamma==1 || LepGood3_mcPromptGamma==1) ; FillColor=ROOT.kOrange, Label="Conv"
-Convs  : ZGTo2LG            : xsec  : (LepGood1_mcPromptGamma==1 || LepGood2_mcPromptGamma==1 || LepGood3_mcPromptGamma==1) ; FillColor=ROOT.kOrange, Label="Conv"

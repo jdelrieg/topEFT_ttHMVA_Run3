@@ -1,0 +1,52 @@
+LepGood1_isLepTight\b    : LepGood_isLepTight_Recl[iLepFO_Recl[0]]; AlsoData
+LepGood2_isLepTight\b    : LepGood_isLepTight_Recl[iLepFO_Recl[1]]; AlsoData
+LepGood3_isLepTight\b    : LepGood_isLepTight_Recl[iLepFO_Recl[2]]; AlsoData
+LepGood4_isLepTight\b    : LepGood_isLepTight_Recl[iLepFO_Recl[3]]; AlsoData
+LepGood1_(\w+)        : LepGood_\1[iLepFO_Recl[0]]; AlsoData
+LepGood2_(\w+)        : LepGood_\1[iLepFO_Recl[1]]; AlsoData
+LepGood3_(\w+)        : LepGood_\1[iLepFO_Recl[2]]; AlsoData
+LepGood4_(\w+)        : LepGood_\1[iLepFO_Recl[3]]; AlsoData
+JetSel1_(\w+)       : JetSel_Recl_\1[0]; AlsoData
+nLepGood    : nLepFO_Recl; AlsoData
+nLepTight\b    : nLepTight_Recl; AlsoData
+nTauFO\b    : nTauSel_Recl; AlsoData
+nTauTight\b    : Sum$(TauSel_Recl_idMVAoldDMdR032017v2>=4); AlsoData
+nJet25\b    : nJet25_Recl; AlsoData
+htJet25j\b    : htJet25j_Recl; AlsoData
+mhtJet25\b    : mhtJet25_Recl; AlsoData
+nJet40\b    : nJet40_Recl; AlsoData
+htJet40j\b    : htJet40j_Recl; AlsoData
+imhtJet40\b    : mhtJet40_Recl; AlsoData
+nFwdJet\b    : nFwdJet_Recl; AlsoData
+nBJetLoose25\b    : nBJetLoose25_Recl; AlsoData
+nBJetMedium25\b    : nBJetMedium25_Recl; AlsoData
+nBJetTight25\b    : nBJetTight25_Recl; AlsoData
+nBJetLoose40\b    : nBJetLoose40_Recl; AlsoData
+nBJetMedium40\b    : nBJetMedium40_Recl; AlsoData
+nBJetTight40\b    : nBJetTight40_Recl; AlsoData
+mZ1\b        : mZ1_Recl; AlsoData
+minMllAFAS\b    : minMllAFAS_Recl; AlsoData
+minMllAFOS\b    : minMllAFOS_Recl; AlsoData
+minMllAFSS\b    : minMllAFSS_Recl; AlsoData
+minMllSFOS\b    : minMllSFOS_Recl; AlsoData
+dTakingEra\b : if3(isData,(run>=275657)+(run>=276315)+(run>=276831)+(run>=277772)+(run>=278820)+(run>=280919),-1); AlsoData # 2016B==0,C,D,E,F,G,H
+### Trigger and data quality
+EventFilters\b    : Flag_goodVertices>=1 && Flag_globalSuperTightHalo2016Filter>=1 && Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_BadPFMuonFilter>=1 && AltBranch$(Flag_ecalBadCalibFilterV2,1)>=1    ; AlsoData
+# Ordering of the cuts below matters
+HLT_MuMu16\b		: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ,1) || AltBranch$(HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ,1) ; Process="signal_(T2tt|T2bW)_.*"
+HLT_MuMuMET16\b		: AltBranch$(HLT_DoubleMu3_PFMET50,1)	; Process="signal_(T2tt|T2bW)_.*"
+HLT_HighMET16\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,1)	; Process="signal_(T2tt|T2bW)_.*"
+HLT_MuMu\b			: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,1)	; Process="signal_(T2tt|T2bW)_.*"
+HLT_MuMuMET\b		: AltBranch$(HLT_DoubleMu3_DZ_PFMET50_PFMHT60,1)	; Process="signal_(T2tt|T2bW)_.*"
+HLT_HighMET\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,1) || AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,1)	; Process="signal_(T2tt|T2bW)_.*"
+HLT_MuMu16\b		: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ,0) || AltBranch$(HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ,0) ; AlsoData
+HLT_MuMuMET16\b		: AltBranch$(HLT_DoubleMu3_PFMET50,0)	; AlsoData
+HLT_HighMET16\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,0)	; AlsoData
+HLT_MuMu\b			: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,0)	; AlsoData
+HLT_MuMuMET\b		: AltBranch$(HLT_DoubleMu3_DZ_PFMET50_PFMHT60,0)	; AlsoData
+HLT_HighMET\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,0) || AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,0)	; AlsoData
+PrefireWeight       : AltBranch$(L1PreFiringWeight_Nom,1) ; AlsoData
+### 2017
+MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2016
+MET_(?![0-9])(\w+) : METFixEE2017_\1_nom ; AlsoData, year=2017
+MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2018
