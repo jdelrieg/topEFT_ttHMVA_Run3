@@ -73,7 +73,7 @@ if args.signalModel not in ["T2tt","T2bW"]:
    categories.append('2los/sr/med/semidd')
    categories.append('2los/sr/high/semidd')
    categories.append('2los/sr/ultra/semidd')
-   categories.append('3l/sr/low/dd')
+   categories.append('3l/sr/low/semidd')
    categories.append('3l/sr/med/semidd')
 else:
    categories.append('2los/sr_col/low/dd')
