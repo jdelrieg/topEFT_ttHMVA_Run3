@@ -59,32 +59,32 @@ for mll in args.reweight.split(','):
       signals += ['%s_%s'%(x,mll) for x in _signals]
 
 categories=[
-'2los/cr_ss/med',
-'2los/cr_dy/low',
-'2los/cr_dy/med',
-'2los/cr_tt/low',
-'2los/cr_tt/med',
-'3l/cr_wz/low',
-'3l/cr_wz/med'
+'2los/cr_ss/med/semidd',
+'2los/cr_dy/low/dd',
+'2los/cr_dy/med/dd',
+'2los/cr_tt/low/dd',
+'2los/cr_tt/med/dd',
+'3l/cr_wz/low/dd',
+'3l/cr_wz/med/dd'
 ]           
           
 if args.signalModel not in ["T2tt","T2bW"]:
-   categories.append('2los/sr/low')
-   categories.append('2los/sr/med')
-   categories.append('2los/sr/high')
-   categories.append('2los/sr/ultra')
-   categories.append('3l/sr/low')
-   categories.append('3l/sr/med')
+   categories.append('2los/sr/low/dd')
+   categories.append('2los/sr/med/semidd')
+   categories.append('2los/sr/high/semidd')
+   categories.append('2los/sr/ultra/semidd')
+   categories.append('3l/sr/low/semidd')
+   categories.append('3l/sr/med/semidd')
 else:
-   categories.append('2los/sr_col/low')
-   categories.append('2los/sr_col/med')
-   categories.append('2los/sr_col/high')
-   categories.append('2los/sr_col/ultra')
+   categories.append('2los/sr_col/low/dd')
+   categories.append('2los/sr_col/med/semidd')
+   categories.append('2los/sr_col/high/semidd')
+   categories.append('2los/sr_col/ultra/semidd')
 
 what=args.what
 odir=args.outDir.rstrip("/")
 duration=args.duration*3600
-opts="--unc --fakes=semidd"
+opts="--unc"
 if args.addopts: opts+=' %s'%args.addopts
 
 def prepSubmission(outdir,subdir,duration):
@@ -132,8 +132,8 @@ class bare_production:
             for cat in categories:
                tasks.append(task(pr,yr,cat))
 
-      def _printCmd(lep,reg,bin,sigstring,rflag,yr,outfile=None):
-         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,args.signalModel,opts,sigstring,rflag,odir,yr)
+      def _printCmd(lep,reg,bin,fakes,sigstring,rflag,yr,outfile=None):
+         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,fakes,args.signalModel,opts,sigstring,rflag,odir,yr)
          if outfile:
             cmd += " >> %s"%outfile
          os.system(cmd)
@@ -152,10 +152,11 @@ class bare_production:
          for yr in yrs:
             for _cat in cats:
                cat = _cat.replace('/','_')
+               cat = "_".join(cat.split("_")[:-1])
                prs = set([tk.pr for tk in job if (yr==tk.yr and _cat==tk.cat)])
-               lep,reg,bin = _cat.split('/')
+               lep,reg,bin,fakes = _cat.split('/')
                if 'background' in prs:
-                  _printCmd(lep,reg,bin,'--data --nCores 4',"",yr,outfile)
+                  _printCmd(lep,reg,bin,fakes,'--data --nCores 4',"",yr,outfile)
                   expoutput.append('%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(odir,yr,cat,cat))
                prs.discard('background')
                if len(prs):
@@ -170,7 +171,7 @@ class bare_production:
                   signal_flags="--signalModel %s"%(args.signalModel)
                   if list(prs)[0].endswith('_pos'): signal_flags += " --reweight pos"
                   if list(prs)[0].endswith('_neg'): signal_flags += " --reweight neg"
-                  _printCmd(lep,reg,bin,'%s --nCores 1 --signal --signalMasses '%skim_instr+','.join(['signal_%s'%pr for pr in prs if pr!='background']),signal_flags,yr,outfile)
+                  _printCmd(lep,reg,bin,fakes,'%s --nCores 1 --signal --signalMasses '%skim_instr+','.join(['signal_%s'%pr for pr in prs if pr!='background']),signal_flags,yr,outfile)
                   if len(prs)>1: raise
                   for _pr in prs: pr=_pr
                   expoutput.append('%s/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr,cat))
@@ -230,7 +231,8 @@ class merge_and_fit:
          if not onlyFit:
             for (_cat,yr) in itertools.product(categories,years):
                cat = _cat.replace('/','_')
-               lep,reg,bin = _cat.split('/')
+               cat = "_".join(cat.split("_")[:-1])
+               lep,reg,bin,fakes = _cat.split('/')
                f = '%s/bare/%s/%s/signal_%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
                f0 = '%s/bare/%s/%s/nosignal/sos_%s.bare.root'%(bkgdDir if bkgdDir else odir,yr,cat,cat)
                f2 = '%s_merged/bare/%s/%s/%s/sos_%s.bare.root'%(odir,yr,cat,pr.rstrip('+'),cat)
@@ -244,7 +246,7 @@ class merge_and_fit:
                   signal_flags="--signalModel %s"%(args.signalModel)
                   if pr.endswith('_pos'): signal_flags += " --reweight pos"
                   if pr.endswith('_neg'): signal_flags += " --reweight neg"
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,fakes,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
                   out.append("rm %s"%f2) # remove temporary file
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
