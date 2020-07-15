@@ -1,6 +1,6 @@
 cut-change:LepGood_isLepTight_Recl\[iLepFO_Recl\[0\]\]:1
 cut-change:LepGood_isLepTight_Recl\[iLepFO_Recl\[1\]\]:(LepGood_isLepTight_Recl[iLepFO_Recl[0]]+LepGood_isLepTight_Recl[iLepFO_Recl[1]]+LepGood_isLepTight_Recl[iLepFO_Recl[2]]==1)
-cut-change:LepGood_isLepTight_Recl\[iLepFO_Recl\[0\]\]:1
+cut-change:LepGood_isLepTight_Recl\[iLepFO_Recl\[2\]\]:1
 
 weight: fakeRateWeight_3l(fetchFR_i(LepGood_pt[iLepFO_Recl[0]], LepGood_eta[iLepFO_Recl[0]], LepGood_pdgId[iLepFO_Recl[0]],(year-2016)), LepGood_isLepTight_Recl[iLepFO_Recl[0]],fetchFR_i(LepGood_pt[iLepFO_Recl[1]], LepGood_eta[iLepFO_Recl[1]], LepGood_pdgId[iLepFO_Recl[1]],(year-2016)),LepGood_isLepTight_Recl[iLepFO_Recl[1]], fetchFR_i(LepGood_pt[iLepFO_Recl[2]], LepGood_eta[iLepFO_Recl[2]], LepGood_pdgId[iLepFO_Recl[2]],(year-2016)),LepGood_isLepTight_Recl[iLepFO_Recl[2]])*(LepGood_isLepTight_Recl[iLepFO_Recl[0]]+LepGood_isLepTight_Recl[iLepFO_Recl[1]]+LepGood_isLepTight_Recl[iLepFO_Recl[2]]==1)
 
