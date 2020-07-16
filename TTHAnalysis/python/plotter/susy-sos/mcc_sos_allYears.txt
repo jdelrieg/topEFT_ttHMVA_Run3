@@ -46,7 +46,17 @@ HLT_MuMu\b			: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,0)	; AlsoD
 HLT_MuMuMET\b		: AltBranch$(HLT_DoubleMu3_DZ_PFMET50_PFMHT60,0)	; AlsoData
 HLT_HighMET\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,0) || AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,0)	; AlsoData
 PrefireWeight       : AltBranch$(L1PreFiringWeight_Nom,1) ; AlsoData
-### 2017
-MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2016
-MET_(?![0-9])(\w+) : METFixEE2017_\1_nom ; AlsoData, year=2017
-MET_(?![0-9])(\w+) : MET_\1_nom ; AlsoData, year=2018
+### MET in MC
+MET_pt_jesTotalUp\b : METFixEE2017_pt_jesTotalUp ; year=2017
+MET_pt_jesTotalDown\b : METFixEE2017_pt_jesTotalDown ; year=2017
+MET_phi_jesTotalUp\b : METFixEE2017_phi_jesTotalUp ; year=2017
+MET_phi_jesTotalDown\b : METFixEE2017_phi_jesTotalDown ; year=2017
+MET_pt\b : MET_pt_nom ; year=2016
+MET_pt\b : METFixEE2017_pt_nom ; year=2017
+MET_pt\b : MET_pt_nom ; year=2018
+MET_phi\b : MET_phi_nom ; year=2016
+MET_phi\b : METFixEE2017_phi_nom ; year=2017
+MET_phi\b : MET_phi_nom ; year=2018
+### 2017 MET in data
+MET_pt\b : METFixEE2017_pt ; AlsoData, year=2017
+MET_phi\b : METFixEE2017_phi ; AlsoData, year=2017

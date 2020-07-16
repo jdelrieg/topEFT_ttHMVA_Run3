@@ -1,12 +1,21 @@
 OUTDIR=/data1/peruzzi/skim
 
 for year in $*
-do
-    FIXMET=""
-    if [[ "${year}" -eq "2017" ]]
+do	
+  	# All data
+    python skimTreesNew.py --skim-friends --Fs {P}/recleaner -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt -p data susy-sos/mca-includes/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
+    
+    # All MC except signal
+    python skimTreesNew.py --skim-friends --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt --xp "data,SMS_(\w+)" susy-sos/mca-includes/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
+    
+    # SMS_TChiWZ,SMS_T2tt,SMS_T2bW (using signalWeights)
+    python skimTreesNew.py --skim-friends --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties --FMCs {P}/signalWeights -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt -p SMS_TChiWZ,SMS_T2tt,SMS_T2bW susy-sos/mca-includes/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
+
+    # SMS_HiggsinoN2N1,SMS_HiggsinoN2C1 (using signalWeights and isrWeights)
+ 	if [[ "${year}" -eq "2016" ]]
     then
-	FIXMET="--mcc susy-sos/mcc_METFixEE2017.txt"
+    	ISR="--FMCs {P}/isrWeights"
     fi
-    python skimTreesNew.py --skim-friends --Fs {P}/recleaner -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos.txt --mcc susy-sos/mcc_triggerdefs.txt ${FIXMET} -p data susy-sos/mca-includes/${year}/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
-    python skimTreesNew.py --skim-friends --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos.txt --mcc susy-sos/mcc_triggerdefs.txt ${FIXMET} --xp data susy-sos/mca-includes/${year}/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
+    python skimTreesNew.py --skim-friends --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties --FMCs {P}/signalWeights ${ISR} -P /eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6/${year} -f -j 8 --split-factor=-1 --year ${year} --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt -p SMS_HiggsinoN2N1,SMS_HiggsinoN2C1 susy-sos/mca-includes/mca-skim-${year}.txt susy-sos/skim_2lep_met125.txt ${OUTDIR}/${year}
+
 done
