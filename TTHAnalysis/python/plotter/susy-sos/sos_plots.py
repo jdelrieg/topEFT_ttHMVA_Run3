@@ -24,7 +24,7 @@ parser.add_argument("--reg", default=None, required=True, help="Choose region to
 parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW"], help="Choose signal model")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
@@ -78,8 +78,7 @@ P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SO
 
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
-TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEAR)+"--readaheadsz 20000000 "
-TREESALL = " --Fs {P}/recleaner/ --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")
+TREESALL = " --Fs {P}/recleaner/ --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
 # For cards only, no need fr multiple year support
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
 if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
@@ -104,7 +103,7 @@ def base(selection):
 
     wBG = " '1.0' "
     wPrefire = ""   
-    if args.signalModel not in ["T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
+    if args.signalModel not in ["HiggsPMSSM", "T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
     if selection=='2los':
         GO="%s susy-sos/mca/mca-2los.txt susy-sos/2los_cuts.txt "%(CORE)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
@@ -179,7 +178,7 @@ def runIt(GO,plotting,name):
                 raise RuntimeError('wrong configuration: trying to run a mixture of all signals')
         if args.preskim:
             for pr in args.signalMasses.split(','):
-                if "TChiWZ" not in pr and "Higgsino" not in pr and "T2tt" not in pr and "T2bW" not in pr: raise RuntimeError('Unrecognised signal model')
+                if "TChiWZ" not in pr and "Higgsino" not in pr and "HiggsPMSSM" not in pr and "T2tt" not in pr and "T2bW" not in pr: raise RuntimeError('Unrecognised signal model')
             FILENAME="SMS_TChiWZ"
             GENMODEL = "GenModel_TChiWZ_ZToLL"
             GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
@@ -191,6 +190,10 @@ def runIt(GO,plotting,name):
             if "T2tt" in pr:
                 FILENAME="SMS_T2tt"
                 GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
+                GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+            if "HiggsPMSSM" in pr:
+                FILENAME="SMS_HiggsinoPMSSM"
+                GENMODEL = "GenModel_MSSM_higgsino"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "T2bW" in pr:
                 FILENAME="SMS_T2bW"
