@@ -5,36 +5,28 @@ import os
 import errno
 import argparse
 
-helpText = "LEP = '2los', '3l'\n\
-REG = 'sr', 'sr_col', 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss','cr_wz', 'appl', 'appl_col',\n\
-\t'cr_ss_1F_NoSF', 'cr_ss_2F_NoSF', 'cr_ss_1F_SF1', 'cr_ss_2F_SF2',\n\
-\t'appl_1F_NoSF', 'appl_2F_NoSF','appl_3F_NoSF', 'appl_1F_SF1F', 'appl_2F_SF2F',\n\
-\t'appl_col_1F_NoSF', 'appl_col_2F_NoSF',\n\
-\t'sr_closure', 'sr_closure_norm'\n\
-BIN =  'low', 'med', 'high', 'ultra'"
-parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
-                                 epilog=helpText)
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("outDir", help="Choose the output directory.\nOutput will be saved to 'outDir/year/LEP_REG_BIN'")
 parser.add_argument("--year", default=[], action="append", required=True, help="Choose the year(s): '2016', '2017', '2018' (REQUIRED). Multiple years work for plotting.")
 parser.add_argument("--nCores", type=int, default=8, help="Number of parallel threads")
 parser.add_argument("--inputDir", default=None, help="Override input directory")
 
-parser.add_argument("--lep", default=None, required=True, help="Choose number of leptons to use (REQUIRED)")
-parser.add_argument("--reg", default=None, required=True, help="Choose region to use (REQUIRED)")
-parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
+parser.add_argument("--lep", default=None, required=True, choices=["2los","3l"], help="Choose number of leptons to use (REQUIRED)")
+parser.add_argument("--reg", default=None, required=True, choices=["sr","sr_col","cr_dy","cr_tt","cr_vv","cr_ss","cr_wz","appl","appl_col","cr_ss_1F_NoSF","cr_ss_2F_NoSF","cr_ss_1F_SF1","cr_ss_2F_SF2","appl_1F_NoSF","appl_2F_NoSF","appl_3F_NoSF","appl_1F_SF1F","appl_2F_SF2F","appl_col_1F_NoSF","appl_col_2F_NoSF","sr_closure","sr_closure_norm"], help="Choose region to use (REQUIRED)")
+parser.add_argument("--bin", default=None, required=True, choices=["low","med","high","ultra"], help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
-parser.add_argument("--fakes", default="mc", help="Use 'mc', 'dd' or 'semidd' fakes. Default = '%(default)s'")
+parser.add_argument("--fakes", default="mc", choices=["mc","dd","semidd"], help="Method of estimating fakes. Default = '%(default)s'")
 parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
 parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
 parser.add_argument("--postfit", default=None, help="Read postfit plot from FitDiagnostics output, format file:shapes_fit_b for bkg-only, file:shapes_fit_s for s+b fit (must plot only the fitted variable)")
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
 
-parser.add_argument("--doWhat", default="plots", help="Do 'plots' or 'cards'. Default = '%(default)s'")
+parser.add_argument("--doWhat", default="plots", choices=["plots","cards"], help="Choose running mode. Default = '%(default)s'")
 # only valid for doWhat=='cards'
 parser.add_argument("--signalMasses", default=None, help="Select only these signal samples (e.g 'signal_TChiWZ_100_70+'), comma separated. Use only when doing 'cards'")
 parser.add_argument("--allowRest", action="store_true", default=False, help="Allow for other non-signal processes")
@@ -51,11 +43,6 @@ conf="%s_%s_%s"%(args.lep,args.reg,args.bin)
 
 for years in YEARS:
     if years not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please choose '2016', '2017', '2018'")
-if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
-if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col", "cr_ss_1F_NoSF", "cr_ss_2F_NoSF", "cr_ss_1F_SF1", "cr_ss_2F_SF2", "appl_1F_NoSF", "appl_2F_NoSF","appl_3F_NoSF", "appl_1F_SF1F", "appl_2F_SF2F", "appl_col_1F_NoSF", "appl_col_2F_NoSF", "sr_closure", "sr_closure_norm"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
-if args.bin not in [ "low", "med", "high","ultra"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
-if args.fakes not in ["mc", "dd", "semidd"]: raise RuntimeError("Unknown choice for FAKES option. Please check help." )
-if args.doWhat not in ["plots", "cards"]: raise RuntimeError("Unknown choice for DOWHAT option. Please check help." ) # More options to be added
 if (args.signalMasses or args.asimov or args.justdump) and args.doWhat != "cards": raise RuntimeError("Option to be used only with the 'cards' option!")
 #if args.fakes == "semidd" and "cr" in args.reg and args.reg != "cr_ss": print "No semidd fakes in the CRs! Using dd fakes..."
 
