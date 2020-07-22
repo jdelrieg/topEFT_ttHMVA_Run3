@@ -2,8 +2,8 @@
 
 $alias : BkgFromMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs
 $alias : allMC : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|signal_.*
-$alias : allMCFullSIM : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|signal_(?!(T2tt|T2bW)).*
-$alias : allMCFastSIM : signal_(T2tt|T2bW).*
+$alias : allMCFullSIM : prompt_tt|prompt_dy|prompt_vv|prompt_wz|Fakes.*|Rares|Convs|signal_(?!(T2tt|T2bW|HiggsPMSSM)).*
+$alias : allMCFastSIM : signal_(T2tt|T2bW|HiggsPMSSM).*
 
 $alias : allSR : .*sr.*
 
