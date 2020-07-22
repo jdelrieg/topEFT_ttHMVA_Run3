@@ -14,3 +14,6 @@ incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signa
 
 incl_signal_Higgsino     : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2C1.txt", FriendsSimple="{P}/signalWeights/", Processes="signal_Higgsino_220_210p00+\,signal_Higgsino_140_120p00+\,signal_Higgsino_120_100p00+"
 incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2C1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/", Processes="signal_Higgsino_220_210p00+\,signal_Higgsino_140_120p00+\,signal_Higgsino_120_100p00+"
+
+incl_signal_PMSSM     : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsPMSSM.txt", Processes="signal_HiggsPMSSM_180_300+\,signal_HiggsPMSSM_140_500+\,signal_HiggsPMSSM_100_800+"
+incl_signal_PMSSM_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsPMSSM.txt", AddWeight="mll_rwt_neg", FriendsSimple="{P}/signalWeights/", Processes="signal_HiggsPMSSM_180_300+\,signal_HiggsPMSSM_140_500+\,signal_HiggsPMSSM_100_800+"
