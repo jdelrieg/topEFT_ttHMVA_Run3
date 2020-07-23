@@ -140,7 +140,7 @@ class bare_production:
                tasks.append(task(pr,yr,cat))
 
       def _printCmd(lep,reg,bin,fakes,sigstring,rflag,yr,outfile=None):
-         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,fakes,args.signalModel,opts,sigstring,rflag,odir,yr)
+         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare --year %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,fakes,args.signalModel,opts,sigstring,rflag,odir,yr)
          if outfile:
             cmd += " >> %s"%outfile
          os.system(cmd)
@@ -253,7 +253,7 @@ class merge_and_fit:
                   signal_flags="--signalModel %s"%(args.signalModel)
                   if pr.endswith('_pos'): signal_flags += " --reweight pos"
                   if pr.endswith('_neg'): signal_flags += " --reweight neg"
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,fakes,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare --year %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,fakes,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
                   out.append("rm %s"%f2) # remove temporary file
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
