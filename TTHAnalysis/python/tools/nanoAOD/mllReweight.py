@@ -91,7 +91,7 @@ class mllReweight( Module ):
             return (1.,1.)
         # correct unphysical configurations due to imperfect precision
         if mll < 0: mll=1e-5
-        elif mll > mN2-mN1: mll=mN2-mN1-1e5
+        elif mll > mN2-mN1: mll=mN2-mN1-1e-5
         # retrieve reweighting functions if not already computed
         if not((mN1,mN2) in self.denominator):
             self.StoreReweightFunctions(mN1,mN2)
