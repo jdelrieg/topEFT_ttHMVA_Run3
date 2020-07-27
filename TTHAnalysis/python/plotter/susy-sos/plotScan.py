@@ -153,6 +153,9 @@ def getLimitHists(files, tag):
         for i,lim in enumerate(limits):
             if len(lim.vals)<len(vars_to_plot): continue
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
+        if args.signalModel in ["T2tt","T2bW","HiggsPMSSM"]:
+            g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
+            g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
         g.SetNpx(300)
         g.SetNpy(300)
         h = g.GetHistogram().Clone()
