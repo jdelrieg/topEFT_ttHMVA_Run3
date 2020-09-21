@@ -46,6 +46,13 @@ HLT_MuMu\b			: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8,0)	; AlsoD
 HLT_MuMuMET\b		: AltBranch$(HLT_DoubleMu3_DZ_PFMET50_PFMHT60,0)	; AlsoData
 HLT_HighMET\b		: AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60,0) || AltBranch$(HLT_PFMETNoMu120_PFMHTNoMu120_IDTight,0)	; AlsoData
 PrefireWeight       : AltBranch$(L1PreFiringWeight_Nom,1) ; AlsoData
+### MET Cuts in AR
+EWK_MCMetBoundMed   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 ; Process="Fakes_.*|fakes_.*"
+EWK_MCMetBoundMed   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) <240 ; Process="prompt_.*|Rares"
+EWK_MCMetBoundHigh   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 ; Process="Fakes_.*|fakes_.*"
+EWK_MCMetBoundHigh   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 240 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) < 290; Process="prompt_.*|Rares"
+EWK_MCMetBoundUltra   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 ; Process="Fakes_.*|fakes_.*"
+EWK_MCMetBoundUltra   : metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 290 ; Process="prompt_.*|Rares"
 ### MET in MC
 MET_pt_jesTotalUp\b : METFixEE2017_pt_jesTotalUp ; year=2017
 MET_pt_jesTotalDown\b : METFixEE2017_pt_jesTotalDown ; year=2017
