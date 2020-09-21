@@ -1,4 +1,6 @@
-ght:  ScaleFactor2F_16*xsec
+## 2016
+
+## weight:  ScaleFactor2F_16*xsec
 fakes_matched2           :DYJetsToLL_M1to5_HT70to100    : ScaleFactor2F_16*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="DY(fakes)",FillColor=ROOT.kGray, years="2016"
 fakes_matched2           :DYJetsToLL_M1to5_HT100to200   : ScaleFactor2F_16*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="DY(fakes)",FillColor=ROOT.kGray, years="2016"
 fakes_matched2           :DYJetsToLL_M1to5_HT200to400   : ScaleFactor2F_16*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="DY(fakes)",FillColor=ROOT.kGray, years="2016"
