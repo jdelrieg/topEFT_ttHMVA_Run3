@@ -272,7 +272,7 @@ if __name__ == '__main__':
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
-                     x = x.replace('^methigh$','^methigh_col$')
+                     x = x.replace('^metmed$','^metmed_col$')
                 if '_high' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
                      x = x.replace('-E ^methigh$','-E ^methigh_col$')
@@ -281,10 +281,8 @@ if __name__ == '__main__':
                      x = x.replace('-E ^metultra$','-E ^metultra_col$')
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(args.lep,args.bin))
-                else: 
-                    if not '_low' in torun : x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_IncMET.txt"%(args.lep,args.bin))
-                    else : x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(args.lep,args.bin))
-
+                else: x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(args.lep,args.bin))                 
+                   
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/closure/mca-2los-closure.txt')
                 x = add(x,"-X ^metmed$ ")
@@ -322,11 +320,11 @@ if __name__ == '__main__':
                 x = add(x, "-E ^2LNT$ ")
             elif '1F_SF1F' in torun:
                 x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/Tests/mca-2los-1F.txt')
-                x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_IncMET.txt "%(args.lep,args.bin))
+                x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt "%(args.lep,args.bin))
                 x = add(x, " -E ^1LNT$ ")
             elif '2F_SF2F' in torun:
                 x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/Tests/mca-2los-2F.txt')
-                x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s_IncMET.txt "%(args.lep,args.bin))
+                x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt "%(args.lep,args.bin))
                 x = add(x, "-E ^2LNT$ ")
             else:
                 x = add(x,"-E ^oneNotTight$ ")
