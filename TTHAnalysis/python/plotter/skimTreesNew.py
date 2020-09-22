@@ -25,6 +25,7 @@ if __name__ == "__main__":
     parser.add_option("--new","--skip-existing", dest="skipExisting", default=False, action="store_true",  help="Don't skim samples that already exist in the output directory") 
     parser.add_option("--justcount",  dest="justcount", default=False, action="store_true",  help="Pretend to skim, up to the point of counting passing events") 
     parser.add_option("--skim-friends",  dest="skimFriends", default=False, action="store_true",  help="Also run skimFTrees") 
+    parser.add_option("--only-friends",    dest="onlyFriends", default=False, action="store_true",  help="Only do friend tree skimming") 
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("ZLIB:3"), help="Compression: none, or (algo):(level) ")
     parser.add_option("--elist", dest="elist", type="string", default="skimTrees_elist", help="Name of the skim elist (default: skimTrees_elist)")
     parser.add_option("--bo", "--branch-selection-output",  dest="branchsel_out", type="string", default=None, help="Branch selection output")
@@ -54,7 +55,7 @@ if __name__ == "__main__":
                     print "\t component %-40s [ missing %s ]" % (tty.cname(), "%s/%s.root" % (outdir, tty.cname()))
             else:
                 print "\t component %-40s" % tty.cname()
-            if options.pretend: continue
+            if options.pretend or options.onlyFriends: continue
             mysource = tty.fname()
             ttys = [ tty ]
             for (var,vdir,vtty) in tty.getTTYVariations():
@@ -84,13 +85,15 @@ if __name__ == "__main__":
     else:
         from multiprocessing import Pool
         Pool(options.jobs).map(_runIt, tasks)
-    if options.skimFriends and not (options.pretend or options.justcount):
+    if options.skimFriends and not options.justcount:
         skimFTrees = os.path.expandvars("$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/skimFTreesNew.py")
         if not os.path.isfile(skimFTrees): raise RuntimeError("missing skimFTreesNew")
         for D in options.friendTreesSimple + options.friendTreesMCSimple + options.friendTreesDataSimple:
             for P in options.path:
                 d = D.replace("{P}",P)
                 if not os.path.exists(d): continue
-                os.system("python %s --elist %s %s %s  > /dev/null" % (skimFTrees, options.elist, outdir, d))
+                os.system("python %s --elist %s %s %s %s %s %s %s" % (skimFTrees, options.elist, outdir, d, outdir+"/"+os.path.basename(d).strip("/"),\
+                        " ".join(['%s'%p for p in mca.listProcesses()]) if len(options.processes) > 0 else "",\
+                        "--new" if options.skipExisting else "",\
+                        "--pretend" if options.pretend else "> /dev/null"))
             print "Skimmed %s" % os.path.basename(D)
-
