@@ -9,7 +9,7 @@ parser.add_argument("--onlyFit", action='store_true', default=False, help="only 
 parser.add_argument("--accountingGroup", default=None, help="accounting group for condor jobs")
 parser.add_argument("--reuseBackground", default=None, help="outDir from previous run for re-using backgrounds")
 parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW"], help="Signal model to consider")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 args = parser.parse_args()
 
@@ -25,6 +25,13 @@ signals_hino = ["signal_Higgsino_"+s for s in signals_hinoN2N1]
 # signals_hinoN2C1 = ["100_75p00", "100_80p00", "100_85p00", "100_90p00", "100_92p50", "100_95p00", "100_96p25", "100_97p50", "100_98p50", "100_99p50", "120_100p00", "120_105p00", "120_110p00", "120_112p50", "120_115p00", "120_116p25", "120_117p50", "120_118p50", "120_119p50", "120_95p00", "140_115p00", "140_120p00", "140_125p00", "140_130p00", "140_132p50", "140_135p00", "140_136p25", "140_137p50", "140_138p50", "140_139p50", "160_135p00", "160_140p00", "160_145p00", "160_150p00", "160_152p50", "160_155p00", "160_156p25", "160_157p50", "160_158p50", "160_159p50", "180_155p00", "180_160p00", "180_165p00", "180_170p00", "180_172p50", "180_175p00", "180_176p25", "180_177p50", "180_178p50", "180_179p50", "200_175p00", "200_180p00", "200_185p00", "200_190p00", "200_192p50", "200_195p00", "200_196p25", "200_197p50", "200_198p50", "200_199p50", "220_195p00", "220_200p00", "220_205p00", "220_210p00", "220_212p50", "220_215p00", "220_216p25", "220_217p50", "220_218p50", "220_219p50", "240_215p00", "240_220p00", "240_225p00", "240_230p00", "240_232p50", "240_235p00", "240_236p25", "240_237p50", "240_238p50", "240_239p50", "250_225p00", "250_230p00", "250_235p00", "250_240p00", "250_242p50", "250_245p00", "250_246p25", "250_247p50", "250_248p50", "250_249p50"]
 # signals_hinoN2C1 = ["signal_HiggsinoN2C1_"+s for s in signals_hinoN2C1]
 #if args.signalModel=="Higgsino": args.reweight = "neg"
+
+signals_HiggsPMSSM=[
+"100_1000", "100_1200", "100_300", "100_400", "100_500", "100_600", "100_800", "120_1000", "120_1200", "120_300", "120_400", "120_500", "120_600", "120_800",\
+"140_1000", "140_1200", "140_300", "140_400", "140_500", "140_600", "140_800", "160_1000", "160_1200", "160_300", "160_400", "160_500", "160_600", "160_800",\
+"180_1000", "180_1200", "180_300", "180_400", "180_500", "180_600", "180_800", "200_1000", "200_1200", "200_300", "200_400", "200_500", "200_600", "200_800",\
+"220_1000", "220_1200", "220_300", "220_400", "220_500", "220_600", "220_800", "240_1000", "240_1200", "240_300", "240_400", "240_500", "240_600", "240_800"]
+signals_HiggsPMSSM = ["signal_HiggsPMSSM_"+s for s in signals_HiggsPMSSM]
 
 signals_stop=[
 "250_170","250_180","250_190","250_200","250_210","250_220","250_230","250_240","275_195","275_205","275_215","275_225","275_235","275_245","275_255","275_265",\
@@ -49,7 +56,7 @@ signals_stop=[
 signals_T2tt = ["signal_T2tt_"+s for s in signals_stop]
 signals_T2bW = ["signal_T2bW_"+s for s in signals_stop]
 
-_signals = signals_TChiWZ if args.signalModel=="TChiWZ" else signals_T2tt if args.signalModel=="T2tt" else signals_T2bW if args.signalModel=="T2bW" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
+_signals = signals_TChiWZ if args.signalModel=="TChiWZ" else signals_HiggsPMSSM if args.signalModel=="HiggsPMSSM" else signals_T2tt if args.signalModel=="T2tt" else signals_T2bW if args.signalModel=="T2bW" else signals_hino # (signals_hinoN2N1+signals_hinoN2C1)
 _signals=[x.lstrip('signal_') for x in _signals]
 signals=[]
 for mll in args.reweight.split(','):
@@ -133,7 +140,7 @@ class bare_production:
                tasks.append(task(pr,yr,cat))
 
       def _printCmd(lep,reg,bin,fakes,sigstring,rflag,yr,outfile=None):
-         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,fakes,args.signalModel,opts,sigstring,rflag,odir,yr)
+         cmd = 'echo "set -e; MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --doWhat cards --signalModel %s --justdump %s %s %s %s/bare --year %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"'%(lep,reg,bin,fakes,args.signalModel,opts,sigstring,rflag,odir,yr)
          if outfile:
             cmd += " >> %s"%outfile
          os.system(cmd)
@@ -246,7 +253,7 @@ class merge_and_fit:
                   signal_flags="--signalModel %s"%(args.signalModel)
                   if pr.endswith('_pos'): signal_flags += " --reweight pos"
                   if pr.endswith('_neg'): signal_flags += " --reweight neg"
-                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,fakes,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
+                  out.append("MYTMPFILE=\$(mktemp); python susy-sos/sos_plots.py --lep %s --reg %s --bin %s --fakes=%s --data %s --doWhat cards %s --signal --signalMasses %s --allowRest --infile %s_merged/bare --year %s %s > \${MYTMPFILE}; source \${MYTMPFILE}; rm \${MYTMPFILE};"%(lep,reg,bin,fakes,"" if args.unblind else "--asimov background",opts,pr,odir,yr,signal_flags))
                   out.append("rm %s"%f2) # remove temporary file
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
