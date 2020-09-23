@@ -61,8 +61,8 @@ LUMI = LUMI.rstrip(",")
 
 submit = '{command}' 
 
-P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
-
+#P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+P0="root://eoscms.cern.ch//eos/cms/store/user/evourlio/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner/ --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
@@ -74,7 +74,7 @@ if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + 
 def base(selection):
     plotting=''
     CORE=TREESALL
-    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s --neg "%(nCores,YEAR,LUMI)
+    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s --neg --perBin"%(nCores,YEAR,LUMI)
     RATIO= " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
@@ -222,32 +222,21 @@ def setwide(x):
     return x2
 
 def binChoice(x,torun):
-    metBinTrig = ''
-    metBinInf = ''
-    metBinSup = ''
+    metBin     = ''
     x2 = add(x,'-E ^eventFilters$ ')
-    if '_low' in torun:
-        metBinTrig = 'metlow'
-        metBinInf = 'metlow'
-        metBinSup = 'metmed'
+    if '_low' in torun: metBin     = 'metlow'
     elif '_med' in torun:
-        metBinTrig = 'metmed'
-        metBinInf = 'metmed'
-        metBinSup = 'methigh' if ( ('2los_' in torun) and ('cr_' not in torun) ) else ''
+        metBin     = 'metmed'
         x2 = add(x2,'-X ^mm$ ')
     elif '_high' in torun:
-        metBinTrig = 'methigh'
-        metBinInf = 'methigh'
-        metBinSup = 'metultra' 
+        metBin     = 'methigh'
         x2 = add(x2,'-X ^mm$ ')
     elif '_ultra' in torun:
-        metBinTrig = 'metultra'
-        metBinInf  = 'metultra'
+        metBin  = 'metultra' 
         x2 = add(x2,'-X ^mm$ ')
-    if metBinInf != '': x2 = add(x2,'-E ^'+metBinInf+'$ -E ^'+metBinTrig+'_trig$ ')
-    if metBinSup != '': x2 = add(x2,'-E ^'+metBinSup+'$ -I ^'+metBinSup+'$ ')
+    if metBin != '': x2 = add(x2,'-E ^'+metBin+'$ -E ^'+metBin+'_trig$ ')
 
-    if metBinTrig=='': print "\n--- NO TRIGGER APPLIED! ---\n"
+    #if metBinTrig=='': print "\n--- NO TRIGGER APPLIED! ---\n"
     return x2
 
 allow_unblinding = True
@@ -273,18 +262,17 @@ if __name__ == '__main__':
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
-                     x = x.replace('^methigh$','^methigh_col$')
+                     x = x.replace('^metmed$','^metmed_col$')
                 if '_high' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
                      x = x.replace('-E ^methigh$','-E ^methigh_col$')
-                     x = x.replace('^metultra$','^metultra_col$')
                 if '_ultra' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
-                     x = x.replace('-E ^metultra$','-E ^metultra_col$')                
+                     x = x.replace('-E ^metultra$','-E ^metultra_col$')
             if args.fakes == "semidd":
                 if '_col' in torun: x = add(x,"--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_col_%s.txt "%(args.lep,args.bin))
-                else: x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(args.lep,args.bin))
-
+                else: x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_appl_%s.txt"%(args.lep,args.bin))                 
+                   
             if '_closure' in torun:
                 x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/closure/mca-2los-closure.txt')
                 x = add(x,"-X ^metmed$ ")
@@ -298,18 +286,22 @@ if __name__ == '__main__':
         if 'appl' in torun:
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
+            if  not '_col' in torun:
+                if '_med' in torun: x = x.replace('^metmed$', '^metmed_AR$')
+                if '_high' in torun: x = x.replace('^methigh$', '^methigh_AR$')
+                if '_ultra' in torun: x = x.replace('^metultra$', '^metultra_AR$')
+
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
-                    x = x.replace('^methigh$','^methigh_col$')
+                    x = x.replace('^metmed$', '^metmed_col$')
                 if '_high' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
-                    x = x.replace('-E ^methigh$','-E ^methigh_col$')
-                    x = x.replace('^metultra$','^metultra_col$')
+                    x = x.replace('^methigh', '^methigh_col$')
                 if '_ultra' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
-                    x = x.replace('-E ^metultra$','-E ^metultra_col$')
+                    x = x.replace('^metultra', '^metultra_col$')
 
             x = add(x,"-X ^twoTight$ ")
             if '1F_NoSF' in torun:
@@ -330,6 +322,7 @@ if __name__ == '__main__':
 
         if 'cr_' in torun:
             x = add(x, "-X ^SF$ ")
+            x = x.replace('^metmed$', '^metmed_CR$')
             if args.reg != "cr_ss" and args.fakes == "semidd": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/dd_bkg/mca-2los-dd.txt')
 
         if 'cr_dy' in torun:
