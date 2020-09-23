@@ -414,6 +414,11 @@ TFile* f_lepSF_Electron_2016 = new TFile(DATA_SF+"/LeptonSF/Electron2016_LeptonS
 TFile* f_lepSF_Muon_2018 = new TFile(DATA_SF+"/LeptonSF/Muon2018_LeptonSFMap.root","read");
 TFile* f_lepSF_Muon_2017 = new TFile(DATA_SF+"/LeptonSF/Muon2017_LeptonSFMap.root","read");
 TFile* f_lepSF_Muon_2016 = new TFile(DATA_SF+"/LeptonSF/Muon2016_LeptonSFMap.root","read");
+// SOS FastSim to Full Sim Tight ID Sf
+TFile *f_lepSF_FastSim_2016 = new TFile(DATA_SF+"/LeptonSF/FastSIM_SF/FastSim_LeptonSF_2016.root","read");
+TFile *f_lepSF_FastSim_2017 = new TFile(DATA_SF+"/LeptonSF/FastSIM_SF/FastSim_LeptonSF_2017.root","read");
+TFile *f_lepSF_FastSim_2018 = new TFile(DATA_SF+"/LeptonSF/FastSIM_SF/FastSim_LeptonSF_2018.root","read");
+
 
 unordered_map<int, TH2F*> h_lepSF_Electron_SF = {
     { 2018, (TH2F*) f_lepSF_Electron_2018->Get("EGamma_SF2D") },
@@ -424,6 +429,18 @@ unordered_map<int, TH2F*> h_lepSF_Muon_SF = {
     { 2018, (TH2F*) f_lepSF_Muon_2018->Get("EGamma_SF2D") },
     { 2017, (TH2F*) f_lepSF_Muon_2017->Get("EGamma_SF2D") },
     { 2016, (TH2F*) f_lepSF_Muon_2016->Get("EGamma_SF2D") }
+};
+
+unordered_map<int, TH2F*>h_lepSF_FastSim_Muon={
+    { 2018, (TH2F*) f_lepSF_FastSim_2018->Get("h_lepSF_mu") },
+    { 2017, (TH2F*) f_lepSF_FastSim_2017->Get("h_lepSF_mu") },
+    { 2016, (TH2F*) f_lepSF_FastSim_2016->Get("h_lepSF_mu") }
+};
+
+unordered_map<int, TH2*>h_lepSF_FastSim_Electron={
+    { 2018, (TH2F*) f_lepSF_FastSim_2018->Get("h_lepSF_el") },
+    { 2017, (TH2F*) f_lepSF_FastSim_2017->Get("h_lepSF_el") },
+    { 2016, (TH2F*) f_lepSF_FastSim_2016->Get("h_lepSF_el") }
 };
 
 // To be revised
@@ -542,84 +559,44 @@ float lepSF(float _pt, float _eta, int pdgId, int year, int nSigma = 0){
 }
 
 
-// Fastsim: MCEff to multiply fastsim samples so that SF * MCEff = DataEff
-// To be revised
-//float lepMCEff_recoToTight(float _pt, float _eta, int pdgId, int year) {
-//	
-//	// Definitions
-//	float MCEff, pt, eta;
-//
-//	if(abs(pdgId)==11) { // Electrons
-//		// Protection
-//		pt = max(float(5.001), min(float(999.999), _pt));
-//		eta = min(float(2.499), abs(_eta)); // eta -> Absolute eta
-//
-//		MCEff = h_lepSF_Electron_MCEff[year]->GetBinContent(h_lepSF_Electron_MCEff[year]->GetXaxis()->FindBin(eta), h_lepSF_Electron_MCEff[year]->GetYaxis()->FindBin(pt));
-//	}
-//	else if(abs(pdgId)==13) { // Muons
-//		// Protection
-//		pt = max(float(3.501), min(float(999.999), _pt));
-//		eta = min(float(2.399), abs(_eta)); // eta -> Absolute eta
-//
-//		MCEff = h_lepSF_Muon_MCEff[year]->GetBinContent(h_lepSF_Muon_MCEff[year]->GetXaxis()->FindBin(eta), h_lepSF_Muon_MCEff[year]->GetYaxis()->FindBin(pt));
-//	}
-//	else { // Other => We should never end up here.
-//		MCEff = 0.0;
-//	}
-//	
-//	if(MCEff<=0.0){
-//		//cout << "=====================================" << endl;
-//		//cout << "||           MC eff <= 0           ||" << endl;
-//		//cout << "||    THIS SHOULD NEVER HAPPEN!    ||" << endl;
-//		//cout << "||   Setting MC eff to 1 for now   ||" << endl;
-//		//cout << "=====================================" << endl;
-//		MCEff = 1.0;
-//	}
-//	return MCEff; 
-//}
-//
-//float lepMCEff_toReco(float _pt, float _eta, int pdgId, int year) {
-//	
-//	// Definitions
-//	float MCEff, pt, eta;
-//	string ptString, yearString;
-//
-//	if(abs(pdgId)==11) { // Electrons
-//		// Protection
-//		pt = max(float(10.001), min(float(499.999), _pt));
-//		eta = max(float(-2.499), min(float(2.499), _eta));
-//
-//		yearString = to_string(year);
-//		if(pt > 20.0) ptString = "High";
-//		else ptString = "Low";
-//		if(year!=2018) yearString = yearString+ptString;
-//
-//		MCEff = h_recoSF_Electron_MCEff[yearString]->GetBinContent(h_recoSF_Electron_MCEff[yearString]->GetXaxis()->FindBin(eta), h_recoSF_Electron_MCEff[yearString]->GetYaxis()->FindBin(pt)); // reco
-//	}
-//	else if(abs(pdgId)==13) { // Muons
-//		// Protection
-//		//pt = max(float(3.501), min(float(999.999), _pt));
-//		//eta = min(float(2.399), abs(_eta)); // eta -> Absolute eta
-//
-//		// tracking SF = 1.0 (Muon POG Recommendations)
-//		// MCEff missing for 2016 from the POG and 2017 and 2018 are left be implemented together with that
-//		// MCEff = h_lepSF_Muon_MCEff[year]->GetBinContent(h_lepSF_Muon_MCEff[year]->GetXaxis()->FindBin(eta), h_lepSF_Muon_MCEff[year]->GetYaxis()->FindBin(pt)); // loose ID
-//		MCEff = 1.0;
-//	}
-//	else { // Other => We should never end up here.
-//		MCEff = 0.0;
-//	}
-//	
-//	if(MCEff<=0.0){
-//		//cout << "=====================================" << endl;
-//		//cout << "||           MC eff <= 0           ||" << endl;
-//		//cout << "||    THIS SHOULD NEVER HAPPEN!    ||" << endl;
-//		//cout << "||   Setting MC eff to 1 for now   ||" << endl;
-//		//cout << "=====================================" << endl;
-//		MCEff = 1.0;
-//	}
-//	return MCEff; 
-//}
+// Fastsim
+float lepSF_FastSim(float _pt, float _eta, int pdgId, int year){
+	
+    // Definitions
+    float SF,  pt, eta;
+    //SFUnc
+
+    if(abs(pdgId)==11){ // Electrons
+        // Protection
+        pt = max(float(5.001), min(float(999.999), _pt));
+        eta = min(float(2.499), abs(_eta)); // eta -> Absolute eta
+
+       
+        SF = h_lepSF_FastSim_Electron[year]->GetBinContent(h_lepSF_FastSim_Electron[year]->GetXaxis()->FindBin(eta), h_lepSF_FastSim_Electron[year]->GetYaxis()->FindBin(pt));
+
+    }
+    else if(abs(pdgId)==13){ // Muons
+        // Protection
+        pt = max(float(3.501), min(float(999.999), _pt));
+        eta = min(float(2.399), abs(_eta)); // eta -> Absolute eta
+
+        SF = h_lepSF_FastSim_Muon[year]->GetBinContent(h_lepSF_FastSim_Muon[year]->GetXaxis()->FindBin(eta), h_lepSF_FastSim_Muon[year]->GetYaxis()->FindBin(pt));
+
+    }
+    else{ // Other => We should never end up here.
+        SF = 0.0;
+    }
+	
+    if(SF<=0.0){
+        //cout << "=====================================" << endl;
+        //cout << "||             SF <= 0             ||" << endl;
+        //cout << "||    THIS SHOULD NEVER HAPPEN!    ||" << endl;
+        //cout << "||     Setting SF to 1 for now     ||" << endl;
+        //cout << "=====================================" << endl;
+        SF = 1.0;
+    }
+    return SF;
+}
 
 float lepMCEff(float _pt, float _eta, int pdgId, int year) {
     // To be revised
@@ -668,9 +645,10 @@ unordered_map<int, TGraph*> TChiWZ_W_BR = {
 };
 
 
+
 float WW_BR(float dmC1pN1, float dmC1mN1, int TopP_decay, int TopM_decay){
     // BR correction for TT pair production with T > b + (C1 > N1 W*) 
-
+    
     // Computations only computed up to dM up to 40. Assume plateau for dM>40
     if (dmC1pN1>40) dmC1pN1=40;
     if (dmC1mN1>40) dmC1mN1=40;
@@ -734,6 +712,5 @@ float WZ_BR(float dmZ, float dmW, int Z_decay, int W_decay){
     
     return Z_weight*W_weight;
 }
-
 
 void functionsSF() {}
