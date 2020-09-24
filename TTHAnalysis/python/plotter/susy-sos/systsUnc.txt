@@ -38,7 +38,9 @@ norm_vv     : prompt_vv.* : .* : normSymm : 1.5
 norm_fakes  : FRfakes_data|semidd_fakes : .* : normSymm : 1.4
 norm_rares  : Rares : .* : normSymm : 1.5
 
-shape_mllInclInMET : semidd_fakes : .*2los_sr_(high|ultra).* : templateSymm; Normalize=False, AddWeight='lnN1D_p1(1.2\,mass_2(LepGood1_pt\,LepGood1_eta\,LepGood1_phi\,LepGood1_mass\,LepGood2_pt\,LepGood2_eta\,LepGood2_phi\,LepGood2_mass)\,25\,50)'
+shape_mllInclInMET_16 : semidd_fakes : .*2los_sr_(high|ultra).* : templateSymm; Normalize=False, AddWeight='lnN1D_p1(1.2\,mass_2(LepGood1_pt\,LepGood1_eta\,LepGood1_phi\,LepGood1_mass\,LepGood2_pt\,LepGood2_eta\,LepGood2_phi\,LepGood2_mass)\,25\,50)', year="2016"
+shape_mllInclInMET_17 : semidd_fakes : .*2los_sr_(high|ultra).* : templateSymm; Normalize=False, AddWeight='lnN1D_p1(1.2\,mass_2(LepGood1_pt\,LepGood1_eta\,LepGood1_phi\,LepGood1_mass\,LepGood2_pt\,LepGood2_eta\,LepGood2_phi\,LepGood2_mass)\,25\,50)', year="2017"
+shape_mllInclInMET_18 : semidd_fakes : .*2los_sr_(high|ultra).* : templateSymm; Normalize=False, AddWeight='lnN1D_p1(1.2\,mass_2(LepGood1_pt\,LepGood1_eta\,LepGood1_phi\,LepGood1_mass\,LepGood2_pt\,LepGood2_eta\,LepGood2_phi\,LepGood2_mass)\,25\,50)', year="2018"
 
 shape_FR_ptDepend_17 : semidd_fakes : .*sr_col.* : templateSymm; Normalize=False, AddWeight='if3(LepGood1_pt<=15\,lnN1D_p1(1.4\,LepGood1_pt\,15\,30)\,(if3(lnN1D_p1(1.4\,LepGood1_pt\,15\,30)>1.2\,1.2\,lnN1D_p1(1.4\,LepGood1_pt\,15\,30))))', year="2017"
 shape_FR_ptDepend_16 : semidd_fakes : .*sr_col.* : templateSymm; Normalize=False, AddWeight='if3(LepGood1_pt<=15\,lnN1D_p1(1.4\,LepGood1_pt\,15\,30)\,(if3(lnN1D_p1(1.4\,LepGood1_pt\,15\,30)>1.1\,1.1\,lnN1D_p1(1.4\,LepGood1_pt\,15\,30))))', year="2016"
