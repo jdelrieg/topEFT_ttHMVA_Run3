@@ -599,7 +599,7 @@ class TreeToYield:
         #elif not self._isdata and self.getOption("KeysPdf",False):
         #else:
         #    print "Histogram for %s/%s has %d entries, so won't use KeysPdf (%s, %s) " % (self._cname, self._name, histo.GetEntries(), canKeys, self.getOption("KeysPdf",False))
-        self.negativeCheck(histo)
+        #self.negativeCheck(histo)
         histo = histo.Clone(name)
         histo.SetDirectory(None)
         if closeTreeAfter: self._close()
