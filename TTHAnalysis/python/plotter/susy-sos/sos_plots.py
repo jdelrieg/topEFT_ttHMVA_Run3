@@ -74,7 +74,7 @@ if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + 
 def base(selection):
     plotting=''
     CORE=TREESALL
-    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s --perBin"%(nCores,YEAR,LUMI)
+    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s "%(nCores,YEAR,LUMI)
     RATIO= " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
@@ -85,7 +85,7 @@ def base(selection):
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
-        CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
+        CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError --perBin "
         if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
