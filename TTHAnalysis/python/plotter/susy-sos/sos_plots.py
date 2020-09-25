@@ -259,6 +259,7 @@ if __name__ == '__main__':
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_col' in torun:
+                x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
@@ -286,11 +287,6 @@ if __name__ == '__main__':
         if 'appl' in torun:
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
-            if  not '_col' in torun:
-                if '_med' in torun: x = x.replace('^metmed$', '^metmed_AR$')
-                if '_high' in torun: x = x.replace('^methigh$', '^methigh_AR$')
-                if '_ultra' in torun: x = x.replace('^metultra$', '^metultra_AR$')
-
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -302,6 +298,10 @@ if __name__ == '__main__':
                 if '_ultra' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
                     x = x.replace('^metultra', '^metultra_col$')
+            else:
+                if '_med' in torun: x = x.replace('^metmed$', '^metmed_AR$')
+                if '_high' in torun: x = x.replace('^methigh$', '^methigh_AR$')
+                if '_ultra' in torun: x = x.replace('^metultra$', '^metultra_AR$')
 
             x = add(x,"-X ^twoTight$ ")
             if '1F_NoSF' in torun:
