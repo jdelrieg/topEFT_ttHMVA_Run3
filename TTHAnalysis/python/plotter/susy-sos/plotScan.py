@@ -314,8 +314,8 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     if args.unblind:
         gl1Obs=TGraph(2)
-        gl1Obs.SetPoint(0, x1+114.5 if args.signalModel in ["T2tt","T2bW"] else 154.5 if args.signalModel in ["HiggsPMSSM"] else 74.5, ylines[2]+fudge)
-        gl1Obs.SetPoint(1, x1+122.5 if args.signalModel in ["T2tt","T2bW"] else 162.5 if args.signalModel in ["HiggsPMSSM"] else 82.5, ylines[2]+fudge)
+        gl1Obs.SetPoint(0, x1+114.5 if args.signalModel in ["T2tt","T2bW"] else 154.5 if args.signalModel in ["HiggsPMSSM"] else 171.0, ylines[2]+fudge)
+        gl1Obs.SetPoint(1, x1+122.5 if args.signalModel in ["T2tt","T2bW"] else 162.5 if args.signalModel in ["HiggsPMSSM"] else 179.0, ylines[2]+fudge)
         gl1Obs.SetLineColor(ROOT.kBlack)
         gl1Obs.SetLineStyle(1)
         gl1Obs.SetLineWidth(2)
@@ -328,7 +328,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     mT3.Draw()
 
     if args.unblind:
-        mT3a=ROOT.TLatex(x1+126.5 if args.signalModel in ["T2tt","T2bW"] else 166.5 if args.signalModel in ["HiggsPMSSM"] else 86.5,ylines[2], "Observed")
+        mT3a=ROOT.TLatex(x1+126.5 if args.signalModel in ["T2tt","T2bW"] else 166.5 if args.signalModel in ["HiggsPMSSM"] else 183.0,ylines[2], "Observed")
         mT3a.SetTextAlign(12)
         mT3a.SetTextFont(42)
         mT3a.SetTextSize(0.040)
