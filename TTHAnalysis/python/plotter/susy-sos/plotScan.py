@@ -95,7 +95,7 @@ class Limit:
             tree = f.Get('limit')
             if not tree: return
             self.exp = {}
-            translate = {0.02500000037252903: -2, 0.1599999964237213: -1, 0.50: 0, 0.8399999737739563: 1, 0.9750000238418579: 2}
+            translate = {0.02500000037252903: '-2', 0.1599999964237213: '-1', 0.50: '0', 0.8399999737739563: '1', 0.9750000238418579: '2'}
             for ev in tree:
                 if ev.quantileExpected==-1:
                     self.obs = ev.limit
@@ -167,13 +167,13 @@ def getLimitHists(files, tag):
         if f.limit.exp:
             vals.update(f.limit.exp)
         if f.limit.obs:
-            vals[9] = f.limit.obs
-        vals[-9] = xsec[str(int(massH))+"_"+str(int(massL))] * vals[0] if args.signalModel=="HiggsPMSSM" else xsec[int(massH)] * vals[0]
+            vals['obs'] = f.limit.obs
+        vals['xs'] = xsec[str(int(massH))+"_"+str(int(massL))] * vals['0'] if args.signalModel=="HiggsPMSSM" else xsec[int(massH)] * vals['0']
         lim = LimitPoint(massH, massL, vals)
         limits.append(lim)
     hs={}
-    vars_to_plot = [0,1,-1,2,-2,-9]
-    if args.unblind: vars_to_plot.append(9)
+    vars_to_plot = ['0','1','-1','2','-2','xs']
+    if args.unblind: vars_to_plot.append('obs')
     for var in vars_to_plot:
         g = TGraph2D(len(limits))
         for i,lim in enumerate(limits):
@@ -192,7 +192,7 @@ def getLimitHists(files, tag):
 
 def plotLimits(limits_hists, limit_labels, label, outdir):
 
-    h_bkgd = limits_hists[0][-9 if args.xsec else 0].Clone('h_bkgd') # -9 plots cross sections, 0 plots the signal strength
+    h_bkgd = limits_hists[0]['xs' if args.xsec else '0'].Clone('h_bkgd') # 'xs' plots cross sections, '0' plots the signal strength
     nlim=len(limits_hists)
 
     c1=TCanvas()
@@ -224,14 +224,14 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     colz = [ROOT.kRed,ROOT.kBlue]
     for iLim, limit_hists in enumerate(limits_hists):
         for var,lim in limit_hists.iteritems():
-            if var==-9: continue
+            if var=='xs': continue
             lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
 
-        h2lim, h2limP1, h2limM1, h2limP2, h2limM2 = limit_hists[0], limit_hists[1], limit_hists[-1], limit_hists[2], limit_hists[-2]
+        h2lim, h2limP1, h2limM1, h2limP2, h2limM2 = limit_hists['0'], limit_hists['1'], limit_hists['-1'], limit_hists['2'], limit_hists['-2']
         if args.unblind:
-            h2limObs = limit_hists[9]
+            h2limObs = limit_hists['obs']
             h2limObs.SetLineWidth(2)
             h2limObs.SetLineColor(ROOT.kBlack)
         h2lim.SetLineWidth(2)
