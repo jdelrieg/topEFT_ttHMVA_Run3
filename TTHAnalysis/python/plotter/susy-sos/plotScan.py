@@ -13,7 +13,17 @@ parser.add_argument("--savefmts", default=[], action="append", help="Choose save
 parser.add_argument("--reweight", default=[], action="append", help="Choose the signal mll reweight scenarios to plot. Default=['none']")
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
+parser.add_argument("--print", dest="prnt", action='store_true', default=False, help="Print results")
+# Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
+parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
+# Nuisance parameter specific options
+parser.add_argument("--NPscan", default=None, help="Run scan of specific nuisances parameter")
+parser.add_argument("--NPerror", action='store_true', default=False, help="Plot NP error instead of central value")
+parser.add_argument("--fit", default="fit_b", choices=["fit_b","fit_s"], help="Use b or (s+b) fit for ML diagnostics. Default(b-only fit)")
+# Significance specific options
+parser.add_argument("--significance", dest="signif", default=None, choices=["exp_aprio","exp_apost","obs"], help="Plot significance maps")
+
 args = parser.parse_args()
 
 
@@ -21,7 +31,7 @@ if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
 if len(args.reweight) == 0: args.reweight = ['none']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
-#if args.signalModel == "Higgsino": args.reweight = ['neg']
+if (args.signif == "exp_apost" or args.signif == "obs") and not args.unblind: raise RuntimeError("Asking for unblinded significance without using the 'unblind' flag is not allowed!")
 
 # Cross section definitions
 TChiWZ_xsec = {
@@ -30,7 +40,7 @@ TChiWZ_xsec = {
 Higgsino_xsec = {
 100 : 8.603,  120 : 4.524,  140 : 2.5324, 160 : 1.5393, 180 : 1.0014,\
 200 : 0.6684, 220 : 0.4679, 240 : 0.3365, 250 : 0.2880}
-pMSSM_xsec = {
+HiggsPMSSM_xsec = {
 "100_1000" : 14.750, "100_1200" : 14.680, "100_300" : 16.300, "100_400" : 15.630, "100_500" : 15.304, "100_600" : 15.112, "100_800" : 14.881,\
 "120_1000" : 7.634,  "120_1200" : 7.586,  "120_300" : 8.364,  "120_400" : 8.035,  "120_500" : 7.893,  "120_600" : 7.788,  "120_800" : 7.679,\
 "140_1000" : 4.375,  "140_1200" : 4.359,  "140_300" : 4.784,  "140_400" : 4.612,  "140_500" : 4.525,  "140_600" : 4.463,  "140_800" : 4.405,\
@@ -60,7 +70,9 @@ elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, 
 elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
 elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
 elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model, NLO-NLL excl."
-moreText2 = "median expected upper limit on "+"cross section" if args.xsec else "signal strength"+"at 95% CL"
+moreText2 = "Median expected upper limit on "+("cross section" if args.xsec else "signal strength")+" at 95% CL"
+if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
+if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
 cmsText               = "#bf{CMS} Preliminary"
 cmsTextFont           = 52  
 cmsTextSize           = 0.55
@@ -70,13 +82,13 @@ lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
 leg_ylo=80. if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 1200. if args.signalModel=="HiggsPMSSM" else 50.
-leg_nlines=3
+leg_nlines=2 if args.NPscan or args.signif else 3
 
 # Plot range
 range_xlo=297. if args.signalModel in ["T2tt","T2bW"] else 100.
 range_xhi=653. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
 range_ylo=10. if args.signalModel in ["T2tt","T2bW"] else 3. if args.signalModel=="Higgsino" else 300. if args.signalModel=="HiggsPMSSM" else 3.5
-range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 61.5
+range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 60.1
 
 if logy:
     range_yhi=350.
@@ -93,8 +105,9 @@ class Limit:
         f = ROOT.TFile.Open(fname)
         if f:
             tree = f.Get('limit')
-            if not tree: return
-            self.exp = {}
+            if not tree:
+                self.exp.update({'0' : None})
+                return
             translate = {0.02500000037252903: '-2', 0.1599999964237213: '-1', 0.50: '0', 0.8399999737739563: '1', 0.9750000238418579: '2'}
             for ev in tree:
                 if ev.quantileExpected==-1:
@@ -117,7 +130,7 @@ class MLFit:
                 if x.GetName()!='r':
                     self.nuisances[x.GetName()] = (x.getVal(),x.getError())
                 else:
-                    self.mu = (x.getVal(), x.getError(), (x.getErrorLo(),x.getErrorHi()))
+                    raise RuntimeError("Not implemented in this context, use the default behavior to get the signal strength scan!")
 
 class Significance:
     def __init__(self,fname):
@@ -128,7 +141,7 @@ class Significance:
             tree = f.Get('limit')
             if not tree: return
             for ev in tree:
-                if ev.quantileExpected==-1: self.val = ev.limit
+                if ev.quantileExpected==-1: self.val = ev.limit if ev.limit > 0.0 else 1e-05
 
 class SignalPoint:
     def __init__(self,indir,tag='all',unblind=False):
@@ -141,15 +154,11 @@ class SignalPoint:
 
     def parse(self):
         self.limit = Limit(self.indir+'/higgsCombine_%s_%s_blind.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
-#        self.signif_aprio = Significance(self.indir+'/higgsCombine_%s_%s_exp_aprio.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
-#        self.mlfit_aprio_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_b')
-#        self.mlfit_aprio_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),'fit_s')
+        if args.signif: self.signif = Significance(self.indir+'/higgsCombine_%s_%s_%s.Significance.mH%d.root'%(self.modname,self.tag,args.signif,int(self.m1))).val
+        if args.NPscan: self.mlfit = MLFit(self.indir+'/fitDiagnostics_%s_%s_aprio_bonly.root'%(self.modname,self.tag),args.fit)
         if self.unblind:
             self.limit = Limit(self.indir+'/higgsCombine_%s_%s_obs.AsymptoticLimits.mH%d.root'%(self.modname,self.tag,int(self.m1)))
-#            self.signif = Significance(self.indir+'/higgsCombine_%s_%s_obs.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
-#            self.signif_apost = Significance(self.indir+'/higgsCombine_%s_%s_exp_apost.Significance.mH%d.root'%(self.modname,self.tag,int(self.m1))).val
-#            self.mlfit_b = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_b')
-#            self.mlfit_s = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),'fit_s')
+            if args.NPscan: self.mlfit = MLFit(self.indir+'/fitDiagnostics_%s_%s_obs.root'%(self.modname,self.tag),args.fit)
 
 class LimitPoint:
     def __init__(self,mass, Dm, vals):
@@ -164,16 +173,29 @@ def getLimitHists(files, tag):
         massH = f.m1
         massL = f.m2 if args.signalModel=="HiggsPMSSM" else f.m1-f.m2
         vals = {}
-        if f.limit.exp:
-            vals.update(f.limit.exp)
-        if f.limit.obs:
-            vals['obs'] = f.limit.obs
-        vals['xs'] = xsec[str(int(massH))+"_"+str(int(massL))] * vals['0'] if args.signalModel=="HiggsPMSSM" else xsec[int(massH)] * vals['0']
+        if args.NPscan:
+            if f.mlfit.nuisances.has_key(args.NPscan):
+                vals.update({'0' : f.mlfit.nuisances[args.NPscan][1 if args.NPerror else 0]})
+            else: vals.update({'0' : None})
+        elif args.signif:
+            vals.update({'0' : f.signif})
+        else:
+            if f.limit.exp:
+                vals.update(f.limit.exp)
+            if f.limit.obs:
+                vals['obs'] = f.limit.obs
+            if vals['0']!=None: vals['xs'] = xsec[str(int(massH))+"_"+str(int(massL))] * vals['0'] if args.signalModel=="HiggsPMSSM" else xsec[int(massH)] * vals['0']
+        if args.prnt: print massH, massL, vals['0']
         lim = LimitPoint(massH, massL, vals)
-        limits.append(lim)
+        if vals['0']!=None: limits.append(lim)
     hs={}
-    vars_to_plot = ['0','1','-1','2','-2','xs']
+    vars_to_plot = ['0','1','-1','xs']
+    if args.sigma2: vars_to_plot = ['0','1','-1','2','-2','xs']
     if args.unblind: vars_to_plot.append('obs')
+
+    if args.NPscan: vars_to_plot = ['0']
+    if args.signif: vars_to_plot = ['0']
+
     for var in vars_to_plot:
         g = TGraph2D(len(limits))
         for i,lim in enumerate(limits):
@@ -204,7 +226,9 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
     h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)
-    h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
+    if args.NPscan: h_bkgd.GetZaxis().SetRangeUser(-1.0,1.0)
+    elif args.signif: h_bkgd.GetZaxis().SetRangeUser(0.0,3.5)
+    else: h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
     h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
     h_bkgd.GetXaxis().SetLabelFont(42)
@@ -225,26 +249,31 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     for iLim, limit_hists in enumerate(limits_hists):
         for var,lim in limit_hists.iteritems():
             if var=='xs': continue
-            lim.SetContour(1,array.array('d',[1]))
+            if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-1]))
+            else: lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
 
-        h2lim, h2limP1, h2limM1, h2limP2, h2limM2 = limit_hists['0'], limit_hists['1'], limit_hists['-1'], limit_hists['2'], limit_hists['-2']
-        if args.unblind:
-            h2limObs = limit_hists['obs']
-            h2limObs.SetLineWidth(2)
-            h2limObs.SetLineColor(ROOT.kBlack)
+        if args.NPscan or args.signif: h2lim = limit_hists['0']
+        else:
+            h2lim, h2limP1, h2limM1 = limit_hists['0'], limit_hists['1'], limit_hists['-1']
+            if args.unblind:
+                h2limObs = limit_hists['obs']
+                h2limObs.SetLineWidth(2)
+                h2limObs.SetLineColor(ROOT.kBlack)
+            h2limP1.SetLineWidth(1)
+            h2limM1.SetLineWidth(1)
+            h2limP1.SetLineStyle(2)
+            h2limM1.SetLineStyle(2)
+            if args.sigma2:
+                h2limP2, h2limM2 = limit_hists['2'], limit_hists['-2']
+                h2limP2.SetLineWidth(1)
+                h2limM2.SetLineWidth(1)
+                h2limP2.SetLineStyle(3)
+                h2limM2.SetLineStyle(3)
         h2lim.SetLineWidth(2)
-        h2limP1.SetLineWidth(1)
-        h2limM1.SetLineWidth(1)
-        h2limP1.SetLineStyle(2)
-        h2limM1.SetLineStyle(2)
-        h2limP2.SetLineWidth(1)
-        h2limM2.SetLineWidth(1)
-        h2limP2.SetLineStyle(3)
-        h2limM2.SetLineStyle(3)
 
-    c1.SetLogz()
+    if not args.NPscan and not args.signif: c1.SetLogz()
     c1.SetLogy(logy)
     t = c1.GetTopMargin()
     r = c1.GetRightMargin()
@@ -297,103 +326,105 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     mT2.SetTextSize(0.040)
     mT2.Draw()
 
-    spread = delta*0.2
-    fudge = delta*0.1
-    gl1=TGraph(2)
-    gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
-    gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
-    gl1.SetLineColor(colz[0])
-    gl1.SetLineStyle(1)
-    gl1.SetLineWidth(2)
-    gl1.Draw("lsame")
+    if not args.NPscan and not args.signif:
+        spread = delta*0.2
+        fudge = delta*0.1
+        gl1=TGraph(2)
+        gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
+        gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
+        gl1.SetLineColor(colz[0])
+        gl1.SetLineStyle(1)
+        gl1.SetLineWidth(2)
+        gl1.Draw("lsame")
 
-    gl1p=TGraph(2)
-    gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
-    gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
-    gl1p.SetLineColor(colz[0])
-    gl1p.SetLineStyle(2)
-    gl1p.SetLineWidth(1)
-    gl1p.Draw("lsame")
+        gl1p=TGraph(2)
+        gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
+        gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
+        gl1p.SetLineColor(colz[0])
+        gl1p.SetLineStyle(2)
+        gl1p.SetLineWidth(1)
+        gl1p.Draw("lsame")
 
-    gl1m=TGraph(2)
-    gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
-    gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
-    gl1m.SetLineColor(colz[0])
-    gl1m.SetLineStyle(2)
-    gl1m.SetLineWidth(1)
-    gl1m.Draw("lsame")
+        gl1m=TGraph(2)
+        gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
+        gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
+        gl1m.SetLineColor(colz[0])
+        gl1m.SetLineStyle(2)
+        gl1m.SetLineWidth(1)
+        gl1m.Draw("lsame")
 
-    gl2p=TGraph(2)
-    gl2p.SetPoint(0, x1+4.5, ylines[2]+2*spread+fudge)
-    gl2p.SetPoint(1, x1+12.5,ylines[2]+2*spread+fudge)
-    gl2p.SetLineColor(colz[0])
-    gl2p.SetLineStyle(3)
-    gl2p.SetLineWidth(1)
-    gl2p.Draw("lsame")
+        if args.sigma2:
+            gl2p=TGraph(2)
+            gl2p.SetPoint(0, x1+4.5, ylines[2]+2*spread+fudge)
+            gl2p.SetPoint(1, x1+12.5,ylines[2]+2*spread+fudge)
+            gl2p.SetLineColor(colz[0])
+            gl2p.SetLineStyle(3)
+            gl2p.SetLineWidth(1)
+            gl2p.Draw("lsame")
 
-    gl2m=TGraph(2)
-    gl2m.SetPoint(0, x1+4.5, ylines[2]-2*spread+fudge)
-    gl2m.SetPoint(1, x1+12.5,ylines[2]-2*spread+fudge)
-    gl2m.SetLineColor(colz[0])
-    gl2m.SetLineStyle(3)
-    gl2m.SetLineWidth(1)
-    gl2m.Draw("lsame")
+            gl2m=TGraph(2)
+            gl2m.SetPoint(0, x1+4.5, ylines[2]-2*spread+fudge)
+            gl2m.SetPoint(1, x1+12.5,ylines[2]-2*spread+fudge)
+            gl2m.SetLineColor(colz[0])
+            gl2m.SetLineStyle(3)
+            gl2m.SetLineWidth(1)
+            gl2m.Draw("lsame")
 
-    if args.unblind:
-        gl1Obs=TGraph(2)
-        gl1Obs.SetPoint(0, x1+114.5 if args.signalModel in ["T2tt","T2bW"] else 154.5 if args.signalModel in ["HiggsPMSSM"] else 74.5, ylines[2]+fudge)
-        gl1Obs.SetPoint(1, x1+122.5 if args.signalModel in ["T2tt","T2bW"] else 162.5 if args.signalModel in ["HiggsPMSSM"] else 82.5, ylines[2]+fudge)
-        gl1Obs.SetLineColor(ROOT.kBlack)
-        gl1Obs.SetLineStyle(1)
-        gl1Obs.SetLineWidth(2)
-        gl1Obs.Draw("lsame")
+        if args.unblind:
+            gl1Obs=TGraph(2)
+            gl1Obs.SetPoint(0, x1+(114.5 if args.signalModel in ["T2tt","T2bW"] else 54.5 if args.signalModel in ["HiggsPMSSM"] else 74.5), ylines[2]+fudge)
+            gl1Obs.SetPoint(1, x1+(122.5 if args.signalModel in ["T2tt","T2bW"] else 62.5 if args.signalModel in ["HiggsPMSSM"] else 82.5), ylines[2]+fudge)
+            gl1Obs.SetLineColor(ROOT.kBlack)
+            gl1Obs.SetLineStyle(1)
+            gl1Obs.SetLineWidth(2)
+            gl1Obs.Draw("lsame")
 
-    mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
-    mT3.SetTextAlign(12)
-    mT3.SetTextFont(42)
-    mT3.SetTextSize(0.040)
-    mT3.Draw()
+        mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
+        mT3.SetTextAlign(12)
+        mT3.SetTextFont(42)
+        mT3.SetTextSize(0.040)
+        mT3.Draw()
 
-    if args.unblind:
-        mT3a=ROOT.TLatex(x1+126.5 if args.signalModel in ["T2tt","T2bW"] else 166.5 if args.signalModel in ["HiggsPMSSM"] else 86.5,ylines[2], "Observed")
-        mT3a.SetTextAlign(12)
-        mT3a.SetTextFont(42)
-        mT3a.SetTextSize(0.040)
-        mT3a.Draw()
+        if args.unblind:
+            mT3a=ROOT.TLatex(x1+(126.5 if args.signalModel in ["T2tt","T2bW"] else 66.5 if args.signalModel in ["HiggsPMSSM"] else 86.5),ylines[2], "Observed")
+            mT3a.SetTextAlign(12)
+            mT3a.SetTextFont(42)
+            mT3a.SetTextSize(0.040)
+            mT3a.Draw()
 
-    if len(limit_labels):
-        XOFF = 100.
-        gl2=TGraph(2)
-        gl2.SetPoint(0, XOFF+x1+4.5, ylines[2]+fudge)
-        gl2.SetPoint(1, XOFF+x1+12.5, ylines[2]+fudge)
-        gl2.SetLineColor(colz[0])
-        gl2.SetLineWidth(2)
-        gl2.Draw("lsame")
+        if len(limit_labels):
+            XOFF = 100.
+            gl2=TGraph(2)
+            gl2.SetPoint(0, XOFF+x1+4.5, ylines[2]+fudge)
+            gl2.SetPoint(1, XOFF+x1+12.5, ylines[2]+fudge)
+            gl2.SetLineColor(colz[0])
+            gl2.SetLineWidth(2)
+            gl2.Draw("lsame")
 
-        mT4=ROOT.TLatex(XOFF+x1+16.5,ylines[2]+fudge, limit_labels[0])
-        mT4.SetTextAlign(12)
-        mT4.SetTextFont(42)
-        mT4.SetTextSize(0.040)
-        mT4.Draw()
+            mT4=ROOT.TLatex(XOFF+x1+16.5,ylines[2]+fudge, limit_labels[0])
+            mT4.SetTextAlign(12)
+            mT4.SetTextFont(42)
+            mT4.SetTextSize(0.040)
+            mT4.Draw()
 
-    if len(limit_labels)>1:
-        XOFF = 150.
-        gl3=TGraph(2)
-        gl3.SetPoint(0, XOFF+x1+4.5, ylines[2]+fudge)
-        gl3.SetPoint(1, XOFF+x1+12.5, ylines[2]+fudge)
-        gl3.SetLineColor(colz[1])
-        gl3.SetLineWidth(2)
-        gl3.Draw("lsame")
+        if len(limit_labels)>1:
+            XOFF = 150.
+            gl3=TGraph(2)
+            gl3.SetPoint(0, XOFF+x1+4.5, ylines[2]+fudge)
+            gl3.SetPoint(1, XOFF+x1+12.5, ylines[2]+fudge)
+            gl3.SetLineColor(colz[1])
+            gl3.SetLineWidth(2)
+            gl3.Draw("lsame")
 
-        mT5=ROOT.TLatex(XOFF+x1+16.5,ylines[2]+fudge, limit_labels[1])
-        mT5.SetTextAlign(12)
-        mT5.SetTextFont(42)
-        mT5.SetTextSize(0.040)
-        mT5.Draw()
+            mT5=ROOT.TLatex(XOFF+x1+16.5,ylines[2]+fudge, limit_labels[1])
+            mT5.SetTextAlign(12)
+            mT5.SetTextFont(42)
+            mT5.SetTextSize(0.040)
+            mT5.Draw()
 
     os.system("mkdir -p %s"%outdir)
     for fmt in args.savefmts:
-        c1.SaveAs("%s/h2lim_%s%s"%(outdir,label+logy*('_log'),fmt))
+        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+logy*('_log'),fmt))
 
 
 def run(indirs,tag,label,outdir):
