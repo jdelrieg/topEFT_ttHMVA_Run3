@@ -65,7 +65,7 @@ submit = '{command}'
 P0="root://eoscms.cern.ch//eos/cms/store/user/evourlio/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
-TREESALL = " --Fs {P}/recleaner/ --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
+TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
 # For cards only, no need fr multiple year support
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
 if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
@@ -74,7 +74,7 @@ if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + 
 def base(selection):
     plotting=''
     CORE=TREESALL
-    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s --perBin"%(nCores,YEAR,LUMI)
+    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s "%(nCores,YEAR,LUMI)
     RATIO= " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
@@ -85,7 +85,7 @@ def base(selection):
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
-        CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
+        CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError --perBin "
         if args.signal: CORE+=" --noStackSig --showIndivSigs " if ((not args.postfit) or (':shapes_fit_s' not in args.postfit)) else " "
 
     wBG = " '1.0' "
@@ -259,6 +259,7 @@ if __name__ == '__main__':
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_col' in torun:
+                x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
@@ -286,11 +287,6 @@ if __name__ == '__main__':
         if 'appl' in torun:
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
-            if  not '_col' in torun:
-                if '_med' in torun: x = x.replace('^metmed$', '^metmed_AR$')
-                if '_high' in torun: x = x.replace('^methigh$', '^methigh_AR$')
-                if '_ultra' in torun: x = x.replace('^metultra$', '^metultra_AR$')
-
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -302,6 +298,10 @@ if __name__ == '__main__':
                 if '_ultra' in torun: 
                     x = add(x,"-X ^pt5sublep$ ")
                     x = x.replace('^metultra', '^metultra_col$')
+            else:
+                if '_med' in torun: x = x.replace('^metmed$', '^metmed_AR$')
+                if '_high' in torun: x = x.replace('^methigh$', '^methigh_AR$')
+                if '_ultra' in torun: x = x.replace('^metultra$', '^metultra_AR$')
 
             x = add(x,"-X ^twoTight$ ")
             if '1F_NoSF' in torun:

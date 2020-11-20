@@ -2,7 +2,7 @@ import ROOT, argparse, math
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dir", default="", required=True, help="Directory with saved toys")
-parser.add_argument("--asimov", default="fit_s", choices=["fit_b","fit_s","prefit"], help="Signal model to consider")
+parser.add_argument("--asimov", default="fit_b", choices=["fit_b","fit_s","prefit"], help="Signal model to consider")
 parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
 parser.add_argument("--masspoint", default="250_230", help="Signal masspoint to consider")
@@ -35,6 +35,7 @@ procs = ["prompt_dy","prompt_tt","prompt_vv","prompt_wz","Rares","Convs","FRfake
 catDirs = {}
 toyHists = {}
 Ntoys = 200
+args.dir = args.dir.rstrip("/") + "/"
 outFile = ROOT.TFile(args.dir+"plotAllYearsWithPostFitToys.root","recreate")
 rootDir = outFile.mkdir("shapes_"+args.asimov)
 for itoy in range(Ntoys):
@@ -63,6 +64,9 @@ for itoy in range(Ntoys):
             if hist:
                 if toyHists.has_key(tempKeyName): toyHists.get(tempKeyName).Add(hist)
                 else: toyHists[tempKeyName] = hist.Clone("proc")
+                if "signal" not in tempKeyName:
+                    if toyHists.has_key(catDirName+"_total_background"): toyHists.get(catDirName+"_total_background").Add(hist)
+                    else: toyHists[catDirName+"_total_background"] = hist.Clone("total_background")
                 if toyHists.has_key(catDirName+"_total"): toyHists.get(catDirName+"_total").Add(hist)
                 else: toyHists[catDirName+"_total"] = hist.Clone("total")
             if itoy == Ntoys-1:
@@ -72,6 +76,11 @@ for itoy in range(Ntoys):
                 for i in range(1,finalHist.GetNbinsX()+1): finalHist.SetBinError(i,finalHist.GetBinError(i)*math.sqrt(Ntoys))
                 catDirs[catDirName].WriteObject(finalHist,proc)
         if itoy == Ntoys-1:
+            finalHistTotalBackground = toyHists[catDirName+"_total_background"].Clone()
+            finalHistTotalBackground.Scale(1/float(Ntoys))
+            for i in range(1,finalHistTotalBackground.GetNbinsX()+1): finalHistTotalBackground.SetBinError(i,finalHistTotalBackground.GetBinError(i)*math.sqrt(Ntoys))
+            catDirs[catDirName].WriteObject(finalHistTotalBackground,"total_background")
+
             finalHistTotal = toyHists[catDirName+"_total"].Clone()
             finalHistTotal.Scale(1/float(Ntoys))
             for i in range(1,finalHistTotal.GetNbinsX()+1): finalHistTotal.SetBinError(i,finalHistTotal.GetBinError(i)*math.sqrt(Ntoys))
