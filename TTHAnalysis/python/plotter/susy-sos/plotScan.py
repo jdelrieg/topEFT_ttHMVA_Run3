@@ -5,6 +5,9 @@ import array
 import argparse
 import sys
 
+import ROOT
+from ROOT import *
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--indir", default=[], action="append", required=True, help="Choose the input directories")
 parser.add_argument("--outdir", default="susy-sos/scanPlots/", help="Choose the output directory. Default='%(default)s'")
@@ -26,12 +29,27 @@ parser.add_argument("--significance", dest="signif", default=None, choices=["exp
 
 args = parser.parse_args()
 
-
 if len(args.indir) == 0: raise RuntimeError("No input directories given!")
 if len(args.tag) == 0: args.tag = ['all','2lep','3lep']
 if len(args.reweight) == 0: args.reweight = ['none']
 if len(args.savefmts) == 0: args.savefmts = ['.pdf','.png','.jpg','.root','.C']
 if (args.signif == "exp_apost" or args.signif == "obs") and not args.unblind: raise RuntimeError("Asking for unblinded significance without using the 'unblind' flag is not allowed!")
+
+if args.signif:
+    ncontours = 999
+    stops = [0.00, 0.34, 0.61, 0.84, 1.00]
+    red   = [0.00, 0.00, 0.87, 1.00, 0.51]
+    green = [0.00, 0.81, 1.00, 0.20, 0.00]
+    blue  = [0.51, 1.00, 0.12, 0.00, 0.00]
+
+    s = array.array('d', stops)
+    r = array.array('d', red)
+    g = array.array('d', green)
+    b = array.array('d', blue)
+
+    npoints = len(s)
+    TColor.CreateGradientColorTable(npoints, s, r, g, b, ncontours)
+    ROOT.gStyle.SetNumberContours(ncontours)
 
 # Cross section definitions
 TChiWZ_xsec = {
@@ -56,9 +74,6 @@ T2XX_xsec = {
 850  : 0.0189612,  875  : 0.015625,   900  : 0.0128895, 925 : 0.0106631, 950 : 0.00883465, 975 : 0.00735655, 1000 : 0.00615134, 1025 : 0.00514619,\
 1050 : 0.00432261, 1075 : 0.00364174, 1100 : 0.00307413}
 xsec = TChiWZ_xsec if args.signalModel=="TChiWZ" else Higgsino_xsec if args.signalModel=="Higgsino" else HiggsPMSSM_xsec if args.signalModel=="HiggsPMSSM" else T2XX_xsec
-
-import ROOT
-from ROOT import *
 
 logy=False
 #logy=True
@@ -141,7 +156,7 @@ class Significance:
             tree = f.Get('limit')
             if not tree: return
             for ev in tree:
-                if ev.quantileExpected==-1: self.val = ev.limit if ev.limit > 0.0 else 1e-05
+                if ev.quantileExpected==-1: self.val = ev.limit
 
 class SignalPoint:
     def __init__(self,indir,tag='all',unblind=False):
@@ -227,7 +242,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
     h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)
     if args.NPscan: h_bkgd.GetZaxis().SetRangeUser(-1.0,1.0)
-    elif args.signif: h_bkgd.GetZaxis().SetRangeUser(0.0,3.5)
+    elif args.signif: h_bkgd.GetZaxis().SetRangeUser(-3.0,3.0)
     else: h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
     h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
