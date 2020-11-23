@@ -323,10 +323,14 @@ mcMatchId     = lambda : ObjTagger('mcMatchId','LepGood', [lambda l: (l.genPartF
 mcPromptGamma = lambda : ObjTagger('mcPromptGamma','LepGood', [lambda l: (l.genPartFlav==22)])
 mcMatch_seq   = [ isMatchRightCharge, mcMatchId ,mcPromptGamma]
 
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertaintiesProducer, jetmetUncertainties2016, jetmetUncertainties2017METv2 as jetmetUncertainties2017, jetmetUncertainties2018
+from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetUncertainties import jetmetUncertaintiesProducer
+# FullSIM JECs
+jetmetUncertainties2016 = lambda : jetmetUncertaintiesProducer("2016", "Summer16_07Aug2017_V11_MC", [ "Total" ])
+jetmetUncertainties2017 = lambda : jetmetUncertaintiesProducer("2017", "Fall17_17Nov2017_V32_MC",   [ "Total" ], metBranchName='METFixEE2017')
+jetmetUncertainties2018 = lambda : jetmetUncertaintiesProducer("2018", "Autumn18_V19_MC",           [ "Total" ])
 # FastSIM JECs
 jetmetUncertainties2016Fast = lambda : jetmetUncertaintiesProducer("2016", "Summer16_FastSimV1_MC", [ "Total" ])
-jetmetUncertainties2017Fast = lambda : jetmetUncertaintiesProducer("2017", "Fall17_FastSimV1_MC", [ "Total" ], metBranchName='METFixEE2017')
+jetmetUncertainties2017Fast = lambda : jetmetUncertaintiesProducer("2017", "Fall17_FastSimV1_MC",   [ "Total" ], metBranchName='METFixEE2017')
 jetmetUncertainties2018Fast = lambda : jetmetUncertaintiesProducer("2018", "Autumn18_FastSimV1_MC", [ "Total" ])
 
 isVLFOEle = lambda : ObjTagger('isVLFOEle', "Electron", [lambda lep,year: VLooseFOEleID(lep,year) ])
