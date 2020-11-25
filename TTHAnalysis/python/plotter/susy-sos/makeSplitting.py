@@ -279,13 +279,13 @@ class merge_and_fit:
             if args.unblind:
                 out.append("combine -M AsymptoticLimits -n _%s_%s_obs -m %s %s 2>&1 > log_limit_obs_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed + a-posteriori expected
                 out.append("combine -M FitDiagnostics %s --setParameterRanges r=-10,10 -n _%s_%s_obs -m %s %s 2>&1 > log_mlfit_obs_%s_%s.txt"%(addopts_fitdiag,fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit
-                out.append("combine -M Significance --uncapped 1 -n _%s_%s_obs -m %s %s 2>&1 > log_signif_obs_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed asymptotic significance
-                out.append("combine -M Significance --uncapped 1 -t -1 --expectSignal 1 --toysFreq -n _%s_%s_exp_apost -m %s %s 2>&1 > log_signif_exp_apost_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-posteriori expected asymptotic significance
+                out.append("combine -M Significance --uncapped 1 --rMin -5.0 -n _%s_%s_obs -m %s %s 2>&1 > log_signif_obs_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # observed asymptotic significance
+                out.append("combine -M Significance --uncapped 1 --rMin -5.0 -t -1 --expectSignal 1 --toysFreq -n _%s_%s_exp_apost -m %s %s 2>&1 > log_signif_exp_apost_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-posteriori expected asymptotic significance
 
             out.append("combine -M AsymptoticLimits --run blind -n _%s_%s_blind -m %s %s 2>&1 > log_limit_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected
             out.append("combine -M FitDiagnostics -t -1 --expectSignal 0 --setParameterRanges r=-10,10 -n _%s_%s_aprio_bonly -m %s %s 2>&1 > log_mlfit_aprio_bonly_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=0
 #           out.append("combine -M FitDiagnostics -t -1 --expectSignal 1 --setParameterRanges r=-10,10 -n _%s_%s_aprio_siginj -m %s %s 2>&1 > log_mlfit_aprio_siginj%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # ML fit, a-priori expected r=1
-            out.append("combine -M Significance --uncapped 1 -t -1 --expectSignal 1 -n _%s_%s_exp_aprio -m %s %s 2>&1 > log_signif_exp_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected asymptotic significance
+            out.append("combine -M Significance --uncapped 1 --rMin -5.0 -t -1 --expectSignal 1 -n _%s_%s_exp_aprio -m %s %s 2>&1 > log_signif_exp_aprio_%s_%s.txt"%(fullpoint,tag,m1,cn,fullpoint,tag)) # a-priori expected asymptotic significance
 
             if tag!='all': out.append("rm %s"%cn) # remove the workspace
 
