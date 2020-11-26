@@ -31,7 +31,8 @@ minMllAFSS\b    : minMllAFSS_Recl; AlsoData
 minMllSFOS\b    : minMllSFOS_Recl; AlsoData
 dTakingEra\b : if3(isData,(run>=275657)+(run>=276315)+(run>=276831)+(run>=277772)+(run>=278820)+(run>=280919),-1); AlsoData # 2016B==0,C,D,E,F,G,H
 ### Trigger and data quality
-EventFilters\b    : Flag_goodVertices>=1 && Flag_globalSuperTightHalo2016Filter>=1 && Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_BadPFMuonFilter>=1 && AltBranch$(Flag_ecalBadCalibFilterV2,1)>=1    ; AlsoData
+EventFilters\b    : Flag_goodVertices>=1 && Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_BadPFMuonFilter>=1 && AltBranch$(Flag_ecalBadCalibFilterV2,1)>=1    ; Process="signal_(T2tt|T2bW|HiggsPMSSM)_.*"
+EventFilters\b    : Flag_goodVertices>=1 && Flag_globalSuperTightHalo2016Filter>=1 && Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_BadPFMuonFilter>=1 && AltBranch$(Flag_ecalBadCalibFilterV2,1)>=1    ; Process="^(?!(.*(T2tt|T2bW|HiggsPMSSM))).*$", AlsoData
 # Ordering of the cuts below matters
 HLT_MuMu16\b		: AltBranch$(HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ,1) || AltBranch$(HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ,1) ; Process="signal_(T2tt|T2bW|HiggsPMSSM)_.*"
 HLT_MuMuMET16\b		: AltBranch$(HLT_DoubleMu3_PFMET50,1)	; Process="signal_(T2tt|T2bW|HiggsPMSSM)_.*"
