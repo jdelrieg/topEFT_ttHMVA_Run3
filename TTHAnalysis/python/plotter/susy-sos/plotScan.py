@@ -264,7 +264,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     for iLim, limit_hists in enumerate(limits_hists):
         for var,lim in limit_hists.iteritems():
             if var=='xs': continue
-            if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-1]))
+            if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-5]))
             else: lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
             lim.SetLineColor(colz[iLim])
