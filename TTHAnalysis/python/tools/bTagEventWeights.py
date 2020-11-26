@@ -5,7 +5,7 @@ from math import log, exp
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
-from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop#, Module, Collection
+from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop
 from BTagScaleFactors import BTagScaleFactors
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 
@@ -79,20 +79,6 @@ class BTagEventWeightFriend:
 
         return out
 
-    def getJetCollection(self, event, jec_syst):
-        if not hasattr(event, "nJet"+jec_syst): jec_syst = ""
-        jets      = [j for j in Collection(event, "Jet"    +jec_syst, "nJet"    +jec_syst)]
-        jets_disc = [j for j in Collection(event, "DiscJet"+jec_syst, "nDiscJet"+jec_syst)]
-
-        try:
-            _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
-            return [(jets[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
-        except AttributeError:
-            if not hasattr(self,'_debugprinted'): print 'Recleaned jets not found, falling back to default cleaned collection'
-            self._debugprinted = True
-            return jets
-
-
     def event_weight_from_discr_shape(self, jets, jetcorr,
                                       syst="central",
                                       flavorAttr=None,
@@ -130,6 +116,11 @@ class BTagEventWeightFriend:
             btagval = getattr(jet, btagAttr)
             tagged = (btagval >= self.reader.working_points[wp])
 
+            # Get FastSIM efficiency from MC
+            efficiency = self.reader.get_tagging_efficiency(jet, wp)
+
+            # Get FastSIM scale factors and multiply
+            # Fastsim SF are defined as eff_full / eff_fast
             fastsim_syst = syst
             if 'correlated' in syst:
                 fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
@@ -137,39 +128,39 @@ class BTagEventWeightFriend:
                                             flavor=flavor, val=btagval, wp=wp,
                                             syst=fastsim_syst, mtype='fastsim')
 
-            efficiency = self.reader.get_tagging_efficiency(jet, wp)
-
-            # Convert to fullsim efficiency using scale factors
-            # Inverted, because fastsim SF are defined as eff_full / eff_fast
-            #    and we are using fullsim efficiencies
-            efficiency /= sf_fastsim
-
-            if not tagged:
-                efficiency = 1.0 - efficiency
-
+            # Get FullSIM scale factors
             sf_fullsim = self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
                                             flavor=flavor, val=btagval, wp=wp,
                                             syst=syst, mtype='auto')
 
+            # Combine factors for efficiency in data = Eff_FastSIM_MC * (Eff_FullSIM_MC / Eff_FastSIM_MC) * (Eff_Data / Eff_FullSIM_MC)
+            eff_data = efficiency * sf_fastsim * sf_fullsim
+
+            # Complimentary efficiencies for not tagged
+            if not tagged:
+                efficiency = 1.0 - efficiency # MC
+                eff_data = 1.0 - eff_data # Data
+                if eff_data < 0.0: print "WARNING: Negative efficiency computed!"
+
+
             pmc *= efficiency
-            pdata *= sf_fullsim*efficiency
+            pdata *= eff_data
+            if pdata < 0.0: print "WARNING: Negative probability computed!"
 
         try:
-            return pmc/pdata
+            return pdata/pmc
         except ZeroDivisionError:
             print "WARNING: scale factor of 0 found"
             return 1.0
 
 
 
-    #def __call__(self, event):
     def analyze(self, event):
         ret = {k:1.0 for k in self.branches}
         #if self.mcOnly and event.isData: return ret
 
         jetscoll = {}
         for _var in self.systsJEC:
- #           jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
             jets = [j for j in Collection(event,"JetSel"+self.recllabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
@@ -181,7 +172,6 @@ class BTagEventWeightFriend:
             jetscoll[_var]=(jets,jetcorr)
 
         for syst in self.btag_systs:
-            #jets = self.getJetCollection(event, jec_syst=self.jec_syst_to_use[syst])
 
             _var=self.jec_syst_to_use[syst]
 
@@ -215,6 +205,7 @@ if __name__ == '__main__':
 
     btagsf_payload = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSVv2_ichep.csv")
 
+#################################################################
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)

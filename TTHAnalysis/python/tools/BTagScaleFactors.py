@@ -1,21 +1,9 @@
 import os
 
 import ROOT
-#################################################################
-# This is mostly copy pasted from Lorenzo Bianchini:
-# https://github.com/bianchini/cmssw/blob/LB_newbtagSF/VHbbAnalysis/Heppy/python/btagSF.py
-#
-# Load the BTagCalibrationStandalone.cc macro from
-# https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
-# and compile it:
-# cmsenv
-# g++ -c -o BTagCalibrationStandalone.so -L${ROOTSYS}/lib $CMSSW_RELEASE_BASE/src/CondTools/BTau/test/BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
-#
-# Get the current scale factor files from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X
-#################################################################
 from ROOT import gSystem
-
-#gSystem.Load(os.path.join(os.path.dirname(__file__), 'BTagCalibrationStandalone.so'))
+ROOT.gSystem.Load('libCondFormatsBTauObjects')
+ROOT.gSystem.Load('libCondToolsBTau')
 from ROOT import BTagCalibration, BTagCalibrationReader
 
 def get_allowed_ranges(csvfile):
@@ -103,6 +91,7 @@ class BTagScaleFactors(object):
             }
 
         if self.algo == 'deepcsv':
+            if not year: print "No year provided, 2018 will be used as the default"
             self.working_points = {
                 "L" : 0.2217 if year==2016 else 0.1522 if year==2017 else 0.1241,
                 "M" : 0.6321 if year==2016 else 0.4941 if year==2017 else 0.4184,
@@ -236,7 +225,6 @@ class BTagScaleFactors(object):
         allsysts += ["central"]
         for syst in allsysts:
             v_iterativefit_sys = getattr(ROOT, 'vector<string>')()
-            #v_iterativefit_sys.push_back(syst)
             self.readers[('iterative', syst)] = BTagCalibrationReader(
                                                     3,
                                                     syst,
@@ -266,9 +254,6 @@ class BTagScaleFactors(object):
 
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
-
-        #raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
-
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:
             if self.verbose>0:
@@ -323,9 +308,6 @@ class BTagScaleFactors(object):
             out_of_range = True
             pt = min(pt, pt_max - 0.01)
             pt = max(pt, pt_min + 0.01)
-
-        # pt_max = 670.-1e-02 if "CSV" in algo else 320.-1e-02
-        # pt_min = 30.+1e-02
 
         if flavor < 2: # b or c jets
             sf = self.readers[(mtype, wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
