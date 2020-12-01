@@ -71,20 +71,21 @@ lepSF_2    : $allMC : .*    : templateAsymm;  AddWeights=['lepSF(LepGood2_pt\,Le
 lepSF_3   : $allMC : .*3l.* : templateAsymm;  AddWeights=['lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)'\,'lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,-1)/lepSF(LepGood3_pt\,LepGood3_eta\,LepGood3_pdgId\,year\,0)']
 # For now, FullSIM lepton SF are applied to FastSIM and the uncertainty is taken for them
 
-CMS_scale_j	: $allMC : .* : templateAsymm; \
+CMS_scale_j	: $allMCFullSIM : .* : templateAsymm; \
         FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt'], \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
+CMS_scale_j	: $allMCFastSIM : .* : templateAsymm; \
+        FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt']
 
-CMS_btag_lf		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']
-CMS_btag_hf		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
-
-CMS_btag_lfstats1	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']
-CMS_btag_lfstats2	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']
-CMS_btag_hfstats1	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
-CMS_btag_hfstats2	: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
-
-CMS_btag_cferr1		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
-CMS_btag_cferr2		: $allMC : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
+CMS_btag_lf		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']
+CMS_btag_hf		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
+CMS_btag_lfstats1	: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']
+CMS_btag_lfstats2	: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']
+CMS_btag_hfstats1	: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
+CMS_btag_hfstats2	: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
+CMS_btag_cferr1		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
+CMS_btag_cferr2		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
+CMS_btag_FastSIM	: $allMCFastSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up/eventBTagSF'\,'eventBTagSF_down/eventBTagSF']
 
 PU  : $allMC : .* : templateAsymm; AddWeights=['puWeightUp/puWeight'\,'puWeightDown/puWeight']
 

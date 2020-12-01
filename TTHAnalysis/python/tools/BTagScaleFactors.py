@@ -1,21 +1,9 @@
 import os
 
 import ROOT
-#################################################################
-# This is mostly copy pasted from Lorenzo Bianchini:
-# https://github.com/bianchini/cmssw/blob/LB_newbtagSF/VHbbAnalysis/Heppy/python/btagSF.py
-#
-# Load the BTagCalibrationStandalone.cc macro from
-# https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
-# and compile it:
-# cmsenv
-# g++ -c -o BTagCalibrationStandalone.so -L${ROOTSYS}/lib $CMSSW_RELEASE_BASE/src/CondTools/BTau/test/BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
-#
-# Get the current scale factor files from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X
-#################################################################
 from ROOT import gSystem
-
-gSystem.Load(os.path.join(os.path.dirname(__file__), 'BTagCalibrationStandalone.so'))
+ROOT.gSystem.Load('libCondFormatsBTauObjects')
+ROOT.gSystem.Load('libCondToolsBTau')
 from ROOT import BTagCalibration, BTagCalibrationReader
 
 def get_allowed_ranges(csvfile):
@@ -31,6 +19,7 @@ def get_allowed_ranges(csvfile):
         opfield = 'CSVv2;OperatingPoint'
         if not opfield in headers: opfield = 'cMVAv2;OperatingPoint'
         if not opfield in headers: opfield = 'CSV;OperatingPoint'
+        if not opfield in headers: opfield = 'DeepCSV;OperatingPoint'
 
         reader = DictReader(infile, fieldnames=headers)
         for row in reader:
@@ -68,14 +57,15 @@ def relevant_iterative_systs(flavor, syst):
 
 class BTagScaleFactors(object):
     """Calculate btagging scale factors
-        algo has to be either 'csv' or 'cmva'
+        algo has to be either 'csv', 'cmva' or 'deepcsv'
     """
     def __init__(self, name,
                  csvfile,
                  csvfastsim=None,
                  eff_rootfile=None,
+                 year=None,
                  algo='csv',
-                 verbose=0):
+                 verbose=1):
         self.name = name
         self.csvfile = csvfile
         self.csvfastsim = csvfastsim
@@ -83,8 +73,8 @@ class BTagScaleFactors(object):
         self.verbose = verbose
         self.algo = algo.lower()
 
-        if not self.algo in ['csv', 'cmva']:
-            print "ERROR: Unknown algorithm. Choose either 'csv' or 'cmva'"
+        if not self.algo in ['csv', 'cmva', 'deepcsv']:
+            print "ERROR: Unknown algorithm. Choose either 'csv', 'cmva' or 'deepcsv'"
             return
 
         self.working_points = {
@@ -99,6 +89,16 @@ class BTagScaleFactors(object):
                 "M" :  0.185,
                 "T" :  0.875,
             }
+
+        if self.algo == 'deepcsv':
+            if not year: print "No year provided, 2018 will be used as the default"
+            self.working_points = {
+                "L" : 0.2217 if year==2016 else 0.1522 if year==2017 else 0.1241,
+                "M" : 0.6321 if year==2016 else 0.4941 if year==2017 else 0.4184,
+                "T" : 0.8953 if year==2016 else 0.8001 if year==2017 else 0.7527,
+            }
+
+
 
         self.mtypes = {
             # Measurement type for each flavor
@@ -194,7 +194,7 @@ class BTagScaleFactors(object):
         v_sys = getattr(ROOT, 'vector<string>')()
 
         for wp in [0, 1, 2]:
-            for syst in ['central', 'up', 'down', 'up_correlated', 'down_correlated']:
+            for syst in ['central', 'up', 'down']:#, 'up_correlated', 'down_correlated']:
                 for flavor in [0, 1, 2]:
                     self.readers[(self.mtypes[flavor], wp, syst, flavor)] = BTagCalibrationReader(
                                                         wp,
@@ -208,7 +208,6 @@ class BTagScaleFactors(object):
                                                         )
 
                     if self.csvfastsim and 'correlated' not in syst:
-
                         self.readers[('fastsim', wp, syst, flavor)] = BTagCalibrationReader(
                                                         wp,
                                                         syst,
@@ -226,7 +225,6 @@ class BTagScaleFactors(object):
         allsysts += ["central"]
         for syst in allsysts:
             v_iterativefit_sys = getattr(ROOT, 'vector<string>')()
-            #v_iterativefit_sys.push_back(syst)
             self.readers[('iterative', syst)] = BTagCalibrationReader(
                                                     3,
                                                     syst,
@@ -256,9 +254,6 @@ class BTagScaleFactors(object):
 
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
-
-        raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
-
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:
             if self.verbose>0:
@@ -314,21 +309,18 @@ class BTagScaleFactors(object):
             pt = min(pt, pt_max - 0.01)
             pt = max(pt, pt_min + 0.01)
 
-        # pt_max = 670.-1e-02 if "CSV" in algo else 320.-1e-02
-        # pt_min = 30.+1e-02
-
         if flavor < 2: # b or c jets
-            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
+            sf = self.readers[(mtype, wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
 
             # double the error for pt out-of-range
             if out_of_range and syst in ["up","down"]:
-                sf = max(2*sf - self.readers[(self.mtypes[flavor], wp, "central", flavor)].eval_auto_bounds('central', flavor, eta, pt), 0.)
+                sf = max(2*sf - self.readers[(mtype, wp, "central", flavor)].eval_auto_bounds('central', flavor, eta, pt), 0.)
 
             # Fastsim SFs are 0.0 for pt between 20 and 30
             return sf if sf != 0.0 else 1.0
 
         else: # light jets
-            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
+            sf = self.readers[(mtype, wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
             return sf if sf != 0.0 else 1.0
 
 #################################################################
