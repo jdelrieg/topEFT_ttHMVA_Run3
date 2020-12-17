@@ -74,8 +74,7 @@ lepSF_3   : $allMC : .*3l.* : templateAsymm;  AddWeights=['lepSF(LepGood3_pt\,Le
 CMS_scale_j	: $allMCFullSIM : .* : templateAsymm; \
         FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt'], \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
-CMS_scale_j	: $allMCFastSIM : .* : templateAsymm; \
-        FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt']
+CMS_scale_j	: $allMCFastSIM : .* : templateAsymm; FakeRates=['susy-sos/systs/fr-jecUp.txt'\,'susy-sos/systs/fr-jecDn.txt']
 
 CMS_btag_lf		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']
 CMS_btag_hf		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
@@ -95,3 +94,7 @@ Prefire_17 : $allMCFullSIM : .* : templateAsymm; AddWeights=['L1PreFiringWeight_
 ISR_16   : signal_TChiWZ.* : .* : templateAsymm;  AddWeights=['if3(isrWeight>=0\,isrWeight\,1)'\, '1./if3(isrWeight>=0\,isrWeight\,1)'], year="2016"
 ISR_17   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2017"
 ISR_18   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2018"
+
+METinFastSIM_16 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2016"
+METinFastSIM_17 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2017"
+METinFastSIM_18 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2018"
