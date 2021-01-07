@@ -223,7 +223,6 @@ class TreeToYield:
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
                 if var.getFRToRemove() != None:
-                    #print "Passa di qui"
                     tty2._FRSourceList = []
                     found = False
                     for fname,FR in self._FRSourceList:
@@ -231,8 +230,7 @@ class TreeToYield:
                             found = True
                             continue
                         tty2._FRSourceList.append((fname,FR))
-                    if not found: 
-                        raise RuntimeError, "Variation %s%s for %s %s would want to remove a FR %s which is not found" % (var.name,direction,self._name,self._cname,var.getFRToRemove())
+                    #if not found: print "Variation %s%s for %s %s would want to remove a FR %s which is not found" % (var.name,direction,self._name,self._cname,var.getFRToRemove())
                     tty2._makeMCCAndScaleFactor()
                 tty2.applyFR(var.getFR(direction))
                 tty2._maintty = self
