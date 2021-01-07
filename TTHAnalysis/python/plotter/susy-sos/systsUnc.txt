@@ -95,6 +95,9 @@ ISR_16   : signal_TChiWZ.* : .* : templateAsymm;  AddWeights=['if3(isrWeight>=0\
 ISR_17   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2017"
 ISR_18   : signal_TChiWZ.* : .* : normSymm: 1.01  ; year="2018"
 
+muR : signal_.* : .* : templateAsymm;   AddWeights=['LHEScaleWeight[7]'\,'LHEScaleWeight[1]'] # Renormalization scale: {7 : 2.0, 1 : 0.5}
+muF : signal_.* : .* : templateAsymm;   AddWeights=['LHEScaleWeight[5]'\,'LHEScaleWeight[3]'] # Factorization scale: {5 : 2.0, 3 : 0.5}
+
 METinFastSIM_16 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2016"
 METinFastSIM_17 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2017"
 METinFastSIM_18 : $allMCFastSIM : .* : templateAsymm; RemoveFakeRate="susy-sos/fakerate/GenMETforFastSIM.txt", FakeRates=['susy-sos/fakerate/GenMETforFastSIM.txt'\,'susy-sos/fakerate/METforFastSIM.txt'], year="2018"

@@ -55,9 +55,15 @@ if args.signif:
 TChiWZ_xsec = {
 100 : 22.6701, 125 : 10.0348,  150 : 5.18086, 175 : 2.95328,  200 : 1.807,\
 225 : 1.16509, 250 : 0.782487, 275 : 0.54303, 300 : 0.386936, 325 : 0.281911}
+TChiWZ_xsec_unc = {
+100 : 0.973967, 125 : 0.457604,  150 : 0.253223, 175 : 0.154386,  200 : 0.101316,\
+225 : 0.0688042, 250 : 0.0487463, 275 : 0.0354083, 300 : 0.0263602, 325 : 0.0200201}
 Higgsino_xsec = {
 100 : 8.603,  120 : 4.524,  140 : 2.5324, 160 : 1.5393, 180 : 1.0014,\
 200 : 0.6684, 220 : 0.4679, 240 : 0.3365, 250 : 0.2880}
+Higgsino_xsec_unc = {
+100 : 0.225952,  120 : 0.122902,  140 : 0.0732226, 160 : 0.0474496, 180 : 0.0326946,\
+200 : 0.0232810, 220 : 0.0171179, 240 : 0.0129217, 250 : 0.0113304}
 HiggsPMSSM_xsec = {
 "100_1000" : 14.750, "100_1200" : 14.680, "100_300" : 16.300, "100_400" : 15.630, "100_500" : 15.304, "100_600" : 15.112, "100_800" : 14.881,\
 "120_1000" : 7.634,  "120_1200" : 7.586,  "120_300" : 8.364,  "120_400" : 8.035,  "120_500" : 7.893,  "120_600" : 7.788,  "120_800" : 7.679,\
@@ -67,13 +73,22 @@ HiggsPMSSM_xsec = {
 "200_1000" : 1.205,  "200_1200" : 1.203,  "200_300" : 1.324,  "200_400" : 1.262,  "200_500" : 1.237,  "200_600" : 1.224,  "200_800" : 1.210,\
 "220_1000" : 0.840,  "220_1200" : 0.836,  "220_300" : 0.936,  "220_400" : 0.888,  "220_500" : 0.866,  "220_600" : 0.862,  "220_800" : 0.847,\
 "240_1000" : 0.612,  "240_1200" : 0.609,  "240_300" : 0.683,  "240_400" : 0.643,  "240_500" : 0.627,  "240_600" : 0.622,  "240_800" : 0.613}
+HiggsPMSSM_xsec_unc = HiggsPMSSM_xsec.copy()
+for key in HiggsPMSSM_xsec_unc.keys(): HiggsPMSSM_xsec_unc[key] = HiggsPMSSM_xsec_unc[key]*0.06 # Assign 6% as in previous analysis
 T2XX_xsec = {
 250  : 21.5949,    275  : 13.3231,    300  : 8.51615,   325 : 5.60471,   350 : 3.78661,    375 : 2.61162,    400  : 1.83537,    425  : 1.31169,\
 450  : 0.948333,   475  : 0.697075,   500  : 0.51848,   525 : 0.390303,  550 : 0.296128,   575 : 0.226118,   600  : 0.174599,   625  : 0.136372,\
 650  : 0.107045,   675  : 0.0844877,  700  : 0.0670476, 725 : 0.0536438, 750 : 0.0431418,  775 : 0.0348796,  800  : 0.0283338,  825  : 0.0230866,\
 850  : 0.0189612,  875  : 0.015625,   900  : 0.0128895, 925 : 0.0106631, 950 : 0.00883465, 975 : 0.00735655, 1000 : 0.00615134, 1025 : 0.00514619,\
 1050 : 0.00432261, 1075 : 0.00364174, 1100 : 0.00307413}
+T2XX_xsec_unc = {
+250  : 3.03613,     275  : 1.89919,     300  : 1.18564,    325 : 0.774257,   350 : 0.518300,   375 : 0.361649,   400  : 0.251418,   425  : 0.177095,\
+450  : 0.127607,    475  : 0.0933565,   500  : 0.0693711,  525 : 0.0520832,  550 : 0.0392923,  575 : 0.0300151,  600  : 0.0230600,  625  : 0.0174504,\
+650  : 0.0138336,   675  : 0.0110428,   700  : 0.00894609, 725 : 0.00728504, 750 : 0.00593006, 775 : 0.00486909, 800  : 0.00401518, 825  : 0.00333435,\
+850  : 0.00278768,  875  : 0.00233698,  900  : 0.00195954, 925 : 0.00165071, 950 : 0.00138860, 975 : 0.00118108, 1000 : 0.00100238, 1025 : 0.000853043,\
+1050 : 0.000725589, 1075 : 0.000621405, 1100 : 0.000532983}
 xsec = TChiWZ_xsec if args.signalModel=="TChiWZ" else Higgsino_xsec if args.signalModel=="Higgsino" else HiggsPMSSM_xsec if args.signalModel=="HiggsPMSSM" else T2XX_xsec
+xsec_unc = TChiWZ_xsec_unc if args.signalModel=="TChiWZ" else Higgsino_xsec_unc if args.signalModel=="Higgsino" else HiggsPMSSM_xsec_unc if args.signalModel=="HiggsPMSSM" else T2XX_xsec_unc
 
 logy=False
 #logy=True
@@ -116,7 +131,9 @@ class Limit:
     def __init__(self,fname):
         self.obs = None
         self.exp = {}
-        if not os.path.exists(fname): return
+        if not os.path.exists(fname): 
+            self.exp.update({'0' : None})
+            return
         f = ROOT.TFile.Open(fname)
         if f:
             tree = f.Get('limit')
@@ -187,6 +204,7 @@ def getLimitHists(files, tag):
         mass = '%d_%d'%(f.m1,f.m2)
         massH = f.m1
         massL = f.m2 if args.signalModel=="HiggsPMSSM" else f.m1-f.m2
+        key = str(int(massH))+"_"+str(int(massL)) if args.signalModel=="HiggsPMSSM" else int(massH)
         vals = {}
         if args.NPscan:
             if f.mlfit.nuisances.has_key(args.NPscan):
@@ -199,14 +217,17 @@ def getLimitHists(files, tag):
                 vals.update(f.limit.exp)
             if f.limit.obs:
                 vals['obs'] = f.limit.obs
-            if vals['0']!=None: vals['xs'] = xsec[str(int(massH))+"_"+str(int(massL))] * vals['0'] if args.signalModel=="HiggsPMSSM" else xsec[int(massH)] * vals['0']
+                vals['obs1'] = xsec[key] / (xsec[key] + xsec_unc[key]) * f.limit.obs
+                vals['obs-1'] = xsec[key] / (xsec[key] - xsec_unc[key]) * f.limit.obs
+            if vals['0']!=None:
+                vals['xs'] = xsec[key] * vals['0']
         if args.prnt: print massH, massL, vals['0']
         lim = LimitPoint(massH, massL, vals)
         if vals['0']!=None: limits.append(lim)
     hs={}
     vars_to_plot = ['0','1','-1','xs']
     if args.sigma2: vars_to_plot = ['0','1','-1','2','-2','xs']
-    if args.unblind: vars_to_plot.append('obs')
+    if args.unblind: vars_to_plot.append('obs'); vars_to_plot.append('obs1'); vars_to_plot.append('obs-1');
 
     if args.NPscan: vars_to_plot = ['0']
     if args.signif: vars_to_plot = ['0']
@@ -273,9 +294,11 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
         else:
             h2lim, h2limP1, h2limM1 = limit_hists['0'], limit_hists['1'], limit_hists['-1']
             if args.unblind:
-                h2limObs = limit_hists['obs']
+                h2limObs, h2limObsP1, h2limObsM1 = limit_hists['obs'], limit_hists['obs1'], limit_hists['obs-1']
                 h2limObs.SetLineWidth(2)
                 h2limObs.SetLineColor(ROOT.kBlack)
+                h2limObsP1.SetLineColor(ROOT.kBlack)
+                h2limObsM1.SetLineColor(ROOT.kBlack)
             h2limP1.SetLineWidth(1)
             h2limM1.SetLineWidth(1)
             h2limP1.SetLineStyle(2)
