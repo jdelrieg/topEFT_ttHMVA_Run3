@@ -67,7 +67,7 @@ nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
 # For cards only, no need fr multiple year support
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
-if YEAR == "2016" and args.signalModel=='TChiWZ': TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
+if YEAR == "2016" and args.signalModel in ["TChiWZ","Higgsino","HiggsPMSSM"]: TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
 
 
 def base(selection):
