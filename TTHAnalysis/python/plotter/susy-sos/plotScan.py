@@ -116,9 +116,9 @@ leg_nlines=2 if args.NPscan or args.signif else 3
 
 # Plot range
 range_xlo=297. if args.signalModel in ["T2tt","T2bW"] else 100.
-range_xhi=653. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
+range_xhi=650. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
 range_ylo=10. if args.signalModel in ["T2tt","T2bW"] else 3. if args.signalModel=="Higgsino" else 300. if args.signalModel=="HiggsPMSSM" else 3.5
-range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 60.1
+range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 61.5 # 61.5 not optimal value for TChiWZ, needs to be tweaked for the different reweightings
 
 if logy:
     range_yhi=350.
@@ -301,14 +301,14 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
                 h2limObsM1.SetLineColor(ROOT.kBlack)
             h2limP1.SetLineWidth(1)
             h2limM1.SetLineWidth(1)
-            h2limP1.SetLineStyle(2)
-            h2limM1.SetLineStyle(2)
+            h2limP1.SetLineStyle(1)
+            h2limM1.SetLineStyle(1)
             if args.sigma2:
                 h2limP2, h2limM2 = limit_hists['2'], limit_hists['-2']
                 h2limP2.SetLineWidth(1)
                 h2limM2.SetLineWidth(1)
-                h2limP2.SetLineStyle(3)
-                h2limM2.SetLineStyle(3)
+                h2limP2.SetLineStyle(2)
+                h2limM2.SetLineStyle(2)
         h2lim.SetLineWidth(2)
 
     if not args.NPscan and not args.signif: c1.SetLogz()
@@ -333,6 +333,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     x1 = range_xlo
     x2 = range_xhi
+    Dx = x2-x1
     y1 = leg_ylo
     y2 = range_yhi
 
@@ -353,12 +354,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     b.SetLineWidth(1)
     b.Draw("l")
     c1.Update()
-    mT=ROOT.TLatex(x1+4.5,ylines[0], moreText2)
+    mT=ROOT.TLatex(x1+0.025*Dx,ylines[0], moreText2)
     mT.SetTextFont(42)
     mT.SetTextAlign(12)
     mT.SetTextSize(0.040)
     mT.Draw()
-    mT2=ROOT.TLatex(x1+4.5,ylines[1], moreText)
+    mT2=ROOT.TLatex(x1+0.025*Dx,ylines[1], moreText)
     mT2.SetTextAlign(12)
     mT2.SetTextFont(42)
     mT2.SetTextSize(0.040)
@@ -368,63 +369,79 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
         spread = delta*0.2
         fudge = delta*0.1
         gl1=TGraph(2)
-        gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
-        gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
+        gl1.SetPoint(0, x1+0.025*Dx, ylines[2]+fudge)
+        gl1.SetPoint(1, x1+0.070*Dx, ylines[2]+fudge)
         gl1.SetLineColor(colz[0])
         gl1.SetLineStyle(1)
         gl1.SetLineWidth(2)
         gl1.Draw("lsame")
 
         gl1p=TGraph(2)
-        gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
-        gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
+        gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge)
+        gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge)
         gl1p.SetLineColor(colz[0])
-        gl1p.SetLineStyle(2)
+        gl1p.SetLineStyle(1)
         gl1p.SetLineWidth(1)
         gl1p.Draw("lsame")
 
         gl1m=TGraph(2)
-        gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
-        gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
+        gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge)
+        gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge)
         gl1m.SetLineColor(colz[0])
-        gl1m.SetLineStyle(2)
+        gl1m.SetLineStyle(1)
         gl1m.SetLineWidth(1)
         gl1m.Draw("lsame")
 
         if args.sigma2:
             gl2p=TGraph(2)
-            gl2p.SetPoint(0, x1+4.5, ylines[2]+2*spread+fudge)
-            gl2p.SetPoint(1, x1+12.5,ylines[2]+2*spread+fudge)
+            gl2p.SetPoint(0, x1+0.025*Dx, ylines[2]+2*spread+fudge)
+            gl2p.SetPoint(1, x1+0.070*Dx, ylines[2]+2*spread+fudge)
             gl2p.SetLineColor(colz[0])
-            gl2p.SetLineStyle(3)
+            gl2p.SetLineStyle(2)
             gl2p.SetLineWidth(1)
             gl2p.Draw("lsame")
 
             gl2m=TGraph(2)
-            gl2m.SetPoint(0, x1+4.5, ylines[2]-2*spread+fudge)
-            gl2m.SetPoint(1, x1+12.5,ylines[2]-2*spread+fudge)
+            gl2m.SetPoint(0, x1+0.025*Dx, ylines[2]-2*spread+fudge)
+            gl2m.SetPoint(1, x1+0.070*Dx, ylines[2]-2*spread+fudge)
             gl2m.SetLineColor(colz[0])
-            gl2m.SetLineStyle(3)
+            gl2m.SetLineStyle(2)
             gl2m.SetLineWidth(1)
             gl2m.Draw("lsame")
 
         if args.unblind:
             gl1Obs=TGraph(2)
-            gl1Obs.SetPoint(0, x1+(114.5 if args.signalModel in ["T2tt","T2bW"] else 54.5 if args.signalModel in ["HiggsPMSSM"] else 74.5), ylines[2]+fudge)
-            gl1Obs.SetPoint(1, x1+(122.5 if args.signalModel in ["T2tt","T2bW"] else 62.5 if args.signalModel in ["HiggsPMSSM"] else 82.5), ylines[2]+fudge)
+            gl1Obs.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+fudge)
+            gl1Obs.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+fudge)
             gl1Obs.SetLineColor(ROOT.kBlack)
             gl1Obs.SetLineStyle(1)
             gl1Obs.SetLineWidth(2)
             gl1Obs.Draw("lsame")
 
-        mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
+            gl1Obsp=TGraph(2)
+            gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge)
+            gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge)
+            gl1Obsp.SetLineColor(ROOT.kBlack)
+            gl1Obsp.SetLineStyle(1)
+            gl1Obsp.SetLineWidth(1)
+            gl1Obsp.Draw("lsame")
+
+            gl1Obsm=TGraph(2)
+            gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge)
+            gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge)
+            gl1Obsm.SetLineColor(ROOT.kBlack)
+            gl1Obsm.SetLineStyle(1)
+            gl1Obsm.SetLineWidth(1)
+            gl1Obsm.Draw("lsame")
+
+        mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2], "Expected #pm 1 #sigma_{experiment}")
         mT3.SetTextAlign(12)
         mT3.SetTextFont(42)
         mT3.SetTextSize(0.040)
         mT3.Draw()
 
         if args.unblind:
-            mT3a=ROOT.TLatex(x1+(126.5 if args.signalModel in ["T2tt","T2bW"] else 66.5 if args.signalModel in ["HiggsPMSSM"] else 86.5),ylines[2], "Observed")
+            mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2], "Observed #pm 1 #sigma_{theory}")
             mT3a.SetTextAlign(12)
             mT3a.SetTextFont(42)
             mT3a.SetTextSize(0.040)
