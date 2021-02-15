@@ -96,7 +96,7 @@ logy=False
 # Legend info
 moreText = ""
 if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bf#bar{f}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
 elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
 elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
 elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model, NLO-NLL excl."
