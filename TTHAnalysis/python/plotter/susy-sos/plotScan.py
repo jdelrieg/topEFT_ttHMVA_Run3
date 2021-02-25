@@ -103,22 +103,22 @@ elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model, NLO-NLL
 moreText2 = "Median expected upper limit on "+("cross section" if args.xsec else "signal strength")+" at 95% CL"
 if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
 if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
-cmsText               = "#bf{CMS} Preliminary"
-cmsTextFont           = 52  
+cmsText               = "#bf{CMS} #it{Preliminary}"
+cmsTextFont           = 42  
 cmsTextSize           = 0.55
 cmsTextOffset         = 0.1
 lumiText              = "137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 lumiTextOffset        = 0.2
-leg_ylo=80. if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 1200. if args.signalModel=="HiggsPMSSM" else 50.
+leg_ylo=78.5 if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 1200. if args.signalModel=="HiggsPMSSM" else 50.
 leg_nlines=2 if args.NPscan or args.signif else 3
 
 # Plot range
 range_xlo=297. if args.signalModel in ["T2tt","T2bW"] else 100.
 range_xhi=650. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
 range_ylo=10. if args.signalModel in ["T2tt","T2bW"] else 3. if args.signalModel=="Higgsino" else 300. if args.signalModel=="HiggsPMSSM" else 3.5
-range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 61.5 # 61.5 not optimal value for TChiWZ, needs to be tweaked for the different reweightings
+range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 63 
 
 if logy:
     range_yhi=350.
@@ -348,7 +348,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
         y2 = ROOT.TMath.Exp(y2)
         ylines = [ROOT.TMath.Exp(l) for l in ylines]
 
-    b = TBox(x1,y1,x2,y2)
+    b = TBox(x1,y1,x2,y2+0.5) #0.5 should change to 1 for neg reweighted TChiWZ plot
     b.SetFillColor(ROOT.kWhite)
     b.SetLineColor(ROOT.kBlack)
     b.SetLineWidth(1)
