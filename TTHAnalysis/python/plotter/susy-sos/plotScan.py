@@ -94,12 +94,17 @@ logy=False
 #logy=True
 
 # Legend info
+reweightText = ""
+# The following labelling won't work properly for commands with multiple reweightings
+if "pos" in args.reweight: reweightText = ", m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} > 0"
+elif "neg" in args.reweight: reweightText = ", m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} < 0"
+
 moreText = ""
-if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
+if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}"+reweightText+", NLO-NLL excl."
 elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bf#bar{f}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
-elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model, NLO-NLL excl."
+elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{t}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2, NLO-NLL excl."
+elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2"+reweightText+", NLO-NLL excl."
+elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model"+reweightText+", NLO-NLL excl."
 moreText2 = "Median expected upper limit on "+("cross section" if args.xsec else "signal strength")+" at 95% CL"
 if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
 if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
@@ -266,7 +271,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     elif args.signif: h_bkgd.GetZaxis().SetRangeUser(-3.0,3.0)
     else: h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
-    h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
+    h_bkgd.GetXaxis().SetTitle("m_{#lower[-0.15]{#tilde{t}}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#lower[-0.15]{#tilde{#chi}_{2}^{0}}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#lower[-0.15]{#tilde{#chi}_{1}^{#pm}}}=m_{#lower[-0.15]{#tilde{#chi}_{2}^{0}}} [GeV]")
     h_bkgd.GetXaxis().SetLabelFont(42)
     h_bkgd.GetXaxis().SetTitleFont(42)
     h_bkgd.GetXaxis().SetLabelSize(0.042)
