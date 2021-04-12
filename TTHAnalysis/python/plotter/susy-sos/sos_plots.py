@@ -74,11 +74,11 @@ def base(selection):
     plotting=''
     CORE=TREESALL
     CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s "%(nCores,YEAR,LUMI)
-    RATIO= "--ratioYLabel 'Data/Pred.' --maxRatioRange  0.6  1.99 --ratioYNDiv 505 "
-    RATIO2=" --showRatio --fixRatioRange"
+    RATIO= "--ratioYLabel 'Data/Pred.' --maxRatioRange 0.0  2.0 --ratioYNDiv 504 "
+    RATIO2=" --showRatio --fixRatioRange" #  --attachRatioPanel
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.042 "
-    SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}}' "
+    SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}}' " #  --lspam '#scale[1.1]{#bf{CMS}}' scale[0.9]{#it{Preliminary}}' for preliminary plots
     if args.signal:
         CORE+=" --xp signal\(\?\!_"+args.signalModel+"\).* "
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
