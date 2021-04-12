@@ -440,27 +440,27 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     if (rmax > 2 and rmax <= 2.4): rmax = 2.4
     unity.SetMarkerStyle(1);
     unity.SetMarkerColor(ROOT.kBlue-7);
-    unityErr.SetFillStyle(3244);
-    unityErr.SetFillColor(ROOT.kGray+2);
+    unityErr.SetFillStyle(1001);
+    unityErr.SetFillColor(ROOT.kCyan);
     unityErr.SetMarkerStyle(1);
     unityErr.SetMarkerColor(ROOT.kCyan);
-    unityErr0.SetFillStyle(3244);
+    unityErr0.SetFillStyle(1001);
     unityErr0.SetFillColor(ROOT.kBlue-7);
     unityErr0.SetMarkerStyle(1);
     unityErr0.SetMarkerColor(ROOT.kBlue-7);
     ROOT.gStyle.SetErrorX(0.5);
     unity.Draw("AXIS");
-    if errorsOnRef and options.getHistosFromFile:
+    if errorsOnRef:
         unityErr.Draw("E2");
     if fitRatio != None and len(ratios) == 1:
         from CMGTools.TTHAnalysis.tools.plotDecorations import fitTGraph
         fitTGraph(ratio,order=fitRatio)
         unityErr.SetFillStyle(3013);
         unityErr0.SetFillStyle(3013);
-        if errorsOnRef and not options.getHistosFromFile:
+        if errorsOnRef:
             unityErr0.Draw("E2 SAME");
     else:
-        if errorsOnRef and not options.getHistosFromFile:
+        if errorsOnRef:
             unityErr0.Draw("E2 SAME");
     unity.Draw("AXIS SAME");
     rmin = float(pspec.getOption("RMin",rmin))
@@ -507,22 +507,22 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     line.Draw("L")
     for ratio in ratios:
         ratio.Draw("E SAME" if ratio.ClassName() != "TGraphAsymmErrors" else "PZ SAME");
-    leg0 = ROOT.TLegend(0.12 if doWide else 0.2, 0.84, 0.25 if doWide else 0.45, 0.88)
+    leg0 = ROOT.TLegend(0.12 if doWide else 0.2, 0.84, 0.25 if doWide else 0.45, 0.94)
     leg0.SetFillColor(0)
     leg0.SetShadowColor(0)
     leg0.SetLineColor(0)
     leg0.SetTextFont(42)
     leg0.SetTextSize(textSize*0.7/0.3)
-    leg0.AddEntry(unityErr0, "Stat. unc.", "F")
-    if showStatTotLegend and not options.getHistosFromFile: leg0.Draw()
-    leg1 = ROOT.TLegend(0.25 if doWide else 0.65, 0.84, 0.38 if doWide else 0.95, 0.88)
+    leg0.AddEntry(unityErr0, "stat. unc.", "F")
+    if showStatTotLegend: leg0.Draw()
+    leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.84, 0.38 if doWide else 0.7, 0.94)
     leg1.SetFillColor(0)
     leg1.SetShadowColor(0)
     leg1.SetLineColor(0)
     leg1.SetTextFont(42)
     leg1.SetTextSize(textSize*0.7/0.3)
-    leg1.AddEntry(unityErr, "Total unc.", "F")
-    if showStatTotLegend and options.getHistosFromFile: leg1.Draw()
+    leg1.AddEntry(unityErr, "total unc.", "F")
+    if showStatTotLegend: leg1.Draw()
     global legendratio0_, legendratio1_
     legendratio0_ = leg0
     legendratio1_ = leg1
@@ -939,10 +939,10 @@ class PlotMaker:
                     c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1]+150 + (plotformat[1]+150 - c1.GetWh())));
                     p1 = ROOT.TPad("pad1","pad1",0,0.30,1,1);
                     p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
-                    p1.SetBottomMargin(0 if options.attachRatioPanel else 0.04);
+                    p1.SetBottomMargin(0 if options.attachRatioPanel else 0.025);
                     p1.Draw();
                     p2 = ROOT.TPad("pad2","pad2",0,0,1,0.30);
-                    p2.SetTopMargin(0 if options.attachRatioPanel else 0.04);
+                    p2.SetTopMargin(0 if options.attachRatioPanel else 0.06);
                     p2.SetBottomMargin(0.3);
                     p2.SetFillStyle(0);
                     p2.Draw();
