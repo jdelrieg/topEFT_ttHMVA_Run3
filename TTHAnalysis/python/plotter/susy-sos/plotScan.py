@@ -20,6 +20,7 @@ parser.add_argument("--print", dest="prnt", action='store_true', default=False, 
 # Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
 parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
+parser.add_argument("--smooth", nargs=2, default=[0,"k5a"], help="Apply smoothing X times with kernel Y")
 # Nuisance parameter specific options
 parser.add_argument("--NPscan", default=None, help="Run scan of specific nuisances parameter")
 parser.add_argument("--NPerror", action='store_true', default=False, help="Plot NP error instead of central value")
@@ -257,7 +258,10 @@ def getLimitHists(files, tag):
 
 def plotLimits(limits_hists, limit_labels, label, outdir):
 
+    smoothingReps = int(args.smooth[0]); smoothingRoutine = args.smooth[1]
+
     h_bkgd = limits_hists[0]['xs' if args.xsec else '0'].Clone('h_bkgd') # 'xs' plots cross sections, '0' plots the signal strength
+    for iSmooth in range(smoothingReps): h_bkgd.Smooth(1,smoothingRoutine)
     nlim=len(limits_hists)
 
     c1=TCanvas()
@@ -303,6 +307,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
             if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-5]))
             else: lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
+            for iSmooth in range(smoothingReps): lim.Smooth(1,smoothingRoutine)
             lim.SetLineColor(colz[iLim])
 
         if args.NPscan or args.signif: h2lim = limit_hists['0']
