@@ -46,6 +46,7 @@ for years in YEARS:
 if (args.signalMasses or args.asimov or args.justdump) and args.doWhat != "cards": raise RuntimeError("Option to be used only with the 'cards' option!")
 #if args.fakes == "semidd" and "cr" in args.reg and args.reg != "cr_ss": print "No semidd fakes in the CRs! Using dd fakes..."
 
+
 lumis = {
 '2016': '35.9', # '33.2' for low MET
 '2017': '41.5', # '36.7' for low MET
@@ -79,6 +80,10 @@ def base(selection):
     LEGEND=" --legendColumns 3 --legendWidth 0.62 "
     LEGEND2=" --legendFontSize 0.042 "
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}}' " #  --lspam '#scale[1.1]{#bf{CMS}}' scale[0.9]{#it{Preliminary}}' for preliminary plots
+    if len(YEARS)==3:
+        if "low" not in torun and "cr_wz" not in torun: SPAM+="--rspam '137 fb^{-1} (13 TeV)'"
+        elif "low" in torun and "cr_wz" not in torun: SPAM+="--rspam '129 fb^{-1} (13 TeV)'"
+        elif "low" in torun and "cr_wz" in torun: SPAM+="--rspam '132 fb^{-1} (13 TeV)'"
     if args.signal:
         CORE+=" --xp signal\(\?\!_"+args.signalModel+"\).* "
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
