@@ -174,7 +174,7 @@ def runIt(GO,plotting,name):
                 GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_SMS_N2N1_higgsino_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
             if "T2tt" in pr:
-                FILENAME="SMS_T2tt"
+                FILENAME="SMS_T2tt,SMS_T2tt_ext"
                 GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "HiggsPMSSM" in pr:
@@ -182,7 +182,7 @@ def runIt(GO,plotting,name):
                 GENMODEL = "GenModel_MSSM_higgsino"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "T2bW" in pr:
-                FILENAME="SMS_T2bW"
+                FILENAME="SMS_T2bW,SMS_T2bW_ext"
                 GENMODEL = "GenModel_T2bW_X05_dM_10to80_genHT_160_genMET_80"
                 GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             ret = "export MYTEMPSKIMDIR=$(mktemp -d); python skimTreesNew.py --elist myCustomElistForSignal --skim-friends {TREESALLSKIM} -f -j {nCores} --split-factor=-1 --year {YEAR} --s2v --tree NanoAOD -p {FILENAME} susy-sos/mca-includes/mca-skim-{YEAR}.txt susy-sos/skim_true.txt ${{MYTEMPSKIMDIR}}/{YEAR} -A alwaystrue model '{GENMODELSTRING}'".format(**{

@@ -694,10 +694,14 @@ DYJetsToLL_M1to5 = [
     DYJetsToLL_M1to5_HT600toInf
 ]
 
+SMS_T2tt_ext = kreator.makeMCComponent("SMS_T2tt_ext", "/SMS-T2tt_dM-10to20_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen weights treatment, added here for convenience
+SMS_T2bW_ext = kreator.makeMCComponent("SMS_T2bW_ext", "/SMS-T2bW_X05_dM-10to20_2Lfilter_mWMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen weights treatment, added here for convenience
 SMS_TChiWZ = kreator.makeMCComponent("SMS_TChiWZ", "/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_GridpackScan_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM", "CMS", ".*root", 1)
 
 SignalSUSY = [
-SMS_TChiWZ,
+SMS_T2tt_ext,
+SMS_T2bW_ext,
+SMS_TChiWZ
 ]
 
 

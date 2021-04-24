@@ -121,7 +121,9 @@ if year == 2018:
             "SMS_HiggsinoN2N1",
             "SMS_HiggsinoN2C1", 
             "SMS_T2tt",
+            "SMS_T2tt_ext",
             "SMS_T2bW",
+            "SMS_T2bW_ext",
             "SMS_HiggsinoPMSSM",
            
 ###relics from tth             
@@ -241,7 +243,9 @@ elif year == 2017:
         "SMS_HiggsinoN2N1",
         "SMS_HiggsinoN2C1",
         "SMS_T2tt",
+        "SMS_T2tt_ext",
         "SMS_T2bW",
+        "SMS_T2bW_ext",
         "SMS_HiggsinoPMSSM",
 
     ])
@@ -357,7 +361,9 @@ elif year == 2016:
         "SMS_HiggsinoN2N1",
         "SMS_HiggsinoN2C1",
         "SMS_T2tt",
+        "SMS_T2tt_ext",
         "SMS_T2bW",
+        "SMS_T2bW_ext",
         "SMS_HiggsinoPMSSM",
 
 ###        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 

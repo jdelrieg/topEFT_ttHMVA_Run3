@@ -32,7 +32,9 @@ SMS_HiggsinoN2N1 : SMS_HiggsinoN2N1 : xsec
 SMS_HiggsinoN2C1 : SMS_HiggsinoN2C1 : xsec
 SMS_HiggsinoPMSSM : SMS_HiggsinoPMSSM : xsec
 SMS_T2tt : SMS_T2tt : xsec
+SMS_T2tt_ext : SMS_T2tt_ext : xsec
 SMS_T2bW : SMS_T2bW : xsec
+SMS_T2bW_ext : SMS_T2bW_ext : xsec
 TBar_tch : TBar_tch : xsec
 TBar_tWch_noFullyHad : TBar_tWch_noFullyHad : xsec
 TGJets_lep : TGJets_lep : xsec
