@@ -260,6 +260,7 @@ if __name__ == '__main__':
 
         if args.fakes == "semidd":
             if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd-CombEwk.txt')
+            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
             else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
         if args.fakes == "dd":
             if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombEwk.txt')                
@@ -269,7 +270,6 @@ if __name__ == '__main__':
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_col' in torun:
-                if args.signalModel in "Stop": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
                 else: x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
