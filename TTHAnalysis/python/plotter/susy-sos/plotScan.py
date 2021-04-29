@@ -17,6 +17,7 @@ parser.add_argument("--reweight", default=[], action="append", help="Choose the 
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 parser.add_argument("--print", dest="prnt", action='store_true', default=False, help="Print results")
+parser.add_argument("--logy", action='store_true', default=False, help="Plot logy limit plot")
 # Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
 parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
@@ -27,8 +28,7 @@ parser.add_argument("--NPerror", action='store_true', default=False, help="Plot 
 parser.add_argument("--fit", default="fit_b", choices=["fit_b","fit_s"], help="Use b or (s+b) fit for ML diagnostics. Default(b-only fit)")
 # Significance specific options
 parser.add_argument("--significance", dest="signif", default=None, choices=["exp_aprio","exp_apost","obs"], help="Plot significance maps")
-#Logy axis
-parser.add_argument("--logy", action='store_true', default=False, help="Plot logy limit plot")
+
 
 args = parser.parse_args()
 
@@ -92,8 +92,6 @@ T2XX_xsec_unc = {
 1050 : 0.000725589, 1075 : 0.000621405, 1100 : 0.000532983}
 xsec = TChiWZ_xsec if args.signalModel=="TChiWZ" else Higgsino_xsec if args.signalModel=="Higgsino" else HiggsPMSSM_xsec if args.signalModel=="HiggsPMSSM" else T2XX_xsec
 xsec_unc = TChiWZ_xsec_unc if args.signalModel=="TChiWZ" else Higgsino_xsec_unc if args.signalModel=="Higgsino" else HiggsPMSSM_xsec_unc if args.signalModel=="HiggsPMSSM" else T2XX_xsec_unc
-
-#logy=False
 
 # Legend info
 reweightText = ""
@@ -246,13 +244,9 @@ def getLimitHists(files, tag):
         for i,lim in enumerate(limits):
             if len(lim.vals)<len(vars_to_plot): continue
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
-        if args.logy:
+        if args.logy or args.signalModel in ["T2tt","T2bW","HiggsPMSSM"]:
             g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
             g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
-        else:
-            if args.signalModel in ["T2tt","T2bW","HiggsPMSSM"]:
-               g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
-               g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
         g.SetNpx(300)
         g.SetNpy(300)
         h = g.GetHistogram().Clone()
