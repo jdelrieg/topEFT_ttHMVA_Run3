@@ -1,0 +1,5 @@
+incl_signal_T2tt    : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-T2tt.txt", AddWeight="triggerMCEff(muDleg_MCEff(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\, MET_pt\, metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year)*lepSF_FastSim(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year)*lepSF_FastSim(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year)", FriendsSimple="{P}/signalWeights/", Processes="signal_T2tt_325_315+\,signal_T2tt_425_375+"
+
+incl_signal_T2bW    : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-T2bW.txt", AddWeight="triggerMCEff(muDleg_MCEff(year\,LepGood1_pt\,LepGood1_eta\,LepGood2_pt\,LepGood2_eta)\, MET_pt\, metmm_pt(LepGood1_pdgId\,LepGood1_pt\,LepGood1_phi\,LepGood2_pdgId\,LepGood2_pt\,LepGood2_phi\,MET_pt\,MET_phi)\,year)*lepSF_FastSim(LepGood1_pt\,LepGood1_eta\,LepGood1_pdgId\,year)*lepSF_FastSim(LepGood2_pt\,LepGood2_eta\,LepGood2_pdgId\,year)", FriendsSimple="{P}/signalWeights/", Processes="signal_T2bW_500_460+\,signal_T2bW_450_430+"
+
+

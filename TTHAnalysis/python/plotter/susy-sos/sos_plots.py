@@ -16,7 +16,7 @@ parser.add_argument("--reg", default=None, required=True, choices=["sr","sr_col"
 parser.add_argument("--bin", default=None, required=True, choices=["low","med","high","ultra"], help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW", "Ewk"], help="Choose signal model")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW", "Ewk", "Stop"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", choices=["mc","dd","semidd"], help="Method of estimating fakes. Default = '%(default)s'")
@@ -84,10 +84,10 @@ def base(selection):
         if "low" not in torun and "cr_wz" not in torun: SPAM+="--rspam '137 fb^{-1} (13 TeV)'"
         elif "low" in torun and "cr_wz" not in torun: SPAM+="--rspam '129 fb^{-1} (13 TeV)'"
         elif "low" in torun and "cr_wz" in torun: SPAM+="--rspam '132 fb^{-1} (13 TeV)'"
-    if args.signal and args.signalModel not in ["Ewk"]:
+    if args.signal and args.signalModel not in ["Ewk", "Stop"]:
         CORE+=" --xp signal\(\?\!_"+args.signalModel+"\).* "
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
-    elif args.signal and args.signalModel in ["Ewk"]: CORE+=""
+    elif args.signal and args.signalModel in ["Ewk", "Stop"]: CORE+=""
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError --perBin "
@@ -95,7 +95,7 @@ def base(selection):
 
     wBG = " '1.0' "
     wPrefire = ""   
-    if args.signalModel not in ["HiggsPMSSM", "T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
+    if args.signalModel not in ["HiggsPMSSM", "T2tt","T2bW", "Stop"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
     if selection=='2los':
         GO="%s susy-sos/mca/mca-2los.txt susy-sos/2los_cuts.txt "%(CORE)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
@@ -259,16 +259,18 @@ if __name__ == '__main__':
         x = binChoice(x,torun)
 
         if args.fakes == "semidd":
-            if args.signalModel not in ["Ewk"]: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
-            elif args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd-CombEwk.txt')
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd-CombEwk.txt')
+            else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
         if args.fakes == "dd":
-            if args.signalModel not in ["Ewk"]: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd.txt')
-            elif args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombEwk.txt')                
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombEwk.txt')                
+            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombStop.txt')  
+            else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd.txt')
         if 'sr' in torun:
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_col' in torun:
-                x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
+                if args.signalModel in "Stop": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
+                else: x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
