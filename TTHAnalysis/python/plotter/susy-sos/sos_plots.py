@@ -378,9 +378,10 @@ if __name__ == '__main__':
         x,x2 = base('3l')
         x = binChoice(x,torun)
 
-        if args.fakes == "semidd": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd.txt')
+        if args.fakes == "semidd": 
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd-CombEwk.txt')
+            else: x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd.txt')
         if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/dd_bkg/mca-3l-dd.txt') 
-
         if 'sr' in torun:
             if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if args.fakes == "semidd": x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(args.lep,args.bin))
