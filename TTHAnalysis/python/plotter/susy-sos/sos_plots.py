@@ -270,7 +270,7 @@ if __name__ == '__main__':
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
             if '_col' in torun:
-                else: x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
+                x = x.replace('susy-sos/mca/semidd_bkg/mca-2los-semidd.txt','susy-sos/mca/semidd_bkg/mca-2los-col-semidd.txt')
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
                      x = add(x,"-X ^pt5sublep$ ")
