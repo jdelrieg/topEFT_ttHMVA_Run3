@@ -1,0 +1,9 @@
+incl_signal_TChiWZ_pos : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-TChiWZ.txt", AddWeight="mll_rwt_pos*if3(isrWeight>=0\,isrWeight\,1)", PostFix="_pos", FriendsSimple="{P}/signalWeights/\,{P}/isrWeights/", Processes="signal_TChiWZ_175_170+\,signal_TChiWZ_200_160+", years="2016"
+incl_signal_TChiWZ_pos : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-TChiWZ.txt", AddWeight="mll_rwt_pos", PostFix="_pos", FriendsSimple="{P}/signalWeights/", Processes="signal_TChiWZ_175_170+\,signal_TChiWZ_200_160+", years="2017\,2018"
+
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2N1.txt", AddWeight="mll_rwt_neg*if3(isrWeight>=0\,isrWeight\,1)", PostFix="_neg", FriendsSimple="{P}/signalWeights/\,{P}/isrWeights/", Processes="signal_Higgsino_180_170p00+\,signal_Higgsino_160_157p00+", years="2016"
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2N1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/", Processes="signal_Higgsino_180_170p00+\,signal_Higgsino_160_157p00+", years="2017\,2018"
+
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2C1.txt", AddWeight="mll_rwt_neg*if3(isrWeight>=0\,isrWeight\,1)", PostFix="_neg", FriendsSimple="{P}/signalWeights/\,{P}/isrWeights/", Processes="signal_Higgsino_180_170p00+\,signal_Higgsino_160_157p00+", years="2016"
+incl_signal_Higgsino_neg : +  ; IncludeMca="susy-sos/mca-includes/mca-2los-signal-HiggsinoN2C1.txt", AddWeight="mll_rwt_neg", PostFix="_neg", FriendsSimple="{P}/signalWeights/", Processes="signal_Higgsino_180_170p00+\,signal_Higgsino_160_157p00+", years="2017\,2018"
+
