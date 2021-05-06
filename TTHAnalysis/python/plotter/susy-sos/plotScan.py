@@ -96,16 +96,16 @@ xsec_unc = TChiWZ_xsec_unc if args.signalModel=="TChiWZ" else Higgsino_xsec_unc 
 # Legend info
 reweightText = ""
 # The following labelling won't work properly for commands with multiple reweightings
-if "pos" in args.reweight: reweightText = "m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} > 0"
-elif "neg" in args.reweight: reweightText = "m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} < 0"
+if "pos" in args.reweight: reweightText = "#tilde{m}_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times #tilde{m}_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} > 0, "
+elif "neg" in args.reweight: reweightText = "#tilde{m}_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times #tilde{m}_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} < 0, "
 
 moreText = ""
 if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1} (Wino/Bino)"
-elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bf#bar{f}#tilde{#chi}^{0}_{1} (T2Bff)"
-elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{t}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2 (T2BW)"
+elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bf#bar{f}#tilde{#chi}^{0}_{1} (T2bff)"
+elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{t}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2 (T2bW)"
 elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2 (Higgsino simplified)"
 elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM"
-moreText2 = reweightText+", NLO-NLL exclusion"
+moreText2 = reweightText+"NLO-NLL exclusion"
 if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
 if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
 cmsText               = "#bf{CMS} #it{Preliminary}"
@@ -113,7 +113,7 @@ cmsTextFont           = 42
 cmsTextSize           = 0.55
 if args.logy: cmsTextOffset = 0.2 
 else:    cmsTextOffset = 0.1
-lumiText              = "137 fb^{-1} (13 TeV)"
+lumiText              = "129#minus137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
 if args.logy: lumiTextOffset     = 0.3 
