@@ -694,14 +694,27 @@ DYJetsToLL_M1to5 = [
     DYJetsToLL_M1to5_HT600toInf
 ]
 
-SMS_T2tt_ext = kreator.makeMCComponent("SMS_T2tt_ext", "/SMS-T2tt_dM-10to20_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen weights treatment, added here for convenience
-SMS_T2bW_ext = kreator.makeMCComponent("SMS_T2bW_ext", "/SMS-T2bW_X05_dM-10to20_2Lfilter_mWMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen weights treatment, added here for convenience
-SMS_TChiWZ = kreator.makeMCComponent("SMS_TChiWZ", "/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_GridpackScan_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM", "CMS", ".*root", 1)
+#SMS_TChiWZ = kreator.makeMCComponent("SMS_TChiWZ", "/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv6-PUMoriond17_Nano25Oct2019_GridpackScan_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v6
+SMS_TChiWZ = kreator.makeMCComponent("SMS_TChiWZ", "/SMS-TChiWZ_ZToLL_mZMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_GridpackScan_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_TChiWZ_ext = kreator.makeMCComponent("SMS_TChiWZ_ext", "/SMS-TChiWZ_ZToLL_mZMin-0p1_mC1-325to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_GridpackScan_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_HiggsinoN2N1 = kreator.makeMCComponent("SMS_HiggsinoN2N1", "/SMS-N2N1-higgsino_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_GridpackScan_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_HiggsinoN2C1 = kreator.makeMCComponent("SMS_HiggsinoN2C1", "/SMS-N2C1-higgsino_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_GridpackScan_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_HiggsinoPMSSM = kreator.makeMCComponent("SMS_HiggsinoPMSSM", "/MSSM-higgsino_no1l_2lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+#SMS_T2tt = kreator.makeMCComponent("SMS_T2tt", "/SMS-T2tt_dM-10to20_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_T2tt_ext = kreator.makeMCComponent("SMS_T2tt_ext", "/SMS-T2tt_dM-10to20_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_T2bW = kreator.makeMCComponent("SMS_T2bW", "/SMS-T2bW_X05_dM-10to80_2Lfilter_mWMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
+SMS_T2bW_ext = kreator.makeMCComponent("SMS_T2bW_ext", "/SMS-T2bW_X05_dM-10to20_2Lfilter_mWMin-0p1_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16NanoAODv7-PUSummer16v3Fast_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM", "CMS", ".*root", 1) # NanoAOD v7, fixes gen/LHE weights treatment, added here for convenience
 
 SignalSUSY = [
-SMS_T2tt_ext,
-SMS_T2bW_ext,
-SMS_TChiWZ
+    SMS_TChiWZ,
+    SMS_TChiWZ_ext,
+    SMS_HiggsinoN2N1,
+    SMS_HiggsinoN2C1,
+    SMS_HiggsinoPMSSM,
+    #SMS_T2tt,
+    SMS_T2tt_ext,
+    SMS_T2bW,
+    SMS_T2bW_ext
 ]
 
 
