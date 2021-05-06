@@ -181,8 +181,11 @@ def runIt(GO,plotting,name):
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
             if "T2tt" in pr:
                 FILENAME="SMS_T2tt,SMS_T2tt_ext"
-                GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
-                GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+                GENMODELSTRING = " || ".join(['AltBranch$(GenModel_T2tt_dM_10to80_2Lfilter_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_T2tt_dM_10to20_2Lfilter_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING = "( " + GENMODELSTRING + " )"
+                #GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
+                #GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "HiggsPMSSM" in pr:
                 FILENAME="SMS_HiggsinoPMSSM"
                 GENMODEL = "GenModel_MSSM_higgsino"
