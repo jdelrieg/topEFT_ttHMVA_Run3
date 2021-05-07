@@ -108,7 +108,7 @@ elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM"
 moreText2 = reweightText+"NLO-NLL exclusion"
 if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
 if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
-cmsText               = "#bf{CMS} #it{Preliminary}"
+cmsText               = "#bf{CMS}" #it{Preliminary}"
 cmsTextFont           = 42  
 cmsTextSize           = 0.55
 if args.logy: cmsTextOffset = 0.2 
@@ -416,8 +416,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
         gl1p=TGraph(2)
         if args.logy:
-            gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge-2.8)
-            gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge-2.8)
+            if args.signalModel == "TChiWZ" :
+                gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge-3.0)
+                gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge-3.0)
+            else:
+                gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge-2.8)
+                gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge-2.8)
         else:
             gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge)
             gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge)
@@ -428,8 +432,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
         gl1m=TGraph(2)
         if args.logy:
-            gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge-2.8)
-            gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge-2.8)
+            if args.signalModel == "TChiWZ" :
+                gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge-3.0)
+                gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge-3.0)
+            else:
+                gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge-2.8)
+                gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge-2.8)                
         else:
             gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge)
             gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge)
@@ -475,8 +483,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
             gl1Obsp=TGraph(2)
             if args.logy:
-                gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge-2.8)
-                gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge-2.8)
+                if args.signalModel == "TChiWZ":
+                    gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge-3.0)
+                    gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge-3.0)
+                else:
+                    gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge-2.8)
+                    gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge-2.8)
             else:
                 gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge)
                 gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge) 
@@ -487,8 +499,12 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
             gl1Obsm=TGraph(2)
             if args.logy:
-                gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge-2.8)
-                gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge-2.8)
+                if args.signalModel == "TChiWZ":
+                    gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge-3.0)
+                    gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge-3.0)
+                else:
+                    gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge-2.8)
+                    gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge-2.8)
             else:
                 gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge)
                 gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge)
@@ -497,14 +513,20 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
             gl1Obsm.SetLineWidth(1)
             gl1Obsm.Draw("lsame")
 
-        mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2]-2.8, "Expected #pm 1 #sigma_{experiment}")
+        if args.logy: 
+            if args.signalModel == "TChiWZ": mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2]-3.0, "Expected #pm 1 #sigma_{experiment}")
+            else: mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2]-2.8, "Expected #pm 1 #sigma_{experiment}")
+        else:  mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2], "Expected #pm 1 #sigma_{experiment}")
         mT3.SetTextAlign(12)
         mT3.SetTextFont(42)
         mT3.SetTextSize(0.040)
         mT3.Draw()
 
         if args.unblind:
-            mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2]-2.8, "Observed #pm 1 #sigma_{theory}")
+            if args.logy:
+                if args.signalModel == "TChiWZ": mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2]-3.0, "Observed #pm 1 #sigma_{theory}")
+                else: mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2]-2.8, "Observed #pm 1 #sigma_{theory}")
+            else: mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2], "Observed #pm 1 #sigma_{theory}")
             mT3a.SetTextAlign(12)
             mT3a.SetTextFont(42)
             mT3a.SetTextSize(0.040)
