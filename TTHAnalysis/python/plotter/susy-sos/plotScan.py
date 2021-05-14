@@ -18,10 +18,11 @@ parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsi
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 parser.add_argument("--print", dest="prnt", action='store_true', default=False, help="Print results")
 parser.add_argument("--logy", action='store_true', default=False, help="Plot logy limit plot")
+parser.add_argument("--pretend", action='store_true', default=False, help="Get limits and run algorithms but don't plot (for debugging purposes)")
 # Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
 parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
-parser.add_argument("--smooth", nargs=2, default=[0,"k5a"], help="Apply smoothing X times with kernel Y")
+parser.add_argument("--smooth", nargs=2, default=[0,"k3a"], help="Apply smoothing X times with kernel Y (Y='k3a','k5a','k5b'). Multiple smoothings are not recommended.")
 # Nuisance parameter specific options
 parser.add_argument("--NPscan", default=None, help="Run scan of specific nuisances parameter")
 parser.add_argument("--NPerror", action='store_true', default=False, help="Plot NP error instead of central value")
@@ -203,6 +204,72 @@ class LimitPoint:
         self.Dm = Dm
         self.vals = vals
 
+class GraphSmoothing:
+    def __init__(self,initialGraph,kernel):
+        self.k5a = ( ( 0, 0, 1, 0, 0 ),
+                     ( 0, 2, 2, 2, 0 ),
+                     ( 1, 2, 5, 2, 1 ),
+                     ( 0, 2, 2, 2, 0 ),
+                     ( 0, 0, 1, 0, 0 ) );
+        self.k5b = ( ( 0, 1, 2, 1, 0 ),
+                     ( 1, 2, 4, 2, 1 ),
+                     ( 2, 4, 8, 4, 2 ),
+                     ( 1, 2, 4, 2, 1 ),
+                     ( 0, 1, 2, 1, 0 ) );
+        self.k3a = ( ( 0, 1, 0 ),
+                     ( 1, 2, 1 ),
+                     ( 0, 1, 0 ) );
+        self.ksize_x = 3 if kernel=="k3a" else 5
+        self.ksize_y = 3 if kernel=="k3a" else 5
+        self.kernel = self.k3a if kernel=="k3a" else self.k5a if kernel=="k5a" else self.k5b if kernel=="k5b" else None
+        if self.kernel==None: raise RuntimeError("Unavailable kernel")
+
+        self.graph = initialGraph
+        self.buf = [0.0] * self.graph.GetN()
+    
+    def smoothedGraph(self,debug=False): # debug=True triggers a lot of printouts
+        for i in range(self.graph.GetN()):
+            self.buf[i] = self.graph.GetZ()[i]
+            if debug: print self.graph.GetZ()[i],"\t",
+        if debug: print
+
+        smoothGraph = TGraph2D(self.graph.GetN())
+
+        x_push = (self.ksize_x-1)/2;
+        y_push = (self.ksize_y-1)/2;
+        npx = 9 if args.signalModel=="TChiWZ" else 9 if args.signalModel=="Higgsino" else 8 if args.signalModel=="HiggsPMSSM" else 15
+        npy = 9 if args.signalModel=="TChiWZ" else 8 if args.signalModel=="Higgsino" else 7 if args.signalModel=="HiggsPMSSM" else 11
+  
+        for j in range(npy):
+            for i in range(npx):
+                content = 0.0
+                norm = 0.0
+                iGraph = j*npx+i
+                if debug: print "\nGraph Bin =", iGraph
+
+                for m in range(self.ksize_y):
+                    for n in range(self.ksize_x):
+                        xb = i+(n-x_push)
+                        yb = j+(m-y_push)
+                        if debug: print "xb =", xb; print "yb =", yb
+                        if (xb >= 0) and (xb < npx) and (yb >= 0) and (yb < npy):
+                            iBin = yb*npx + xb
+                            if debug: print "Buffer Bin =", iBin
+                            k = self.kernel[n][m]
+                            if k!=0.0:
+                                norm = norm + k
+                                content = content + k*self.buf[iBin]
+                                if debug: print "Adding value", self.buf[iBin], " with weight", k, ". Resulting Sweights =", norm, " and Svalues =", content
+                if norm!=0.0:
+                    if debug: print "Previous value =", self.graph.GetZ()[iGraph], " Updated value =", content/norm
+                    smoothGraph.SetPoint(iBin,self.graph.GetX()[iGraph],self.graph.GetY()[iGraph],content/norm)
+
+        self.graph = smoothGraph
+        return smoothGraph
+
+def DeltaMsorting(lim):
+    return lim.mass+lim.Dm*1000 # Dummy function to order limit points first by DeltaM and then by M_NLSP
+
 def getLimitHists(files, tag):
     limits=[]
     for f in files:
@@ -229,6 +296,7 @@ def getLimitHists(files, tag):
         if args.prnt: print massH, massL, vals['0']
         lim = LimitPoint(massH, massL, vals)
         if vals['0']!=None: limits.append(lim)
+    limits.sort(key=DeltaMsorting)
     hs={}
     vars_to_plot = ['0','1','-1','xs']
     if args.sigma2: vars_to_plot = ['0','1','-1','2','-2','xs']
@@ -238,13 +306,19 @@ def getLimitHists(files, tag):
     if args.signif: vars_to_plot = ['0']
 
     for var in vars_to_plot:
-        g = TGraph2D(len(limits))
+        # Include i-->i+1 hack to fill the 625/18 masspoint of the T2bW scan... Needs to be revised if results change.
+        g = TGraph2D(len(limits)+1) if args.signalModel=="T2bW" else TGraph2D(len(limits))
         for i,lim in enumerate(limits):
             if len(lim.vals)<len(vars_to_plot): continue
+            if args.signalModel=="T2bW" and ((lim.Dm==18.0 and lim.mass>625.0) or lim.Dm>18.0): i=i+1
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
-        if args.logy or args.signalModel in ["T2tt","T2bW","HiggsPMSSM"]:
-            g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
-            g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
+            if args.signalModel=="T2bW" and lim.Dm==18.0 and lim.mass==600.0:
+                g.SetPoint(i+1,625.0,18.0,(limits[i].vals[var]+limits[i+1].vals[var])/2.0) 
+        smoothing = GraphSmoothing(g,args.smooth[1])
+        for iSmooth in range(int(args.smooth[0])): g = smoothing.smoothedGraph(debug=False)
+        # Hack to extend limit plots and make space for the legend
+        g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
+        g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
         g.SetNpx(300)
         g.SetNpy(300)
         h = g.GetHistogram().Clone()
@@ -255,10 +329,7 @@ def getLimitHists(files, tag):
 
 def plotLimits(limits_hists, limit_labels, label, outdir):
 
-    smoothingReps = int(args.smooth[0]); smoothingRoutine = args.smooth[1]
-
     h_bkgd = limits_hists[0]['xs' if args.xsec else '0'].Clone('h_bkgd') # 'xs' plots cross sections, '0' plots the signal strength
-    for iSmooth in range(smoothingReps): h_bkgd.Smooth(1,smoothingRoutine)
     nlim=len(limits_hists)
 
     c1=TCanvas()
@@ -304,7 +375,6 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
             if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-5]))
             else: lim.SetContour(1,array.array('d',[1]))
             lim.Draw("CONT3 same")
-            for iSmooth in range(smoothingReps): lim.Smooth(1,smoothingRoutine)
             lim.SetLineColor(colz[iLim])
 
         if args.NPscan or args.signif: h2lim = limit_hists['0']
@@ -564,7 +634,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     os.system("mkdir -p %s"%outdir)
     for fmt in args.savefmts:
-        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+args.logy*('_log'),fmt))
+        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+args.logy*('_log')+(int(args.smooth[0])>0)*("_smooth"+args.smooth[0]+args.smooth[1]),fmt))
 
 
 def run(indirs,tag,label,outdir):
@@ -572,11 +642,21 @@ def run(indirs,tag,label,outdir):
     points = {}
     for d in dirs:
         x = SignalPoint(d,tag,args.unblind)
-        if x: points[(x.m1,x.m2)] = x
+        if x:
+            # Parse only points that are needed
+            if args.signalModel=="TChiWZ":
+                if x.m1 < 100 or x.m1 > 300 or x.m1-x.m2 < 3.0 or x.m1-x.m2 > 50.0: continue
+            elif args.signalModel=="Higgsino":
+                if x.m1 < 100 or x.m1 > 250 or x.m1-x.m2 < 3.0 or x.m1-x.m2 > 40.0: continue
+            elif args.signalModel=="HiggsPSSM":
+                if x.m1 < 100 or x.m1 > 240 or x.m2 < 300.0 or x.m2 > 1200.0: continue
+            elif args.signalModel=="T2tt" or args.signalModel=="T2bW":
+                if x.m1 < 300 or x.m1 > 650 or x.m1-x.m2 < 10.0 or x.m1-x.m2 > 80.0: continue
+            points[(x.m1,x.m2)] = x
     print 'Found %d files'%len(points)
     if len(points)==0: raise RuntimeError("No points found")
     lims = getLimitHists(points.values(),tag)
-    plotLimits([lims], [], label, outdir)
+    if not args.pretend: plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
     limCurves=[]
