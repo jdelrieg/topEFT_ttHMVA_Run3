@@ -22,7 +22,7 @@ parser.add_argument("--pretend", action='store_true', default=False, help="Get l
 # Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
 parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
-parser.add_argument("--smooth", nargs=2, default=[0,"k3a"], help="Apply smoothing X times with kernel Y (Y='k3a','k5a','k5b'). Multiple smoothings are not recommended.")
+parser.add_argument("--smooth", nargs=2, default=[0,"k3a"], help="Apply smoothing X times with kernel Y (Y='k3a','k5a','k5b'). Multiple smoothings are not recommended. Not guaranteed to be compatible with a tag other than 'all'.")
 # Nuisance parameter specific options
 parser.add_argument("--NPscan", default=None, help="Run scan of specific nuisances parameter")
 parser.add_argument("--NPerror", action='store_true', default=False, help="Plot NP error instead of central value")
@@ -634,7 +634,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     os.system("mkdir -p %s"%outdir)
     for fmt in args.savefmts:
-        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+args.logy*('_log')+(int(args.smooth[0])>0)*("_smooth"+args.smooth[0]+args.smooth[1]),fmt))
+        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+args.logy*('_log')+(("_smooth"+args.smooth[0]+args.smooth[1]) if int(args.smooth[0])>0 else ""),fmt))
 
 
 def run(indirs,tag,label,outdir):

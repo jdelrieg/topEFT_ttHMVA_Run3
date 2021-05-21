@@ -76,7 +76,8 @@ CMS_scale_j	: $allMCFullSIM : .* : templateAsymm; \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
 CMS_scale_j	: $allMCFastSIM : .* : templateAsymm; FakeRates=['susy-sos/systs/fr-jesUp.txt'\,'susy-sos/systs/fr-jesDn.txt']
 
-CMS_res_j	: $allMCFullSIM : .* : templateAsymm; FakeRates=['susy-sos/systs/fr-jerUp.txt'\,'susy-sos/systs/fr-jerDn.txt']
+CMS_res_j	: ^(?!(.*(Rares|T2tt|T2bW|HiggsPMSSM))).* : .* : templateAsymm; FakeRates=['susy-sos/systs/fr-jerUp.txt'\,'susy-sos/systs/fr-jerDn.txt']
+CMS_res_j	: Rares : .* : normAsymm: 1.14 : 0.94
 CMS_res_j	: $allMCFastSIM : .* : templateAsymm; FakeRates=['susy-sos/systs/fr-jerUp.txt'\,'susy-sos/systs/fr-jerDn.txt']
 
 CMS_btag_lf		: $allMCFullSIM : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']
