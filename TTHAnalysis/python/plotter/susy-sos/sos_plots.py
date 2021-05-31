@@ -62,7 +62,8 @@ LUMI = LUMI.rstrip(",")
 
 submit = '{command}' 
 
-P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+P0="/eos/cms/store/user/evourlio/NanoTrees_SOS_210419_JERs2018_skim/"
+#"root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
@@ -81,7 +82,7 @@ def base(selection):
     LEGEND2=" --legendFontSize 0.035"
     SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}}' " #  --lspam '#scale[1.1]{#bf{CMS}}' scale[0.9]{#it{Preliminary}}' for preliminary plots
     if len(YEARS)==3:
-        if "low" not in torun and "cr_wz" not in torun: SPAM+="--rspam '137 fb^{-1} (13 TeV)'"
+        if "low" not in torun: SPAM+="--rspam '137 fb^{-1} (13 TeV)'"
         elif "low" in torun and "cr_wz" not in torun: SPAM+="--rspam '129 fb^{-1} (13 TeV)'"
         elif "low" in torun and "cr_wz" in torun: SPAM+="--rspam '132 fb^{-1} (13 TeV)'"
     if args.signal and args.signalModel not in ["Ewk", "Stop"]:
@@ -263,7 +264,7 @@ if __name__ == '__main__':
 
         if args.fakes == "semidd":
             if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd-CombEwk.txt')
-            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/semidd_bkg/mca-2los.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
+            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/mca-2los.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
             else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
         if args.fakes == "dd":
             if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombEwk.txt')                
