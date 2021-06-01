@@ -62,8 +62,7 @@ LUMI = LUMI.rstrip(",")
 
 submit = '{command}' 
 
-P0="/eos/cms/store/user/evourlio/NanoTrees_SOS_210419_JERs2018_skim/"
-#"root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
+P0="root://eoscms.cern.ch//eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_070220_v6_skim_2lep_met125/"
 if args.inputDir: P0=args.inputDir+'/'
 nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
