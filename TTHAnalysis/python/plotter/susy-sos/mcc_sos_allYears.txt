@@ -16,7 +16,7 @@ htJet25j\b    : htJet25j_Recl; AlsoData
 mhtJet25\b    : mhtJet25_Recl; AlsoData
 nJet40\b    : nJet40_Recl; AlsoData
 htJet40j\b    : htJet40j_Recl; AlsoData
-imhtJet40\b    : mhtJet40_Recl; AlsoData
+mhtJet40\b    : mhtJet40_Recl; AlsoData
 nFwdJet\b    : nFwdJet_Recl; AlsoData
 nBJetLoose25\b    : nBJetLoose25_Recl; AlsoData
 nBJetMedium25\b    : nBJetMedium25_Recl; AlsoData
@@ -59,12 +59,16 @@ MET_pt_jesTotalUp\b : METFixEE2017_pt_jesTotalUp ; year=2017
 MET_pt_jesTotalDown\b : METFixEE2017_pt_jesTotalDown ; year=2017
 MET_phi_jesTotalUp\b : METFixEE2017_phi_jesTotalUp ; year=2017
 MET_phi_jesTotalDown\b : METFixEE2017_phi_jesTotalDown ; year=2017
-MET_pt\b : MET_pt_nom ; year=2016
-MET_pt\b : METFixEE2017_pt_nom ; year=2017
-MET_pt\b : MET_pt_nom ; year=2018
-MET_phi\b : MET_phi_nom ; year=2016
-MET_phi\b : METFixEE2017_phi_nom ; year=2017
-MET_phi\b : MET_phi_nom ; year=2018
+MET_pt_jerUp\b : METFixEE2017_pt_jerUp ; year=2017
+MET_pt_jerDown\b : METFixEE2017_pt_jerDown ; year=2017
+MET_phi_jerUp\b : METFixEE2017_phi_jerUp ; year=2017
+MET_phi_jerDown\b : METFixEE2017_phi_jerDown ; year=2017
+MET_pt\b : MET_pt_jer ; year=2016
+MET_pt\b : METFixEE2017_pt_jer ; year=2017
+MET_pt\b : MET_pt_jer ; year=2018
+MET_phi\b : MET_phi_jer ; year=2016
+MET_phi\b : METFixEE2017_phi_jer ; year=2017
+MET_phi\b : MET_phi_jer ; year=2018
 ### 2017 MET in data
 MET_pt\b : METFixEE2017_pt ; AlsoData, year=2017
 MET_phi\b : METFixEE2017_phi ; AlsoData, year=2017

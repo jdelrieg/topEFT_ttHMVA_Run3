@@ -16,7 +16,7 @@ parser.add_argument("--reg", default=None, required=True, choices=["sr","sr_col"
 parser.add_argument("--bin", default=None, required=True, choices=["low","med","high","ultra"], help="Choose bin to use (REQUIRED)")
 
 parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW"], help="Choose signal model")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM", "T2tt","T2bW", "Ewk", "Stop"], help="Choose signal model")
 parser.add_argument("--reweight", choices=["none","pos","neg","all"], default="none", help="Re-weight signal mll distribution for +/- N1*N2")
 parser.add_argument("--data", action="store_true", default=False, help="Include data")
 parser.add_argument("--fakes", default="mc", choices=["mc","dd","semidd"], help="Method of estimating fakes. Default = '%(default)s'")
@@ -46,6 +46,7 @@ for years in YEARS:
 if (args.signalMasses or args.asimov or args.justdump) and args.doWhat != "cards": raise RuntimeError("Option to be used only with the 'cards' option!")
 #if args.fakes == "semidd" and "cr" in args.reg and args.reg != "cr_ss": print "No semidd fakes in the CRs! Using dd fakes..."
 
+
 lumis = {
 '2016': '35.9', # '33.2' for low MET
 '2017': '41.5', # '36.7' for low MET
@@ -67,21 +68,26 @@ nCores = args.nCores
 TREESALL = " --Fs {P}/recleaner --FMCs {P}/bTagWeights --FMCs {P}/jetmetUncertainties -P "+P0+"%s "%(YEARS[0] if len(YEARS)==1 else "")+"--readaheadsz 20000000 "
 # For cards only, no need fr multiple year support
 TREESALLSKIM = TREESALL + " --FMCs {P}/signalWeights "
-if YEAR == "2016" and args.signalModel in ["TChiWZ","Higgsino","HiggsPMSSM"]: TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
+if YEAR == "2016" and args.signalModel in ["TChiWZ","Higgsino","HiggsPMSSM", "Ewk"]: TREESALLSKIM = TREESALLSKIM + " --FMCs {P}/isrWeights "
 
 
 def base(selection):
     plotting=''
     CORE=TREESALL
     CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos_allYears.txt %s "%(nCores,YEAR,LUMI)
-    RATIO= " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 "
-    RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
-    LEGEND=" --legendColumns 3 --legendWidth 0.62 "
-    LEGEND2=" --legendFontSize 0.032 "
-    SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
-    if args.signal:
+    RATIO= "--ratioYLabel 'Data/Pred.' --maxRatioRange 0.0  2.0 --ratioYNDiv 504 "
+    RATIO2=" --showRatio --fixRatioRange" #  --attachRatioPanel
+    LEGEND=" --legendColumns 3 --legendWidth 0.68 "
+    LEGEND2=" --legendFontSize 0.035"
+    SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}}' " #  --lspam '#scale[1.1]{#bf{CMS}}' scale[0.9]{#it{Preliminary}}' for preliminary plots
+    if len(YEARS)==3:
+        if "low" not in torun: SPAM+="--rspam '137 fb^{-1} (13 TeV)'"
+        elif "low" in torun and "cr_wz" not in torun: SPAM+="--rspam '129 fb^{-1} (13 TeV)'"
+        elif "low" in torun and "cr_wz" in torun: SPAM+="--rspam '132 fb^{-1} (13 TeV)'"
+    if args.signal and args.signalModel not in ["Ewk", "Stop"]:
         CORE+=" --xp signal\(\?\!_"+args.signalModel+"\).* "
         CORE+=" --xp signal.*\(_pos\|_neg\) " if args.reweight=="none" else " --xp signal.*\(\?\<\!_pos\) " if args.reweight=="pos" else " --xp signal.*\(\?\<\!_neg\) " if args.reweight=="neg" else ""
+    elif args.signal and args.signalModel in ["Ewk", "Stop"]: CORE+=""
     else: CORE+=" --xp signal.* "
     if args.doWhat == "plots": 
         CORE+=RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError --perBin "
@@ -89,7 +95,7 @@ def base(selection):
 
     wBG = " '1.0' "
     wPrefire = ""   
-    if args.signalModel not in ["HiggsPMSSM", "T2tt","T2bW"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
+    if args.signalModel not in ["HiggsPMSSM", "T2tt","T2bW", "Stop"] and (YEAR=="2016" or YEAR=="2017"): wPrefire = "L1PreFiringWeight_Nom*" # Other FastSIM samples should be added here
     if selection=='2los':
         GO="%s susy-sos/mca/mca-2los.txt susy-sos/2los_cuts.txt "%(CORE)
         if args.doWhat in ["plots"]: plotting+=" susy-sos/2los_plots.txt "
@@ -175,8 +181,11 @@ def runIt(GO,plotting,name):
                 GENMODELSTRING = "( " + GENMODELSTRING + " )"
             if "T2tt" in pr:
                 FILENAME="SMS_T2tt,SMS_T2tt_ext"
-                GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
-                GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
+                GENMODELSTRING = " || ".join(['AltBranch$(GenModel_T2tt_dM_10to80_2Lfilter_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING+= " || " + " || ".join(['AltBranch$(GenModel_T2tt_dM_10to20_2Lfilter_%s,0)'%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')])
+                GENMODELSTRING = "( " + GENMODELSTRING + " )"
+                #GENMODEL = "GenModel_T2tt_dM_10to80_2Lfilter"
+                #GENMODELSTRING="( " + " || ".join([(GENMODEL+'_%s')%('_'.join(pr.split('_')[2:4])) for pr in args.signalMasses.split(',')]) + " )"
             if "HiggsPMSSM" in pr:
                 FILENAME="SMS_HiggsinoPMSSM"
                 GENMODEL = "GenModel_MSSM_higgsino"
@@ -252,8 +261,14 @@ if __name__ == '__main__':
         x,x2 = base('2los')
         x = binChoice(x,torun)
 
-        if args.fakes == "semidd": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
-        if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd.txt')
+        if args.fakes == "semidd":
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd-CombEwk.txt')
+            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/mca-2los.txt', 'susy-sos/mca/semidd_bkg/mca-2los-semidd-CombStop.txt')
+            else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/semidd_bkg/mca-2los-semidd.txt')
+        if args.fakes == "dd":
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombEwk.txt')                
+            elif args.signalModel in "Stop": x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd-CombStop.txt')  
+            else: x = x.replace('susy-sos/mca/mca-2los.txt','susy-sos/mca/dd_bkg/mca-2los-dd.txt')
         if 'sr' in torun:
             if not '_low' in torun: x = add(x, "-X ^mll$ -E ^mll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
 
@@ -366,9 +381,10 @@ if __name__ == '__main__':
         x,x2 = base('3l')
         x = binChoice(x,torun)
 
-        if args.fakes == "semidd": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd.txt')    
+        if args.fakes == "semidd": 
+            if args.signalModel in "Ewk": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd-CombEwk.txt')
+            else: x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/semidd_bkg/mca-3l-semidd.txt')
         if args.fakes == "dd": x = x.replace('susy-sos/mca/mca-3l.txt','susy-sos/mca/dd_bkg/mca-3l-dd.txt') 
-
         if 'sr' in torun:
             if not '_low' in torun: x = add(x, "-X ^maxMll$ -X ^minMll$ -E ^minMll_low$ -E ^JPsiVeto$ -X ^pt5sublep$  -E ^mindR$ -X ^ledlepPt$ -E ^ledlepPt3p5$")
             if args.fakes == "semidd": x = add(x, "--mcc susy-sos/fakerate/%s/ScaleFactors_SemiDD/mcc_SF_%s.txt"%(args.lep,args.bin))

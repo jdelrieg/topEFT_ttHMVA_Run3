@@ -17,15 +17,19 @@ parser.add_argument("--reweight", default=[], action="append", help="Choose the 
 parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","HiggsPMSSM","T2tt","T2bW"], help="Signal model to consider")
 parser.add_argument("--unblind", action='store_true', default=False, help="Run unblinded scans")
 parser.add_argument("--print", dest="prnt", action='store_true', default=False, help="Print results")
+parser.add_argument("--logy", action='store_true', default=False, help="Plot logy limit plot")
+parser.add_argument("--pretend", action='store_true', default=False, help="Get limits and run algorithms but don't plot (for debugging purposes)")
 # Limit specific options
 parser.add_argument("--xsec", action='store_true', default=False, help="Plot xsec instead of signal strength (which is the default)")
 parser.add_argument("--sigma2", action='store_true', default=False, help="Also plot the 2 sigma line")
+parser.add_argument("--smooth", nargs=2, default=[0,"k3a"], help="Apply smoothing X times with kernel Y (Y='k3a','k5a','k5b'). Multiple smoothings are not recommended. Not guaranteed to be compatible with a tag other than 'all'.")
 # Nuisance parameter specific options
 parser.add_argument("--NPscan", default=None, help="Run scan of specific nuisances parameter")
 parser.add_argument("--NPerror", action='store_true', default=False, help="Plot NP error instead of central value")
 parser.add_argument("--fit", default="fit_b", choices=["fit_b","fit_s"], help="Use b or (s+b) fit for ML diagnostics. Default(b-only fit)")
 # Significance specific options
 parser.add_argument("--significance", dest="signif", default=None, choices=["exp_aprio","exp_apost","obs"], help="Plot significance maps")
+
 
 args = parser.parse_args()
 
@@ -90,39 +94,41 @@ T2XX_xsec_unc = {
 xsec = TChiWZ_xsec if args.signalModel=="TChiWZ" else Higgsino_xsec if args.signalModel=="Higgsino" else HiggsPMSSM_xsec if args.signalModel=="HiggsPMSSM" else T2XX_xsec
 xsec_unc = TChiWZ_xsec_unc if args.signalModel=="TChiWZ" else Higgsino_xsec_unc if args.signalModel=="Higgsino" else HiggsPMSSM_xsec_unc if args.signalModel=="HiggsPMSSM" else T2XX_xsec_unc
 
-logy=False
-#logy=True
-
 # Legend info
+reweightText = ""
+# The following labelling won't work properly for commands with multiple reweightings
+if "pos" in args.reweight: reweightText = "#tilde{m}_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times #tilde{m}_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} > 0, "
+elif "neg" in args.reweight: reweightText = "#tilde{m}_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}} #times #tilde{m}_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}} < 0, "
+
 moreText = ""
-if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, NLO-NLL excl."
-elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, NLO-NLL excl."
-elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM model, NLO-NLL excl."
-moreText2 = "Median expected upper limit on "+("cross section" if args.xsec else "signal strength")+" at 95% CL"
+if args.signalModel == "TChiWZ": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0} #rightarrow WZ#tilde{#chi}^{0}_{1}#tilde{#chi}^{0}_{1} (Wino/Bino)"
+elif args.signalModel == "T2tt": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow bf#bar{f}#tilde{#chi}^{0}_{1} (T2bff)"
+elif args.signalModel == "T2bW": moreText = "pp #rightarrow #tilde{t}#tilde{t}, #tilde{t} #rightarrow b#tilde{#chi}^{#pm}_{1}#rightarrow bW#tilde{#chi}^{0}_{1}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{t}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2 (T2bW)"
+elif args.signalModel == "Higgsino": moreText = "pp #rightarrow #tilde{#chi}_{1}^{#pm}#tilde{#chi}_{2}^{0}, #tilde{#chi}_{2}^{0}#tilde{#chi}_{2}^{0}, m_{#lower[-0.20]{#tilde{#chi}_{1}^{#pm}}}=(m_{#lower[-0.25]{#tilde{#chi}_{2}^{0}}}+m_{#lower[-0.15]{#tilde{#chi}_{1}^{0}}})/2 (Higgsino simplified)"
+elif args.signalModel == "HiggsPMSSM": moreText = "Higgsino pMSSM"
+moreText2 = reweightText+"NLO-NLL exclusion"
 if args.NPscan: moreText2 = "Normalized "+("uncertainty constraint" if args.NPerror else "central value shift")+" of parameter '"+str(args.NPscan)+"'"
 if args.signif: moreText2 = ("Observed" if args.signif=="obs" else "Expected a-posteriori" if args.signif=="exp_apost" else "Expected a-priori")+" significance"
-cmsText               = "#bf{CMS} Preliminary"
-cmsTextFont           = 52  
+cmsText               = "#bf{CMS}" #it{Preliminary}"
+cmsTextFont           = 42  
 cmsTextSize           = 0.55
-cmsTextOffset         = 0.1
-lumiText              = "137 fb^{-1} (13 TeV)"
+if args.logy: cmsTextOffset = 0.2 
+else:    cmsTextOffset = 0.1
+lumiText              = "129#minus137 fb^{-1} (13 TeV)"
 lumiTextFont          = 42
 lumiTextSize          = 0.45
-lumiTextOffset        = 0.2
-leg_ylo=80. if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 1200. if args.signalModel=="HiggsPMSSM" else 50.
+if args.logy: lumiTextOffset     = 0.3 
+else: lumiTextOffset        = 0.2
+leg_ylo=78.5 if args.signalModel in ["T2tt","T2bW"] else 40. if args.signalModel=="Higgsino" else 1200. if args.signalModel=="HiggsPMSSM" else 50.
 leg_nlines=2 if args.NPscan or args.signif else 3
 
 # Plot range
 range_xlo=297. if args.signalModel in ["T2tt","T2bW"] else 100.
-range_xhi=653. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
+range_xhi=650. if args.signalModel in ["T2tt","T2bW"] else 250. if args.signalModel=="Higgsino" else 240. if args.signalModel=="HiggsPMSSM" else 300.
 range_ylo=10. if args.signalModel in ["T2tt","T2bW"] else 3. if args.signalModel=="Higgsino" else 300. if args.signalModel=="HiggsPMSSM" else 3.5
-range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 60.1
+if args.logy: range_yhi=155. if args.signalModel in ["T2tt","T2bW"] else 79.5 if args.signalModel=="Higgsino" else 2000. if args.signalModel=="HiggsPMSSM" else 90
+else: range_yhi=95. if args.signalModel in ["T2tt","T2bW"] else 50. if args.signalModel=="Higgsino" else 1500. if args.signalModel=="HiggsPMSSM" else 63 
 
-if logy:
-    range_yhi=350.
-    leg_ylo=100.
 
 def mass_from_str(s):
     return float(s.replace('p','.'))
@@ -198,6 +204,72 @@ class LimitPoint:
         self.Dm = Dm
         self.vals = vals
 
+class GraphSmoothing:
+    def __init__(self,initialGraph,kernel):
+        self.k5a = ( ( 0, 0, 1, 0, 0 ),
+                     ( 0, 2, 2, 2, 0 ),
+                     ( 1, 2, 5, 2, 1 ),
+                     ( 0, 2, 2, 2, 0 ),
+                     ( 0, 0, 1, 0, 0 ) );
+        self.k5b = ( ( 0, 1, 2, 1, 0 ),
+                     ( 1, 2, 4, 2, 1 ),
+                     ( 2, 4, 8, 4, 2 ),
+                     ( 1, 2, 4, 2, 1 ),
+                     ( 0, 1, 2, 1, 0 ) );
+        self.k3a = ( ( 0, 1, 0 ),
+                     ( 1, 2, 1 ),
+                     ( 0, 1, 0 ) );
+        self.ksize_x = 3 if kernel=="k3a" else 5
+        self.ksize_y = 3 if kernel=="k3a" else 5
+        self.kernel = self.k3a if kernel=="k3a" else self.k5a if kernel=="k5a" else self.k5b if kernel=="k5b" else None
+        if self.kernel==None: raise RuntimeError("Unavailable kernel")
+
+        self.graph = initialGraph
+        self.buf = [0.0] * self.graph.GetN()
+    
+    def smoothedGraph(self,debug=False): # debug=True triggers a lot of printouts
+        for i in range(self.graph.GetN()):
+            self.buf[i] = self.graph.GetZ()[i]
+            if debug: print self.graph.GetZ()[i],"\t",
+        if debug: print
+
+        smoothGraph = TGraph2D(self.graph.GetN())
+
+        x_push = (self.ksize_x-1)/2;
+        y_push = (self.ksize_y-1)/2;
+        npx = 9 if args.signalModel=="TChiWZ" else 9 if args.signalModel=="Higgsino" else 8 if args.signalModel=="HiggsPMSSM" else 15
+        npy = 9 if args.signalModel=="TChiWZ" else 8 if args.signalModel=="Higgsino" else 7 if args.signalModel=="HiggsPMSSM" else 11
+  
+        for j in range(npy):
+            for i in range(npx):
+                content = 0.0
+                norm = 0.0
+                iGraph = j*npx+i
+                if debug: print "\nGraph Bin =", iGraph
+
+                for m in range(self.ksize_y):
+                    for n in range(self.ksize_x):
+                        xb = i+(n-x_push)
+                        yb = j+(m-y_push)
+                        if debug: print "xb =", xb; print "yb =", yb
+                        if (xb >= 0) and (xb < npx) and (yb >= 0) and (yb < npy):
+                            iBin = yb*npx + xb
+                            if debug: print "Buffer Bin =", iBin
+                            k = self.kernel[n][m]
+                            if k!=0.0:
+                                norm = norm + k
+                                content = content + k*self.buf[iBin]
+                                if debug: print "Adding value", self.buf[iBin], " with weight", k, ". Resulting Sweights =", norm, " and Svalues =", content
+                if norm!=0.0:
+                    if debug: print "Previous value =", self.graph.GetZ()[iGraph], " Updated value =", content/norm
+                    smoothGraph.SetPoint(iBin,self.graph.GetX()[iGraph],self.graph.GetY()[iGraph],content/norm)
+
+        self.graph = smoothGraph
+        return smoothGraph
+
+def DeltaMsorting(lim):
+    return lim.mass+lim.Dm*1000 # Dummy function to order limit points first by DeltaM and then by M_NLSP
+
 def getLimitHists(files, tag):
     limits=[]
     for f in files:
@@ -224,6 +296,7 @@ def getLimitHists(files, tag):
         if args.prnt: print massH, massL, vals['0']
         lim = LimitPoint(massH, massL, vals)
         if vals['0']!=None: limits.append(lim)
+    limits.sort(key=DeltaMsorting)
     hs={}
     vars_to_plot = ['0','1','-1','xs']
     if args.sigma2: vars_to_plot = ['0','1','-1','2','-2','xs']
@@ -233,13 +306,19 @@ def getLimitHists(files, tag):
     if args.signif: vars_to_plot = ['0']
 
     for var in vars_to_plot:
-        g = TGraph2D(len(limits))
+        # Include i-->i+1 hack to fill the 625/18 masspoint of the T2bW scan... Needs to be revised if results change.
+        g = TGraph2D(len(limits)+1) if args.signalModel=="T2bW" else TGraph2D(len(limits))
         for i,lim in enumerate(limits):
             if len(lim.vals)<len(vars_to_plot): continue
+            if args.signalModel=="T2bW" and ((lim.Dm==18.0 and lim.mass>625.0) or lim.Dm>18.0): i=i+1
             g.SetPoint(i,lim.mass,lim.Dm,lim.vals[var])
-        if args.signalModel in ["T2tt","T2bW","HiggsPMSSM"]:
-            g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
-            g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
+            if args.signalModel=="T2bW" and lim.Dm==18.0 and lim.mass==600.0:
+                g.SetPoint(i+1,625.0,18.0,(limits[i].vals[var]+limits[i+1].vals[var])/2.0) 
+        smoothing = GraphSmoothing(g,args.smooth[1])
+        for iSmooth in range(int(args.smooth[0])): g = smoothing.smoothedGraph(debug=False)
+        # Hack to extend limit plots and make space for the legend
+        g.SetPoint(len(limits)+1,range_xlo,range_yhi,1)
+        g.SetPoint(len(limits)+1,range_xhi,range_yhi,1)
         g.SetNpx(300)
         g.SetNpy(300)
         h = g.GetHistogram().Clone()
@@ -255,33 +334,41 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     c1=TCanvas()
     c1.SetLeftMargin(0.12)
-    c1.SetRightMargin(0.12)
+    c1.SetRightMargin(0.15)
     c1.SetBottomMargin(0.13)
 
     h_bkgd.SetStats(0)
 
     h_bkgd.GetXaxis().SetRangeUser(range_xlo,range_xhi)
-    h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)
+    h_bkgd.GetYaxis().SetRangeUser(range_ylo,range_yhi)   
     if args.NPscan: h_bkgd.GetZaxis().SetRangeUser(-1.0,1.0)
     elif args.signif: h_bkgd.GetZaxis().SetRangeUser(-3.0,3.0)
     else: h_bkgd.GetZaxis().SetRangeUser(3e-2,70)
 
-    h_bkgd.GetXaxis().SetTitle("m_{#tilde{t}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#tilde{#chi}_{2}^{0}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#tilde{#chi}_{1}^{#pm}}=m_{#tilde{#chi}_{2}^{0}} [GeV]")
+    h_bkgd.GetXaxis().SetTitle("m_{#lower[-0.15]{#tilde{t}}} [GeV]" if args.signalModel in ["T2tt","T2bW"] else "m_{#lower[-0.15]{#tilde{#chi}_{2}^{0}}} [GeV]" if args.signalModel=="Higgsino" else "#mu [GeV]" if args.signalModel=="HiggsPMSSM" else "m_{#lower[-0.15]{#tilde{#chi}_{1}^{#pm}}}=m_{#lower[-0.15]{#tilde{#chi}_{2}^{0}}} [GeV]")
     h_bkgd.GetXaxis().SetLabelFont(42)
     h_bkgd.GetXaxis().SetTitleFont(42)
     h_bkgd.GetXaxis().SetLabelSize(0.042)
-    h_bkgd.GetXaxis().SetTitleSize(0.052)
+    h_bkgd.GetXaxis().SetTitleSize(0.042)
 
     h_bkgd.GetYaxis().SetTitle("#Delta m(#tilde{t}, #tilde{#chi}_{1}^{0}) [GeV]" if args.signalModel in ["T2tt","T2bW"] else "M_{1} = 0.5 M_{2} [GeV]" if args.signalModel=="HiggsPMSSM" else "#Delta m(#tilde{#chi}_{2}^{0}, #tilde{#chi}_{1}^{0}) [GeV]")
     h_bkgd.GetYaxis().SetTitleOffset(1.10)
     h_bkgd.GetYaxis().SetLabelFont(42)
     h_bkgd.GetYaxis().SetTitleFont(42)
     h_bkgd.GetYaxis().SetLabelSize(0.042)
-    h_bkgd.GetYaxis().SetTitleSize(0.052)
+    h_bkgd.GetYaxis().SetTitleSize(0.042)
 
     h_bkgd.Draw("colz" if nlim==1 else "axis")
 
     colz = [ROOT.kRed,ROOT.kBlue]
+
+    h_bkgd.GetZaxis().SetTitle("95% CL upper limit on the cross section [pb]")
+    h_bkgd.GetZaxis().SetTitleOffset(1.10)
+    h_bkgd.GetZaxis().SetLabelFont(42)
+    h_bkgd.GetZaxis().SetTitleFont(42)
+    h_bkgd.GetZaxis().SetLabelSize(0.042)
+    h_bkgd.GetZaxis().SetTitleSize(0.042)
+
     for iLim, limit_hists in enumerate(limits_hists):
         for var,lim in limit_hists.iteritems():
             if var=='xs': continue
@@ -301,18 +388,18 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
                 h2limObsM1.SetLineColor(ROOT.kBlack)
             h2limP1.SetLineWidth(1)
             h2limM1.SetLineWidth(1)
-            h2limP1.SetLineStyle(2)
-            h2limM1.SetLineStyle(2)
+            h2limP1.SetLineStyle(1)
+            h2limM1.SetLineStyle(1)
             if args.sigma2:
                 h2limP2, h2limM2 = limit_hists['2'], limit_hists['-2']
                 h2limP2.SetLineWidth(1)
                 h2limM2.SetLineWidth(1)
-                h2limP2.SetLineStyle(3)
-                h2limM2.SetLineStyle(3)
+                h2limP2.SetLineStyle(2)
+                h2limM2.SetLineStyle(2)
         h2lim.SetLineWidth(2)
 
     if not args.NPscan and not args.signif: c1.SetLogz()
-    c1.SetLogy(logy)
+    c1.SetLogy(args.logy)
     t = c1.GetTopMargin()
     r = c1.GetRightMargin()
     l = c1.GetLeftMargin()
@@ -333,32 +420,39 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     x1 = range_xlo
     x2 = range_xhi
+    Dx = x2-x1
     y1 = leg_ylo
     y2 = range_yhi
 
-    if logy:
-        y1 = ROOT.TMath.Log(y1)
-        y2 = ROOT.TMath.Log(y2)
     delta = (y2-y1)/leg_nlines
     ylines = [y1+(i+0.5)*delta for i in range(leg_nlines)]
     ylines.reverse()
-    if logy:
-        y1 = ROOT.TMath.Exp(y1)
-        y2 = ROOT.TMath.Exp(y2)
-        ylines = [ROOT.TMath.Exp(l) for l in ylines]
 
-    b = TBox(x1,y1,x2,y2)
+    if args.logy: 
+        if args.signalModel in ["T2tt", "T2bW", "HiggsPMSSM"]: b = TBox(x1,y1,x2,y2) 
+        if args.signalModel in ["Higgsino", "TChiWZ"] : b = TBox(x1,y1-2,x2,y2+3)
+    else: 
+        if args.signalModel == "TChiWZ" and 'neg' in args.reweight: b = TBox(x1,y1,x2,y2+1)
+        else: b = TBox(x1,y1,x2,y2+0.5)
     b.SetFillColor(ROOT.kWhite)
     b.SetLineColor(ROOT.kBlack)
     b.SetLineWidth(1)
     b.Draw("l")
     c1.Update()
-    mT=ROOT.TLatex(x1+4.5,ylines[0], moreText2)
+    if args.logy: 
+        if args.signalModel == "HiggsPMSSM": mT=ROOT.TLatex(x1+0.025*Dx,ylines[0]+2, moreText)
+        elif args.signalModel in ["Higgsino", "TChiWZ"]: mT=ROOT.TLatex(x1+0.025*Dx,ylines[0]-1, moreText)
+        else: mT=ROOT.TLatex(x1+0.025*Dx,ylines[0]-5, moreText)
+    else: mT=ROOT.TLatex(x1+0.025*Dx,ylines[0], moreText)
     mT.SetTextFont(42)
     mT.SetTextAlign(12)
     mT.SetTextSize(0.040)
     mT.Draw()
-    mT2=ROOT.TLatex(x1+4.5,ylines[1], moreText)
+    if args.logy: 
+        if args.signalModel == "HiggsPMSSM": mT2=ROOT.TLatex(x1+0.025*Dx,ylines[1]-2.1, moreText2)
+        elif args.signalModel in ["Higgsino", "TChiWZ"]: mT2=ROOT.TLatex(x1+0.025*Dx,ylines[1]-4, moreText2)
+        else: mT2=ROOT.TLatex(x1+0.025*Dx,ylines[1]-3, moreText2)
+    else: mT2=ROOT.TLatex(x1+0.025*Dx,ylines[1], moreText2)
     mT2.SetTextAlign(12)
     mT2.SetTextFont(42)
     mT2.SetTextSize(0.040)
@@ -368,63 +462,135 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
         spread = delta*0.2
         fudge = delta*0.1
         gl1=TGraph(2)
-        gl1.SetPoint(0, x1+4.5, ylines[2]+fudge)
-        gl1.SetPoint(1, x1+12.5, ylines[2]+fudge)
+        if args.logy:
+            if args.signalModel == "TChiWZ" :
+                gl1.SetPoint(0, x1+0.025*Dx, ylines[2]+fudge-3.0)
+                gl1.SetPoint(1, x1+0.070*Dx, ylines[2]+fudge-3.0)
+
+            else:
+                gl1.SetPoint(0, x1+0.025*Dx, ylines[2]+fudge-2.8)
+                gl1.SetPoint(1, x1+0.070*Dx, ylines[2]+fudge-2.8)
+        else:
+            gl1.SetPoint(0, x1+0.025*Dx, ylines[2]+fudge)
+            gl1.SetPoint(1, x1+0.070*Dx, ylines[2]+fudge) 
         gl1.SetLineColor(colz[0])
         gl1.SetLineStyle(1)
         gl1.SetLineWidth(2)
         gl1.Draw("lsame")
 
         gl1p=TGraph(2)
-        gl1p.SetPoint(0, x1+4.5, ylines[2]+spread+fudge)
-        gl1p.SetPoint(1, x1+12.5,ylines[2]+spread+fudge)
+        if args.logy:
+            if args.signalModel == "TChiWZ" :
+                gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge-3.0)
+                gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge-3.0)
+            else:
+                gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge-2.8)
+                gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge-2.8)
+        else:
+            gl1p.SetPoint(0, x1+0.025*Dx, ylines[2]+spread+fudge)
+            gl1p.SetPoint(1, x1+0.070*Dx, ylines[2]+spread+fudge)
         gl1p.SetLineColor(colz[0])
-        gl1p.SetLineStyle(2)
+        gl1p.SetLineStyle(1)
         gl1p.SetLineWidth(1)
         gl1p.Draw("lsame")
 
         gl1m=TGraph(2)
-        gl1m.SetPoint(0, x1+4.5, ylines[2]-spread+fudge)
-        gl1m.SetPoint(1, x1+12.5,ylines[2]-spread+fudge)
+        if args.logy:
+            if args.signalModel == "TChiWZ" :
+                gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge-3.0)
+                gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge-3.0)
+            else:
+                gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge-2.8)
+                gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge-2.8)                
+        else:
+            gl1m.SetPoint(0, x1+0.025*Dx, ylines[2]-spread+fudge)
+            gl1m.SetPoint(1, x1+0.070*Dx, ylines[2]-spread+fudge)
         gl1m.SetLineColor(colz[0])
-        gl1m.SetLineStyle(2)
+        gl1m.SetLineStyle(1)
         gl1m.SetLineWidth(1)
         gl1m.Draw("lsame")
 
         if args.sigma2:
             gl2p=TGraph(2)
-            gl2p.SetPoint(0, x1+4.5, ylines[2]+2*spread+fudge)
-            gl2p.SetPoint(1, x1+12.5,ylines[2]+2*spread+fudge)
+            gl2p.SetPoint(0, x1+0.025*Dx, ylines[2]+2*spread+fudge)
+            gl2p.SetPoint(1, x1+0.070*Dx, ylines[2]+2*spread+fudge)
             gl2p.SetLineColor(colz[0])
-            gl2p.SetLineStyle(3)
+            gl2p.SetLineStyle(2)
             gl2p.SetLineWidth(1)
             gl2p.Draw("lsame")
 
             gl2m=TGraph(2)
-            gl2m.SetPoint(0, x1+4.5, ylines[2]-2*spread+fudge)
-            gl2m.SetPoint(1, x1+12.5,ylines[2]-2*spread+fudge)
+            gl2m.SetPoint(0, x1+0.025*Dx, ylines[2]-2*spread+fudge)
+            gl2m.SetPoint(1, x1+0.070*Dx, ylines[2]-2*spread+fudge)
             gl2m.SetLineColor(colz[0])
-            gl2m.SetLineStyle(3)
+            gl2m.SetLineStyle(2)
             gl2m.SetLineWidth(1)
             gl2m.Draw("lsame")
 
         if args.unblind:
             gl1Obs=TGraph(2)
-            gl1Obs.SetPoint(0, x1+(114.5 if args.signalModel in ["T2tt","T2bW"] else 54.5 if args.signalModel in ["HiggsPMSSM"] else 74.5), ylines[2]+fudge)
-            gl1Obs.SetPoint(1, x1+(122.5 if args.signalModel in ["T2tt","T2bW"] else 62.5 if args.signalModel in ["HiggsPMSSM"] else 82.5), ylines[2]+fudge)
+            if args.logy: 
+                if args.signalModel == "TChiWZ" : 
+                    gl1Obs.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+fudge-3.0)
+                    gl1Obs.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+fudge-3.0)
+                else:
+                    gl1Obs.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+fudge-2.8)
+                    gl1Obs.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+fudge-2.8)
+
+            else: 
+                gl1Obs.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+fudge)
+                gl1Obs.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+fudge)
             gl1Obs.SetLineColor(ROOT.kBlack)
             gl1Obs.SetLineStyle(1)
             gl1Obs.SetLineWidth(2)
             gl1Obs.Draw("lsame")
 
-        mT3=ROOT.TLatex(x1+16.5,ylines[2], "Expected #pm #sigma_{exp}")
+            gl1Obsp=TGraph(2)
+            if args.logy:
+                if args.signalModel == "TChiWZ":
+                    gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge-3.0)
+                    gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge-3.0)
+                else:
+                    gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge-2.8)
+                    gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge-2.8)
+            else:
+                gl1Obsp.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]+spread+fudge)
+                gl1Obsp.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]+spread+fudge) 
+            gl1Obsp.SetLineColor(ROOT.kBlack)
+            gl1Obsp.SetLineStyle(1)
+            gl1Obsp.SetLineWidth(1)
+            gl1Obsp.Draw("lsame")
+
+            gl1Obsm=TGraph(2)
+            if args.logy:
+                if args.signalModel == "TChiWZ":
+                    gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge-3.0)
+                    gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge-3.0)
+                else:
+                    gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge-2.8)
+                    gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge-2.8)
+            else:
+                gl1Obsm.SetPoint(0, x1+0.5*(x2-x1)+0.025*Dx, ylines[2]-spread+fudge)
+                gl1Obsm.SetPoint(1, x1+0.5*(x2-x1)+0.070*Dx, ylines[2]-spread+fudge)
+            gl1Obsm.SetLineColor(ROOT.kBlack)
+            gl1Obsm.SetLineStyle(1)
+            gl1Obsm.SetLineWidth(1)
+            gl1Obsm.Draw("lsame")
+
+        if args.logy: 
+            if args.signalModel == "TChiWZ": mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2]-3.0, "Expected #pm 1 #sigma_{experiment}")
+            else: mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2]-2.8, "Expected #pm 1 #sigma_{experiment}")
+        else:  mT3=ROOT.TLatex(x1+0.095*Dx, ylines[2], "Expected #pm 1 #sigma_{experiment}")
         mT3.SetTextAlign(12)
         mT3.SetTextFont(42)
         mT3.SetTextSize(0.040)
         mT3.Draw()
 
         if args.unblind:
-            mT3a=ROOT.TLatex(x1+(126.5 if args.signalModel in ["T2tt","T2bW"] else 66.5 if args.signalModel in ["HiggsPMSSM"] else 86.5),ylines[2], "Observed")
+            if args.logy:
+                if args.signalModel == "TChiWZ": mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2]-3.0, "Observed #pm 1 #sigma_{theory}")
+                else: mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2]-2.8, "Observed #pm 1 #sigma_{theory}")
+            else: mT3a=ROOT.TLatex(x1+0.5*(x2-x1)+0.095*Dx, ylines[2], "Observed #pm 1 #sigma_{theory}")
             mT3a.SetTextAlign(12)
             mT3a.SetTextFont(42)
             mT3a.SetTextSize(0.040)
@@ -462,7 +628,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
 
     os.system("mkdir -p %s"%outdir)
     for fmt in args.savefmts:
-        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+logy*('_log'),fmt))
+        c1.SaveAs("%s/h2%s_%s%s"%(outdir,"NP_"+str(args.NPscan) if args.NPscan else "Significance_"+args.signif if args.signif else "lim",label+args.logy*('_log')+(("_smooth"+args.smooth[0]+args.smooth[1]) if int(args.smooth[0])>0 else ""),fmt))
 
 
 def run(indirs,tag,label,outdir):
@@ -470,11 +636,21 @@ def run(indirs,tag,label,outdir):
     points = {}
     for d in dirs:
         x = SignalPoint(d,tag,args.unblind)
-        if x: points[(x.m1,x.m2)] = x
+        if x:
+            # Parse only points that are needed
+            if args.signalModel=="TChiWZ":
+                if x.m1 < 100 or x.m1 > 300 or x.m1-x.m2 < 3.0 or x.m1-x.m2 > 50.0: continue
+            elif args.signalModel=="Higgsino":
+                if x.m1 < 100 or x.m1 > 250 or x.m1-x.m2 < 3.0 or x.m1-x.m2 > 40.0: continue
+            elif args.signalModel=="HiggsPSSM":
+                if x.m1 < 100 or x.m1 > 240 or x.m2 < 300.0 or x.m2 > 1200.0: continue
+            elif args.signalModel=="T2tt" or args.signalModel=="T2bW":
+                if x.m1 < 300 or x.m1 > 650 or x.m1-x.m2 < 10.0 or x.m1-x.m2 > 80.0: continue
+            points[(x.m1,x.m2)] = x
     print 'Found %d files'%len(points)
     if len(points)==0: raise RuntimeError("No points found")
     lims = getLimitHists(points.values(),tag)
-    plotLimits([lims], [], label, outdir)
+    if not args.pretend: plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
     limCurves=[]

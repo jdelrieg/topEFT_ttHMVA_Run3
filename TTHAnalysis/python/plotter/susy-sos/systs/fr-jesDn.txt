@@ -1,10 +1,9 @@
-change: MET_pt_nom\b: MET_pt_jesTotalDown
-change: MET_phi_nom\b: MET_phi_jesTotalDown
-change: METFixEE2017_pt_nom\b: METFixEE2017_pt_jesTotalDown
-change: METFixEE2017_phi_nom\b: METFixEE2017_phi_jesTotalDown
+change: MET_pt_jer\b: MET_pt_jesTotalDown
+change: MET_phi_jer\b: MET_phi_jesTotalDown
+change: METFixEE2017_pt_jer\b: METFixEE2017_pt_jesTotalDown
+change: METFixEE2017_phi_jer\b: METFixEE2017_phi_jesTotalDown
 change: htJet25j_Recl\b: htJet25j_jesTotalDown_Recl
 change: nBJetLoose25_Recl\b: nBJetLoose25_jesTotalDown_Recl
 change: nBJetMedium25_Recl\b: nBJetMedium25_jesTotalDown_Recl
 change: nBJetMedium40_Recl\b: nBJetMedium40_jesTotalDown_Recl
-#change: jetId\b: jetId_jecDown
 weight:1

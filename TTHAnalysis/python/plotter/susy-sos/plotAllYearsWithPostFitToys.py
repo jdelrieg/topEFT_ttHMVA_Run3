@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--dir", default="", required=True, help="Directory with saved toys")
 parser.add_argument("--asimov", default="fit_b", choices=["fit_b","fit_s","prefit"], help="Signal model to consider")
 parser.add_argument("--reweight", default="none", help="Comma-separated list of scenarios to consider: none, pos, neg")
-parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt"], help="Signal model to consider")
+parser.add_argument("--signalModel", default="TChiWZ", choices=["TChiWZ","Higgsino","T2tt","T2bW","HiggsPMSSM"], help="Signal model to consider")
 parser.add_argument("--masspoint", default="250_230", help="Signal masspoint to consider")
 args = parser.parse_args()
 
@@ -17,7 +17,7 @@ categories=[
 "3l_cr_wz_low",
 "3l_cr_wz_med"
 ]            
-if args.signalModel!="T2tt":
+if args.signalModel!="T2tt" and args.signalModel!="T2bW":
    categories.append("2los_sr_low")
    categories.append("2los_sr_med")
    categories.append("2los_sr_high")
@@ -30,7 +30,7 @@ else:
    categories.append("2los_sr_col_high")
    categories.append("2los_sr_col_ultra")
 years = ["2016","2017","2018"]
-procs = ["prompt_dy","prompt_tt","prompt_vv","prompt_wz","Rares","Convs","FRfakes_data","semidd_fakes","signal_"+args.signalModel+"_"+args.masspoint+"_"+args.reweight]
+procs = ["prompt_dy","prompt_tt","prompt_vv","prompt_wz","Rares","Convs","FRfakes_data","semidd_fakes","signal_"+args.signalModel+"_"+args.masspoint+("_"+args.reweight if args.reweight!="none" else "")]
 
 catDirs = {}
 toyHists = {}

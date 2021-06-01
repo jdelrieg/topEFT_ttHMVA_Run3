@@ -1,0 +1,9 @@
+change: MET_pt_jer\b: MET_pt_jerDown
+change: MET_phi_jer\b: MET_phi_jerDown
+change: METFixEE2017_pt_jer\b: METFixEE2017_pt_jerDown
+change: METFixEE2017_phi_jer\b: METFixEE2017_phi_jerDown
+change: htJet25j_Recl\b: htJet25j_jerDown_Recl
+change: nBJetLoose25_Recl\b: nBJetLoose25_jerDown_Recl
+change: nBJetMedium25_Recl\b: nBJetMedium25_jerDown_Recl
+change: nBJetMedium40_Recl\b: nBJetMedium40_jerDown_Recl
+weight:1
