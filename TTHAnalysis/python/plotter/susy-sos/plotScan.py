@@ -424,12 +424,6 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     y1 = leg_ylo
     y2 = range_yhi
 
-    if args.logy:
-        y1 = ROOT.TMath.Log(y1)
-        y2 = ROOT.TMath.Log(y2)
-        y1 = ROOT.TMath.Exp(y1)
-        y2 = ROOT.TMath.Exp(y2)
-
     delta = (y2-y1)/leg_nlines
     ylines = [y1+(i+0.5)*delta for i in range(leg_nlines)]
     ylines.reverse()
