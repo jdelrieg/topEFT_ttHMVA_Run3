@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_TriggerBitChecker_h
-#define PhysicsTools_Heppy_TriggerBitChecker_h
+#ifndef CMGTools_Heppy_TriggerBitChecker_h
+#define CMGTools_Heppy_TriggerBitChecker_h
 
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/PatCandidates/interface/PackedTriggerPrescales.h"

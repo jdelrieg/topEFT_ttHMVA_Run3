@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_AlphaT_h
-#define PhysicsTools_Heppy_AlphaT_h
+#ifndef CMGTools_Heppy_AlphaT_h
+#define CMGTools_Heppy_AlphaT_h
 
 #include <cmath>
 #include <numeric>

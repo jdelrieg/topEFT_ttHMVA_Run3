@@ -8,8 +8,8 @@
 /*              May 8, 2012, v1.00a                                    */
 /*                                                                     */  
 /***********************************************************************/
-#ifndef PhysicsTools_Heppy_mt2w_bisect_H
-#define PhysicsTools_Heppy_mt2w_bisect_H
+#ifndef CMGTools_Heppy_mt2w_bisect_H
+#define CMGTools_Heppy_mt2w_bisect_H
 
 namespace heppy {
 

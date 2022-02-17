@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_EGammaMvaEleEstimatorFWLite_h
-#define PhysicsTools_Heppy_EGammaMvaEleEstimatorFWLite_h
+#ifndef CMGTools_Heppy_EGammaMvaEleEstimatorFWLite_h
+#define CMGTools_Heppy_EGammaMvaEleEstimatorFWLite_h
 
 class EGammaMvaEleEstimator;
 class EGammaMvaEleEstimatorCSA14;

@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_PdfWeightProducerTool_h
-#define PhysicsTools_Heppy_PdfWeightProducerTool_h
+#ifndef CMGTools_Heppy_PdfWeightProducerTool_h
+#define CMGTools_Heppy_PdfWeightProducerTool_h
 
 #include "TRandom3.h"
 #include <iostream>

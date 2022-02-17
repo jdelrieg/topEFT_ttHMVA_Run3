@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_CMGMuonCleanerBySegmentsAlgo_h
-#define PhysicsTools_Heppy_CMGMuonCleanerBySegmentsAlgo_h
+#ifndef CMGTools_Heppy_CMGMuonCleanerBySegmentsAlgo_h
+#define CMGTools_Heppy_CMGMuonCleanerBySegmentsAlgo_h
 
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"

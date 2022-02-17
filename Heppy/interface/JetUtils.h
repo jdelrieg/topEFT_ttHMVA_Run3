@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_JetUtils_h
-#define PhysicsTools_Heppy_JetUtils_h
+#ifndef CMGTools_Heppy_JetUtils_h
+#define CMGTools_Heppy_JetUtils_h
 
 #include "DataFormats/Common/interface/Ptr.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"

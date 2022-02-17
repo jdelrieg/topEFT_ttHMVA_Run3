@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_genutils_h
-#define PhysicsTools_Heppy_genutils_h
+#ifndef CMGTools_Heppy_genutils_h
+#define CMGTools_Heppy_genutils_h
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 

@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_MuScleFitCorrector_h
-#define PhysicsTools_Heppy_MuScleFitCorrector_h
+#ifndef CMGTools_Heppy_MuScleFitCorrector_h
+#define CMGTools_Heppy_MuScleFitCorrector_h
 
 
 /**

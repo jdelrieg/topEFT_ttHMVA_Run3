@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_FloatZipper_h
-#define PhysicsTools_Heppy_FloatZipper_h
+#ifndef CMGTools_Heppy_FloatZipper_h
+#define CMGTools_Heppy_FloatZipper_h
 
 #include <cstdint>
 #include "DataFormats/Math/interface/libminifloat.h"

@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_MuScleFitCorrector_Functions_h
-#define PhysicsTools_Heppy_MuScleFitCorrector_Functions_h
+#ifndef CMGTools_Heppy_MuScleFitCorrector_Functions_h
+#define CMGTools_Heppy_MuScleFitCorrector_Functions_h
 
 /**
  * Scale function classes

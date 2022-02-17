@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_Davismt2_h
-#define PhysicsTools_Heppy_Davismt2_h
+#ifndef CMGTools_Heppy_Davismt2_h
+#define CMGTools_Heppy_Davismt2_h
 
 #include <iostream>
 #include <cmath>

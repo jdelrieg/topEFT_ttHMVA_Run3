@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_IsolationComputer_h
-#define PhysicsTools_Heppy_IsolationComputer_h
+#ifndef CMGTools_Heppy_IsolationComputer_h
+#define CMGTools_Heppy_IsolationComputer_h
 
 #include <vector>
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"

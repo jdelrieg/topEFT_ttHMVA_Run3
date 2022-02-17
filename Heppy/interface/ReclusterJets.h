@@ -1,5 +1,5 @@
-#ifndef PhysicsTools_Heppy_ReclusterJets_h
-#define PhysicsTools_Heppy_ReclusterJets_h
+#ifndef CMGTools_Heppy_ReclusterJets_h
+#define CMGTools_Heppy_ReclusterJets_h
 
 #include <vector>
 #include <iostream>
