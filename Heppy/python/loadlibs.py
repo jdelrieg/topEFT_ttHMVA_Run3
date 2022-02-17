@@ -9,6 +9,6 @@ def load_libs():
     gSystem.Load("libFWCoreFWLite")
         
     #now the RootTools stuff
-    gSystem.Load("libPhysicsToolsHeppy")
+    gSystem.Load("libCMGToolsHeppy")
 
 load_libs()
