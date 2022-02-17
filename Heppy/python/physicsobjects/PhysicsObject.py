@@ -1,5 +1,5 @@
 import copy
-from PhysicsTools.Heppy.physicsobjects.Particle import Particle
+from CMGTools.Heppy.physicsobjects.Particle import Particle
 
 class PhysicsObject(Particle):
     '''Wrapper to particle-like C++ objects.'''

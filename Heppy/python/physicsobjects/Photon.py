@@ -1,5 +1,5 @@
 from __future__ import print_function
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import *
+from CMGTools.Heppy.physicsobjects.PhysicsObject import *
 from math import exp
 import re
 

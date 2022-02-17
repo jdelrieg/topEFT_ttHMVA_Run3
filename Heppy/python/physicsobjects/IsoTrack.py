@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import *
+from CMGTools.Heppy.physicsobjects.PhysicsObject import *
 import ROOT
 import math
 

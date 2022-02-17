@@ -7,7 +7,7 @@ import timeit
 import subprocess
 from math import ceil
 from PhysicsTools.HeppyCore.framework.config import CFG
-from PhysicsTools.Heppy.utils.edmUtils import edmFileLs
+from CMGTools.Heppy.utils.edmUtils import edmFileLs
 class CmsswPreprocessor :
     def __init__(self,configFile,command="cmsRun", addOrigAsSecondary=True, prefetch=False, options={}) :
         self.configFile=configFile

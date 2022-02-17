@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
+from CMGTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
 import ntuple
 
 class ZJetsTreeAnalyzer(TreeAnalyzerNumpy):

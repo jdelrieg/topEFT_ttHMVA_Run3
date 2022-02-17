@@ -1,9 +1,9 @@
 from __future__ import print_function
 import ROOT
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import NTupleVariable
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import NTupleVariable
 import six
 import PhysicsTools.HeppyCore.framework.config as cfg
         

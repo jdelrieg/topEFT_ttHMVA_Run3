@@ -1,14 +1,14 @@
 from __future__ import print_function
 import math, os
 from bisect import bisect
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import Jet
 from PhysicsTools.HeppyCore.utils.deltar import deltaR2, deltaPhi, matchObjectCollection, matchObjectCollection2, bestMatch,matchObjectCollection3
-from PhysicsTools.Heppy.physicsutils.JetReCalibrator import JetReCalibrator
+from CMGTools.Heppy.physicsutils.JetReCalibrator import JetReCalibrator
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-from PhysicsTools.Heppy.physicsutils.QGLikelihoodCalculator import QGLikelihoodCalculator
+from CMGTools.Heppy.physicsutils.QGLikelihoodCalculator import QGLikelihoodCalculator
 
 import six
 import copy

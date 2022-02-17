@@ -1,17 +1,17 @@
 import random
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet, GenJet
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import Jet, GenJet
 
 from PhysicsTools.HeppyCore.utils.deltar import cleanObjectCollection, matchObjectCollection
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
 from PhysicsTools.HeppyCore.utils.deltar import deltaR2
 
 
-from PhysicsTools.Heppy.physicsutils.BTagSF import BTagSF
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import GenParticle
-from PhysicsTools.Heppy.utils.cmsswRelease import isNewerThan
+from CMGTools.Heppy.physicsutils.BTagSF import BTagSF
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import GenParticle
+from CMGTools.Heppy.utils.cmsswRelease import isNewerThan
 
 class JetAnalyzer( Analyzer ):
     """Analyze jets ;-)

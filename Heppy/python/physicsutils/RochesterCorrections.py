@@ -1,6 +1,6 @@
 import copy
 from ROOT import heppy
-from PhysicsTools.Heppy.utils.cmsswRelease import isNewerThan
+from CMGTools.Heppy.utils.cmsswRelease import isNewerThan
 
 is2012 = isNewerThan('CMSSW_5_2_0')
 

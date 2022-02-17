@@ -1,6 +1,6 @@
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import *
+from CMGTools.Heppy.physicsobjects.PhysicsObject import *
 from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
-from PhysicsTools.Heppy.physicsutils.PuJetIDWP import PuJetIDWP
+from CMGTools.Heppy.physicsutils.PuJetIDWP import PuJetIDWP
 import math
 
 loose_WP = [

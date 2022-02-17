@@ -6,13 +6,13 @@ import types
 
 from ROOT import TLorentzVector
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.Lepton import Lepton
-from PhysicsTools.Heppy.physicsobjects.Tau import Tau
-from PhysicsTools.Heppy.physicsobjects.IsoTrack import IsoTrack
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.Lepton import Lepton
+from CMGTools.Heppy.physicsobjects.Tau import Tau
+from CMGTools.Heppy.physicsobjects.IsoTrack import IsoTrack
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi, bestMatch , matchObjectCollection3
 

@@ -1,6 +1,6 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.Jet import Jet, GenJet
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.Jet import Jet, GenJet
 from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection
 
 class SimpleJetAnalyzer(Analyzer):

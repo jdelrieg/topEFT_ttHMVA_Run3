@@ -1,7 +1,7 @@
 from __future__ import print_function
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsutils.genutils import isNotFromHadronicShower, realGenMothers, realGenDaughters, motherRef
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsutils.genutils import isNotFromHadronicShower, realGenMothers, realGenDaughters, motherRef
 
 def interestingPdgId(id,includeLeptons=False):        
     id = abs(id)

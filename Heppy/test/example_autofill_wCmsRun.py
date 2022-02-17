@@ -5,7 +5,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 # The content of the output tree is defined here
 # the definitions of the NtupleObjects are located under PhysicsTools/Heppy/pythonanalyzers/objects/autophobj.py
  
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 treeProducer= cfg.Analyzer(
 	class_object=AutoFillTreeProducer, 
 	verbose=False, 
@@ -45,29 +45,29 @@ treeProducer= cfg.Analyzer(
 	)
 
 # Import standard analyzers and take their default config
-from PhysicsTools.Heppy.analyzers.objects.LeptonAnalyzer import LeptonAnalyzer
+from CMGTools.Heppy.analyzers.objects.LeptonAnalyzer import LeptonAnalyzer
 LepAna = LeptonAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
+from CMGTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
 VertexAna = VertexAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.objects.PhotonAnalyzer import PhotonAnalyzer
+from CMGTools.Heppy.analyzers.objects.PhotonAnalyzer import PhotonAnalyzer
 PhoAna = PhotonAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.objects.TauAnalyzer import TauAnalyzer
+from CMGTools.Heppy.analyzers.objects.TauAnalyzer import TauAnalyzer
 TauAna = TauAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.objects.JetAnalyzer import JetAnalyzer
+from CMGTools.Heppy.analyzers.objects.JetAnalyzer import JetAnalyzer
 JetAna = JetAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
+from CMGTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
 LHEAna = LHEAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer 
+from CMGTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer 
 GenAna = GeneratorAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.objects.METAnalyzer import METAnalyzer
+from CMGTools.Heppy.analyzers.objects.METAnalyzer import METAnalyzer
 METAna = METAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer import PileUpAnalyzer
+from CMGTools.Heppy.analyzers.core.PileUpAnalyzer import PileUpAnalyzer
 PUAna = PileUpAnalyzer.defaultConfig
-from PhysicsTools.Heppy.analyzers.core.TriggerBitAnalyzer import TriggerBitAnalyzer
+from CMGTools.Heppy.analyzers.core.TriggerBitAnalyzer import TriggerBitAnalyzer
 FlagsAna = TriggerBitAnalyzer.defaultEventFlagsConfig
 
 # Configure trigger bit analyzer
-from PhysicsTools.Heppy.analyzers.core.TriggerBitAnalyzer import TriggerBitAnalyzer
+from CMGTools.Heppy.analyzers.core.TriggerBitAnalyzer import TriggerBitAnalyzer
 TrigAna= cfg.Analyzer(
     verbose=False,
     class_object=TriggerBitAnalyzer,
@@ -105,7 +105,7 @@ output_service = cfg.Service(
 
 # the following two lines are just for automatic testing
 # they are not needed for running on your own samples
-from PhysicsTools.Heppy.utils.miniAodFiles import miniAodFiles
+from CMGTools.Heppy.utils.miniAodFiles import miniAodFiles
 testfiles=miniAodFiles()
 
 sample = cfg.Component(
@@ -115,7 +115,7 @@ sample = cfg.Component(
     name="SingleSample", isMC=False,isEmbed=False
     )
 
-from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+from CMGTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 preprocessor = CmsswPreprocessor("makeAK5Jets.py")
 
 # the following is declared in case this cfg is used in input to the heppy.py script

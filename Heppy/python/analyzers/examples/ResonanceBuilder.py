@@ -1,6 +1,6 @@
 
 from PhysicsTools.HeppyCore.framework.analyzer import Analyzer
-from PhysicsTools.Heppy.physicsobjects.Particle import Particle
+from CMGTools.Heppy.physicsobjects.Particle import Particle
 
 import pprint 
 import itertools
@@ -59,7 +59,7 @@ class ResonanceBuilder(Analyzer):
 
     Example configuration:
 
-    from PhysicsTools.Heppy.analyzers.examples.ResonanceBuilder import ResonanceBuilder
+    from CMGTools.Heppy.analyzers.examples.ResonanceBuilder import ResonanceBuilder
     dimuons = cfg.Analyzer(
        ResonanceBuilder,
        'dimuons',                            

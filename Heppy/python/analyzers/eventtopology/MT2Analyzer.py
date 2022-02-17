@@ -6,10 +6,10 @@ from math import *
 from ROOT import std 
 from ROOT import TLorentzVector, TVectorD
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 import PhysicsTools.HeppyCore.framework.config as cfg
 

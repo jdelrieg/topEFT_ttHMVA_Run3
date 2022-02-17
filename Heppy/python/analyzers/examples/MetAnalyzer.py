@@ -1,7 +1,7 @@
 from __future__ import print_function
 import copy
 from PhysicsTools.HeppyCore.framework.analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 import random
 
 def pv(vc):

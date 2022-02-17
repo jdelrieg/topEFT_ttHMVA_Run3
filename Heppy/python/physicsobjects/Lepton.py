@@ -1,5 +1,5 @@
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import *
-from PhysicsTools.Heppy.physicsutils.EffectiveAreas import is_ea_table, effective_area
+from CMGTools.Heppy.physicsobjects.PhysicsObject import *
+from CMGTools.Heppy.physicsutils.EffectiveAreas import is_ea_table, effective_area
 
 import ROOT
 

@@ -1,6 +1,6 @@
-from PhysicsTools.Heppy.physicsobjects.Lepton import Lepton
-from PhysicsTools.Heppy.physicsutils.TauDecayModes import tauDecayModes
-from PhysicsTools.Heppy.physicsutils.TauMVAID import tau_mvaid_2017 as tau_mvaid
+from CMGTools.Heppy.physicsobjects.Lepton import Lepton
+from CMGTools.Heppy.physicsutils.TauDecayModes import tauDecayModes
+from CMGTools.Heppy.physicsutils.TauMVAID import tau_mvaid_2017 as tau_mvaid
 
 import math
 

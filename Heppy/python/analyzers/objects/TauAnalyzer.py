@@ -1,6 +1,6 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.Tau import Tau
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.Tau import Tau
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, matchObjectCollection3
 

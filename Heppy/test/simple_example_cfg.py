@@ -1,7 +1,7 @@
 from __future__ import print_function
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.utils.miniAodFiles import miniAodFiles
+from CMGTools.Heppy.utils.miniAodFiles import miniAodFiles
 
 # set to True if you want several parallel processes
 multi_thread = False
@@ -27,13 +27,13 @@ selectedComponents  = [inputSample]
 
 # a very simple muon analyzer
 # read miniaod muons and wrap them in python muons
-from PhysicsTools.Heppy.analyzers.examples.SimpleMuonAnalyzer import SimpleMuonAnalyzer
+from CMGTools.Heppy.analyzers.examples.SimpleMuonAnalyzer import SimpleMuonAnalyzer
 muons = cfg.Analyzer(
     SimpleMuonAnalyzer,
     'muons',
     )
 
-from PhysicsTools.Heppy.analyzers.examples.ResonanceBuilder import ResonanceBuilder
+from CMGTools.Heppy.analyzers.examples.ResonanceBuilder import ResonanceBuilder
 dimuons = cfg.Analyzer(
     ResonanceBuilder,
     'dimuons',
@@ -45,7 +45,7 @@ dimuons = cfg.Analyzer(
 
 # a very simple jet analyzer
 # read miniaod jets and wrap them in python jets
-from PhysicsTools.Heppy.analyzers.examples.SimpleJetAnalyzer import SimpleJetAnalyzer
+from CMGTools.Heppy.analyzers.examples.SimpleJetAnalyzer import SimpleJetAnalyzer
 all_jets = cfg.Analyzer(
     SimpleJetAnalyzer,
     'all_jets',
@@ -65,7 +65,7 @@ sel_jets = cfg.Analyzer(
 
 
 # a simple tree with a Z candidate and the two leading jets (if any)
-from PhysicsTools.Heppy.analyzers.examples.ZJetsTreeAnalyzer import ZJetsTreeAnalyzer
+from CMGTools.Heppy.analyzers.examples.ZJetsTreeAnalyzer import ZJetsTreeAnalyzer
 tree = cfg.Analyzer(
     ZJetsTreeAnalyzer
     )
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # 
     #   ipython -i simple_example_cfg.py
     # 
-    from PhysicsTools.Heppy.physicsutils.LorentzVectors import LorentzVector
+    from CMGTools.Heppy.physicsutils.LorentzVectors import LorentzVector
 
     from PhysicsTools.HeppyCore.framework.looper import Looper 
     looper = Looper( 'Loop', config, nPrint = 5, nEvents=100) 

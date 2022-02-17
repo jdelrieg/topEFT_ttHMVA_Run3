@@ -1,8 +1,8 @@
-from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 #from ROOT import TriggerBitChecker
-from PhysicsTools.Heppy.analyzers.core.autovars import *
-from PhysicsTools.Heppy.analyzers.objects.autophobj  import *
+from CMGTools.Heppy.analyzers.core.autovars import *
+from CMGTools.Heppy.analyzers.objects.autophobj  import *
 
 import six
 

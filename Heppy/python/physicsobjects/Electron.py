@@ -1,6 +1,6 @@
-from PhysicsTools.Heppy.physicsobjects.Lepton import Lepton
+from CMGTools.Heppy.physicsobjects.Lepton import Lepton
 from RecoEgamma.ElectronIdentification.FWLite import electron_mvas, working_points, electron_cut_based_IDs
-from PhysicsTools.Heppy.physicsutils.electronID_Egamma_dict import wps_dict, methods_dict
+from CMGTools.Heppy.physicsutils.electronID_Egamma_dict import wps_dict, methods_dict
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 import ROOT
 import sys

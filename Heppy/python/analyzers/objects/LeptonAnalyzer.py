@@ -1,19 +1,19 @@
 from __future__ import print_function
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.Electron import Electron
-from PhysicsTools.Heppy.physicsobjects.Muon import Muon
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.Electron import Electron
+from CMGTools.Heppy.physicsobjects.Muon import Muon
 #from CMGTools.TTHAnalysis.tools.EfficiencyCorrector import EfficiencyCorrector
 
 from PhysicsTools.HeppyCore.utils.deltar import bestMatch
-from PhysicsTools.Heppy.physicsutils.RochesterCorrections import rochcor
-from PhysicsTools.Heppy.physicsutils.MuScleFitCorrector   import MuScleFitCorr
-from PhysicsTools.Heppy.physicsutils.KalmanMuonCorrector   import KalmanMuonCorrector
-from PhysicsTools.Heppy.physicsutils.ElectronCalibrator import Run2ElectronCalibrator
+from CMGTools.Heppy.physicsutils.RochesterCorrections import rochcor
+from CMGTools.Heppy.physicsutils.MuScleFitCorrector   import MuScleFitCorr
+from CMGTools.Heppy.physicsutils.KalmanMuonCorrector   import KalmanMuonCorrector
+from CMGTools.Heppy.physicsutils.ElectronCalibrator import Run2ElectronCalibrator
 #from CMGTools.TTHAnalysis.electronCalibrator import ElectronCalibrator
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.utils.deltar import * 
-from PhysicsTools.Heppy.physicsutils.genutils import *
+from CMGTools.Heppy.physicsutils.genutils import *
 
 
 from ROOT import heppy, TLorentzVector

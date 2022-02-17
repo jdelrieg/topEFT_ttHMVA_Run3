@@ -8,12 +8,12 @@ import re
 from ROOT import TLorentzVector
 from ROOT import heppy 
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.Photon import Photon
-from PhysicsTools.Heppy.physicsutils.PhotonCalibrator import Run2PhotonCalibrator
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.Photon import Photon
+from CMGTools.Heppy.physicsutils.PhotonCalibrator import Run2PhotonCalibrator
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi, bestMatch, matchObjectCollection3
 

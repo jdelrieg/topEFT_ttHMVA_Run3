@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import *
+from CMGTools.Heppy.physicsobjects.PhysicsObject import *
 
 #add __str__ to reco::GenParticle python wrapper
 import ROOT

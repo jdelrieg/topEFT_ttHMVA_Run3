@@ -1,9 +1,9 @@
 import json
 import os
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 
 from FWCore.PythonUtilities.LumiList import LumiList
-from PhysicsTools.Heppy.utils.rltinfo import RLTInfo
+from CMGTools.Heppy.utils.rltinfo import RLTInfo
 
 from DataFormats.FWLite import Lumis
 

@@ -1,9 +1,9 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import Jet
 from PhysicsTools.HeppyCore.utils.deltar import * 
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.physicsutils.JetReCalibrator import Type1METCorrector, setFakeRawMETOnOldMiniAODs
+from CMGTools.Heppy.physicsutils.JetReCalibrator import Type1METCorrector, setFakeRawMETOnOldMiniAODs
 import PhysicsTools.HeppyCore.framework.config as cfg
 
 import copy

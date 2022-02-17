@@ -1,5 +1,5 @@
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import printOut 
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import GenParticle 
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import printOut 
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import GenParticle 
 import ROOT
 
 def findStatus1Leptons(particle):

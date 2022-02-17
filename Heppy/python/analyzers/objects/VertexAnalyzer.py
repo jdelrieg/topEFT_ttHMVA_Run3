@@ -1,11 +1,11 @@
 from __future__ import print_function
 import itertools
 
-from PhysicsTools.Heppy.analyzers.core.VertexHistograms import VertexHistograms
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.VertexHistograms import VertexHistograms
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.HeppyCore.statistics.average import Average
-from PhysicsTools.Heppy.physicsutils.PileUpSummaryInfo import PileUpSummaryInfo
+from CMGTools.Heppy.physicsutils.PileUpSummaryInfo import PileUpSummaryInfo
 import PhysicsTools.HeppyCore.framework.config as cfg
 
 class VertexAnalyzer( Analyzer ):
