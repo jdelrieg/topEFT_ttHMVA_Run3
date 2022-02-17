@@ -1,6 +1,6 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
-from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
+from CMGTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class nBJetCounter( Module ):
     def __init__(self,label,bTagLabel,jetSel,WPs=["Loose","Medium","Tight"],years=[2016,2017,2018]):

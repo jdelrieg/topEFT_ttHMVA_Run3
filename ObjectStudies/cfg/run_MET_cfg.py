@@ -494,7 +494,7 @@ args = ['python',
 #print " ".join(args)
 
 subprocess.call(args)
-from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+from CMGTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 preprocessor = CmsswPreprocessor(preprocessorFile)
 
 ###autoAAA(selectedComponents)

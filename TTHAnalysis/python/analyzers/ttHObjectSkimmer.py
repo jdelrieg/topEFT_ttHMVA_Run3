@@ -1,10 +1,10 @@
 import os 
 import logging 
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 class ttHObjectSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):

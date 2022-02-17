@@ -4,7 +4,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 
 from math import sqrt, cos
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
-from PhysicsTools.Heppy.physicsobjects.Jet import _btagWPs
+from CMGTools.Heppy.physicsobjects.Jet import _btagWPs
 
 class TTH_gen_reco(Module):
     def __init__(self):

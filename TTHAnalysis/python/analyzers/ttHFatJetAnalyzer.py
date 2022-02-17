@@ -1,9 +1,9 @@
 import random
 import math
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet
-from PhysicsTools.Heppy.physicsutils.JetReCalibrator import JetReCalibrator
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import Jet
+from CMGTools.Heppy.physicsutils.JetReCalibrator import JetReCalibrator
 
 from PhysicsTools.HeppyCore.utils.deltar import *
 import PhysicsTools.HeppyCore.framework.config as cfg

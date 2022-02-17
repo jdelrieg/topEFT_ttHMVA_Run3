@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 from CMGTools.HToZZ4L.tools.DiObject import DiObject

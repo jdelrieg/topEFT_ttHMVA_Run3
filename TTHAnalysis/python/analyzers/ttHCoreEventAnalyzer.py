@@ -1,6 +1,6 @@
 from math import *
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from CMGTools.TTHAnalysis.leptonMVA import LeptonMVA
 from CMGTools.TTHAnalysis.signedSip import *

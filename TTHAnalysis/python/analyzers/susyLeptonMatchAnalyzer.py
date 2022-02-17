@@ -1,7 +1,7 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 #from CMGTools.RootTools.fwlite.AutoHandle import AutoHandle
 from PhysicsTools.HeppyCore.utils.deltar import *
-from PhysicsTools.Heppy.physicsutils.genutils import *
+from CMGTools.Heppy.physicsutils.genutils import *
 
 class susyLeptonMatchAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):

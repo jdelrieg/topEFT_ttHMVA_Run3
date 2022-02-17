@@ -1,6 +1,6 @@
 import os
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.TTHAnalysis.signedSip import SignedImpactParameterComputer
 from CMGTools.TTHAnalysis.tools.SVMVA import SVMVA
 from PhysicsTools.HeppyCore.utils.deltar import deltaR

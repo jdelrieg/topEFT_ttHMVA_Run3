@@ -180,7 +180,7 @@ tauAna.loose_tauID = "decayModeFindingNewDMs"
 
 if analysis in ['SOS']:
     #Adding LHE Analyzer for saving lheHT
-    from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
+    from CMGTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
     LHEAna = LHEAnalyzer.defaultConfig
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
                             LHEAna)
@@ -757,7 +757,7 @@ if runFRMC or runDataQCD:
         fastSkim.minLeptons = 2
         ttHLepSkim.maxLeptons = 1
         susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkimBM)
-        from PhysicsTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
+        from CMGTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
         trigMatcher1Mu2J = cfg.Analyzer(
             TriggerMatchAnalyzer, name="trigMatcher1Mu",
             label='1Mu',

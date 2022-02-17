@@ -91,7 +91,7 @@ isoTrackAna.doRelIsolation = True
 ##  ALPHAT VARIABLES
 ##------------------------------------------
 
-from PhysicsTools.Heppy.analyzers.eventtopology.AlphaTAnalyzer import AlphaTAnalyzer
+from CMGTools.Heppy.analyzers.eventtopology.AlphaTAnalyzer import AlphaTAnalyzer
 from CMGTools.TTHAnalysis.analyzers.ttHAlphaTControlAnalyzer import ttHAlphaTControlAnalyzer
 # Tree Producer
 ttHAlphaTAna = cfg.Analyzer(

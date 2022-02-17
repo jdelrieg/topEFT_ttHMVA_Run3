@@ -1,8 +1,8 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
-from PhysicsTools.Heppy.physicsutils.genutils import *
+from CMGTools.Heppy.physicsutils.genutils import *
 
 class LeptonFromGen:
     def __init__(self, physObj):

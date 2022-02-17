@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from CMGTools.TTHAnalysis.analyzers.ttHSVAnalyzer import matchToGenHadron
 
 class ttHHeavyFlavourHadronAnalyzer( Analyzer ):

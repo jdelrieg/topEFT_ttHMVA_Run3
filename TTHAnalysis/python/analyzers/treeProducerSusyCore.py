@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 susyCore_globalVariables = [
             NTupleVariable("Flag_badMuonMoriond2017",  lambda ev: ev.badMuonMoriond2017, int, help="bad muon found in event (Moriond 2017 filter)?"),

@@ -1,8 +1,8 @@
 #!/bin/env python
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer import *  
-from PhysicsTools.Heppy.analyzers.core.autovars import *  
-from PhysicsTools.Heppy.analyzers.objects.autophobj import  *
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer import *  
+from CMGTools.Heppy.analyzers.core.autovars import *  
+from CMGTools.Heppy.analyzers.objects.autophobj import  *
 from math import *
 
 ##------------------------------------------  

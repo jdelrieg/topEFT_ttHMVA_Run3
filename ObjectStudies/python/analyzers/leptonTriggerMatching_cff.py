@@ -1,6 +1,6 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 _MuPathTemplate = cfg.Analyzer(TriggerMatchAnalyzer, 
     processName = 'PAT',

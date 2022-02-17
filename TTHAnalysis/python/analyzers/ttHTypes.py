@@ -1,7 +1,7 @@
 #!/bin/env python
 from math import *
-from PhysicsTools.Heppy.analyzers.core.autovars import NTupleObjectType  
-from PhysicsTools.Heppy.analyzers.objects.autophobj import  *
+from CMGTools.Heppy.analyzers.core.autovars import NTupleObjectType  
+from CMGTools.Heppy.analyzers.objects.autophobj import  *
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 from CMGTools.TTHAnalysis.signedSip import *

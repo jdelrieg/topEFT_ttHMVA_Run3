@@ -3,9 +3,9 @@
 ##########################################################
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-from PhysicsTools.Heppy.analyzers.core.all import *
-from PhysicsTools.Heppy.analyzers.objects.all import *
-from PhysicsTools.Heppy.analyzers.gen.all import *
+from CMGTools.Heppy.analyzers.core.all import *
+from CMGTools.Heppy.analyzers.objects.all import *
+from CMGTools.Heppy.analyzers.gen.all import *
 
 ##------------------------------------------
 ##  Core modules

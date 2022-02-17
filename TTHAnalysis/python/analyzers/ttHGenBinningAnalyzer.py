@@ -4,8 +4,8 @@ import copy
 
 #from ROOT import TLorentzVector
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 #from CMGTools.RootTools.physicsobjects.genutils import *
         

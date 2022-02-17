@@ -168,7 +168,7 @@ ttHTopoJetAna = cfg.Analyzer(
             jetPt = mt2JPt, ### this will change diffMetMht and deltaPhiMin
             )
 
-from PhysicsTools.Heppy.analyzers.eventtopology.MT2Analyzer import MT2Analyzer
+from CMGTools.Heppy.analyzers.eventtopology.MT2Analyzer import MT2Analyzer
 
 MT2Ana = cfg.Analyzer(
     MT2Analyzer, name = 'MT2Analyzer',
@@ -619,7 +619,7 @@ if runPreprocessor:
     #print "Making pre-processorfile:"
     #print " ".join(args)
     subprocess.call(args)
-    from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+    from CMGTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
     preprocessor = CmsswPreprocessor(preprocessorFile)
 
 

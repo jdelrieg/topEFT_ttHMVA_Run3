@@ -1,7 +1,7 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer import AutoFillTreeProducer
-from PhysicsTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer import AutoFillTreeProducer
+from CMGTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
 from CMGTools.HToZZ4L.analyzers.TwoLeptonAnalyzer import TwoLeptonAnalyzer
 from CMGTools.HToZZ4L.analyzers.ThreeLeptonAnalyzer import ThreeLeptonAnalyzer
 from CMGTools.HToZZ4L.analyzers.FourLeptonEventSkimmer import FourLeptonEventSkimmer

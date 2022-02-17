@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 
 class ttHSTSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):

@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtra ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose HZZ ID"),

@@ -1,5 +1,5 @@
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 class ttHFastJetSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):

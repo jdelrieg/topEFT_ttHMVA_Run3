@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 treeProducerSusyGenLevelOnly_globalVariables = [
             #NTupleVariable("rho",  lambda ev: ev.rho, float, help="kt6PFJets rho"),

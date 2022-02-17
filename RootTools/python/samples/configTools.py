@@ -110,7 +110,7 @@ def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
 
 def insertEventSelector(sequence):
     if not sequence: raise RuntimeError, "to apply an event selection, I need a sequence"
-    from PhysicsTools.Heppy.analyzers.core.EventSelector import eventSelector
+    from CMGTools.Heppy.analyzers.core.EventSelector import eventSelector
     eventSelector = cfg.Analyzer(EventSelector, 
             name="EventSelector",
             toSelect = [ eval("("+x.replace(":",",")+")") for x in getHeppyOption('events').split(",") ],

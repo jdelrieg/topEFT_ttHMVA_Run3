@@ -8,7 +8,7 @@ import math
 import numpy
 import ROOT
 
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.utils.deltar import deltaR2,deltaR
 import PhysicsTools.HeppyCore.framework.config as cfg

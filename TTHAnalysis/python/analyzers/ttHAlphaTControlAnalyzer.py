@@ -6,17 +6,17 @@ from math import *
 #from ROOT import TLorentzVector, TVectorD
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
-# from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Lepton
-# from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Photon
-# from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Electron
-# from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Muon
-# from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet
+# from CMGTools.Heppy.physicsobjects.PhysicsObjects import Lepton
+# from CMGTools.Heppy.physicsobjects.PhysicsObjects import Photon
+# from CMGTools.Heppy.physicsobjects.PhysicsObjects import Electron
+# from CMGTools.Heppy.physicsobjects.PhysicsObjects import Muon
+# from CMGTools.Heppy.physicsobjects.PhysicsObjects import Tau
+from CMGTools.Heppy.physicsobjects.PhysicsObjects import Jet
 
 import os
 

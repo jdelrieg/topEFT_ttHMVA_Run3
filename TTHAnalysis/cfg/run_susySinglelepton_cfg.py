@@ -75,7 +75,7 @@ ttHSTSkimmer = cfg.Analyzer(
     )
 
 #add LHE Analyzer
-from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
+from CMGTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
 LHEAna = LHEAnalyzer.defaultConfig
 
 from CMGTools.TTHAnalysis.analyzers.ttHReclusterJetsAnalyzer import ttHReclusterJetsAnalyzer

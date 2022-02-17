@@ -1,12 +1,12 @@
 from math import *
-from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
+from CMGTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi, bestMatch, inConeCollection
-from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
+from CMGTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 
 
 from PhysicsTools.HeppyCore.framework.event import Event
 from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from CMGTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 
 from ROOT import heppy

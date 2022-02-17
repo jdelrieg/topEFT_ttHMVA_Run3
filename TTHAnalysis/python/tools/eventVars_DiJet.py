@@ -3,7 +3,7 @@ from ROOT import TLorentzVector, TVector2, std
 import ROOT
 import time
 import itertools
-import PhysicsTools.Heppy.loadlibs
+import CMGTools.Heppy.loadlibs
 import array
 import operator
 

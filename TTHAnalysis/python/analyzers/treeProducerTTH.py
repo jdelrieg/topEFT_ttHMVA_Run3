@@ -1,4 +1,4 @@
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import *
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import *
 from CMGTools.TTHAnalysis.analyzers.ttHTypes import *
 
 ttH_globalVariables = [

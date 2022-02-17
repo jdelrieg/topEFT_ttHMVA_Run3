@@ -1,5 +1,5 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 from CMGTools.ObjectStudies.analyzers.leptonTriggerMatching_cff import WithLeptonTriggerMatchType
 
 leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType, WithLeptonTriggerMatchType ], variables = [
