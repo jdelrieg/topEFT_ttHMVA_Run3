@@ -1,9 +1,6 @@
 import os
 import re 
 
-# from CMGTools.H2TauTau.officialJSONS import jsonMap
-# from CMGTools.H2TauTau.dcsJSONS import dcsJsonMap
-
 def lfnToDataset( lfn ):
     '''If lfn contains A/CMG/B, returns /B. Otherwise, returns lfn.'''
     # The CMG that we capture in the regexp below corresponds to the

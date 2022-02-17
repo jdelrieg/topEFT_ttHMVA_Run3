@@ -15,8 +15,6 @@ packages = [dir for dir in pkg_dirs \
 pythonpath = ['.']
 for pkg in packages:
     ana_dir = '/'.join( [pkg, 'python/analyzers'] )
-    if pkg.endswith('CMGTools/H2TauTau'):
-        ana_dir = '/'.join( [pkg, 'python/proto/analyzers'] )
     if os.path.isdir(ana_dir):
         pythonpath.append( ana_dir )
     
