@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/Megajet.h"
+#include "CMGTools/Heppy/interface/Megajet.h"
 
 #include <vector>
 #include <cmath>

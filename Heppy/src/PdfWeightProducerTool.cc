@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/PdfWeightProducerTool.h"
+#include "CMGTools/Heppy/interface/PdfWeightProducerTool.h"
 #include <cassert>
 
 namespace LHAPDF {

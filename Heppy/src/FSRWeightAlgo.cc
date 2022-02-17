@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/FSRWeightAlgo.h"
+#include "CMGTools/Heppy/interface/FSRWeightAlgo.h"
 
 
 #include "DataFormats/Candidate/interface/CompositeCandidate.h"

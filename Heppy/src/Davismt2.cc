@@ -32,7 +32,7 @@ double mt2_value = mt2_event.get_mt2();
 
 *******************************************************************************/ 
 
-#include "PhysicsTools/Heppy/interface/Davismt2.h"
+#include "CMGTools/Heppy/interface/Davismt2.h"
 // ClassImp(Davismt2);
 
 using namespace std;

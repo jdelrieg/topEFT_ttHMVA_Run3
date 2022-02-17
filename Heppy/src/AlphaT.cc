@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/AlphaT.h"
+#include "CMGTools/Heppy/interface/AlphaT.h"
 
 #include <cmath>
 #include <numeric>

@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/BTagSF.h"
+#include "CMGTools/Heppy/interface/BTagSF.h"
 #include "TMath.h"
 
 namespace heppy {

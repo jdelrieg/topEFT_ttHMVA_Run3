@@ -10,7 +10,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 cfg.Analyzer.nosubdir=True
 
 # The content of the output tree is defined here
-# the definitions of the NtupleObjects are located under PhysicsTools/Heppy/pythonanalyzers/objects/autophobj.py
+# the definitions of the NtupleObjects are located under CMGTools/Heppy/pythonanalyzers/objects/autophobj.py
  
 from CMGTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 treeProducer= cfg.Analyzer(

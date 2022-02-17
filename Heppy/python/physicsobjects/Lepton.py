@@ -82,7 +82,7 @@ class Lepton( PhysicsObject):
            'eta' : lambda x: x.superCluster().eta()
          }
         
-        Please see PhysicsTools/Heppy/python/physicsutils/EffectiveAreas.py for 
+        Please see CMGTools/Heppy/python/physicsutils/EffectiveAreas.py for 
         more information.
 
         If a string is provided, the corresponding attribute must be added to the 

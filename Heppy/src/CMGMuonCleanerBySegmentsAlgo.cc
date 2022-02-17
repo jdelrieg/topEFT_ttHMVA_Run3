@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/CMGMuonCleanerBySegmentsAlgo.h"
+#include "CMGTools/Heppy/interface/CMGMuonCleanerBySegmentsAlgo.h"
 #include <iostream>
 
 namespace heppy {

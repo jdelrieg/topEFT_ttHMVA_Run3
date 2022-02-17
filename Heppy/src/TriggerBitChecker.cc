@@ -1,4 +1,4 @@
-#include "PhysicsTools/Heppy/interface/TriggerBitChecker.h"
+#include "CMGTools/Heppy/interface/TriggerBitChecker.h"
 
 #include "FWCore/Common/interface/TriggerNames.h"
 #include <cassert>

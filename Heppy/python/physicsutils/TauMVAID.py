@@ -77,7 +77,7 @@ class TauMVAID(object):
 
 # 2017v2 MVA: 
 
-basedir = '$CMSSW_BASE/src/PhysicsTools/Heppy/data/'
+basedir = '$CMSSW_BASE/src/CMGTools/Heppy/data/'
 working_points = dict(
     VVTight = 'RecoTauTag_tauIdMVAIsoDBoldDMwLT2017v2WPEff40.root',
     VTight = 'RecoTauTag_tauIdMVAIsoDBoldDMwLT2017v2WPEff50.root',

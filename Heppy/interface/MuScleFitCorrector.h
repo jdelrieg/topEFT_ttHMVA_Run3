@@ -12,7 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "PhysicsTools/Heppy/interface/MuScleFitCorrector_Functions.h"
+#include "CMGTools/Heppy/interface/MuScleFitCorrector_Functions.h"
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 

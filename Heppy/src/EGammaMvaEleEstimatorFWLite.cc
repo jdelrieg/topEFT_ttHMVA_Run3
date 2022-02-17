@@ -1,5 +1,5 @@
 
-#include "PhysicsTools/Heppy/interface/EGammaMvaEleEstimatorFWLite.h"
+#include "CMGTools/Heppy/interface/EGammaMvaEleEstimatorFWLite.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimator.h"
 #include "EgammaAnalysis/ElectronTools/interface/EGammaMvaEleEstimatorCSA14.h"
 #include "FWCore/ParameterSet/interface/FileInPath.h"
