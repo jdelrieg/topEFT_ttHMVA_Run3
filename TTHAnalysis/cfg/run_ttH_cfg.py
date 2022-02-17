@@ -101,7 +101,7 @@ tauAna.loose_vetoLeptons = False # no cleaning with leptons in production
 
 # run 2017 tau ID score
 tauAna.mvaId2017 = {
-    "fileName" : "$CMSSW_BASE/src/PhysicsTools/Heppy/data/GBRForest_tauIdMVAIsoDBoldDMdR0p3wLT2017v2.root",
+    "fileName" : "$CMSSW_BASE/src/CMGTools/Heppy/data/GBRForest_tauIdMVAIsoDBoldDMdR0p3wLT2017v2.root",
     "mvaName" : "RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2",
     "mvaKind" : "DBoldDMwLTwGJ",
 }

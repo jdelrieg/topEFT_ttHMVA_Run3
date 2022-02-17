@@ -4,7 +4,7 @@ from array import array
 from glob import glob
 import os
 
-from PhysicsTools.Heppy import loadlibs
+from CMGTools.Heppy import loadlibs
 from CMGTools.TTHAnalysis.leptonMVA  import MVAVar, MVATool, CategorizedMVA
 
 _CommonSpect = [ 
