@@ -159,7 +159,7 @@ if __name__ == "__main__":
             _processOneComponent(copy(pp), comp, outdir, preprocessor, options)
 
     else:
-        from PhysicsTools.HeppyCore.framework.heppy_loop import split
+        from CMGTools.RootTools.samples.configTools import split
         components = split(components)
         if options.ntasks == 0 or len(components) == 1: # single core, for debugging
             map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])

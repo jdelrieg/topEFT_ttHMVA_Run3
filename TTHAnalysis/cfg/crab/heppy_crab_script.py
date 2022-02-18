@@ -65,7 +65,7 @@ cfo = imp.load_source(cfgfile.rstrip('py'), cfgfile, handle)
 config = cfo.config
 handle.close()
 
-from PhysicsTools.HeppyCore.framework.heppy_loop import split
+from CMGTools.RootTools.samples.configTools import split
 # pick right component from dataset and file from jobID
 selectedComponents = []
 localPrefix = ""

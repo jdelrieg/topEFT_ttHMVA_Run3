@@ -1,7 +1,7 @@
 import cPickle, math, optparse, os, os.path, shutil, copy
 
 def reSplitChunk(compname,splitFactor):
-    from PhysicsTools.HeppyCore.framework.heppy_loop import split
+    from CMGTools.RootTools.samples.configTools import split
     try:
         comp = cPickle.load(open("%s/config.pck" % compname))
     except:

@@ -65,7 +65,7 @@ if len(options.filesToShip)>0: os.environ["FILESTOSHIP"] = ','.join(options.file
 if options.maxevents>0: os.environ["MAXNUMEVENTS"] = str(options.maxevents)
 os.environ["ONLYUNPACKED"] = str(options.only_unpacked)
 
-from PhysicsTools.HeppyCore.framework.heppy_loop import split
+from CMGTools.RootTools.samples.configTools import split
 for comp in conf.components:
     if getattr(comp,"useAAA",False):
         raise RuntimeError, 'Components should have useAAA disabled in the cfg when running on crab - tune the behaviour of AAA in the crab submission instead!'

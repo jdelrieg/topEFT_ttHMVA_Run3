@@ -8,7 +8,7 @@ import shutil
 import pickle
 from PhysicsTools.HeppyCore.utils.batchmanager import BatchManager
 
-from PhysicsTools.HeppyCore.framework.heppy_loop import split
+from CMGTools.RootTools.samples.configTools import split
 
 def batchScriptCERN( runningMode, jobDir, remoteDir=''):
    if runningMode == "LXPLUS-CONDOR-TRANSFER": 
