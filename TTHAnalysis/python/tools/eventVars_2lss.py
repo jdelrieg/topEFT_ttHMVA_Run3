@@ -6,7 +6,7 @@ from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import decla
 
 from math import sqrt, cos
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
-from CMGTools.Heppy.physicsobjects.Jet import _btagWPs
+from CMGTools.TTHAnalysis.tools.btagWPs import _btagWPs
 
 class EventVars2LSS(Module):
     def __init__(self, label="", recllabel='Recl', doSystJEC=True, variations=[]):

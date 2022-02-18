@@ -4,7 +4,7 @@ import types
 from CMGTools.TTHAnalysis.tools.collectionSkimmer import CollectionSkimmer
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 import ROOT, os
-from CMGTools.Heppy.physicsobjects.Jet import _btagWPs
+from CMGTools.TTHAnalysis.tools.btagWPs import _btagWPs
 
 class fastCombinedObjectRecleaner(Module):
     def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,jetPtsFwd,btagL_thr,btagM_thr,jetCollection='Jet',jetBTag='btagDeepFlavB',tauCollection='Tau',isMC=None, 
