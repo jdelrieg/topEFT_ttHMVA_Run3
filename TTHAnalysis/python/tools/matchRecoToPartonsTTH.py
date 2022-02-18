@@ -1,5 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer2 import Object
-from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection3
+from CMGTools.TTHAnalysis.tools.matchObjectCollectionUnique import matchObjectCollectionUnique
 import ROOT, os
 
 class MatchRecoToPartonsTTH_MyObjectProxy:
@@ -38,7 +38,7 @@ class MatchRecoToPartonsTTH:
         igenfinal = getattr(event,"iallFinalParton")
         genfinal = [gen[igenfinal[i]] for i in xrange(ngenfinal)]
 
-        pairs = matchObjectCollection3(lepsFO+reco,genfinal)
+        pairs = matchObjectCollectionUnique(lepsFO+reco,genfinal,dRmax=0.3)
 
         mLeps = [-1]*len(leps)
         mReco = [-1]*len(reco)

@@ -1,5 +1,4 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection3
 import ROOT
 
 class MyVarProxy:
