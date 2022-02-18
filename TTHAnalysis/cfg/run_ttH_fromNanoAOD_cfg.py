@@ -1,16 +1,16 @@
 import re, os, sys
 from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions, doTestN, configureSplittingFromTime, cropToLumi
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
-from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+from CMGTools.Production.globalOptions import getCMGOption
 
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 def byCompName(components, regexps):
     return [ c for c in components if any(re.match(r, c.name) for r in regexps) ]
 
-year = int(getHeppyOption("year", "2018"))
-analysis = getHeppyOption("analysis", "main")
-preprocessor = getHeppyOption("nanoPreProcessor")
+year = int(getCMGOption("year", "2018"))
+analysis = getCMGOption("analysis", "main")
+preprocessor = getCMGOption("nanoPreProcessor")
 
 # Samples
 if preprocessor:
@@ -34,7 +34,7 @@ else:
         from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_25Oct2019 as allData
 mcSamples_=[]
-autoAAA(mcSamples_+allData, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
+autoAAA(mcSamples_+allData, quiet=not(getCMGOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
 mcSamples_, _ = mergeExtensions(mcSamples_)
 
 # Triggers
@@ -93,7 +93,7 @@ elif analysis == "frqcd":
 
 # make MC
 mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers if trigs), [])
-if getHeppyOption('applyTriggersInMC'):
+if getCMGOption('applyTriggersInMC'):
     for comp in mcSamples:
         comp.triggers = mcTriggers
 
@@ -108,14 +108,14 @@ for pd, trigs in DatasetsAndTriggers:
     vetoTriggers += trigs[:]
 
 selectedComponents = mcSamples + dataSamples
-if getHeppyOption('selectComponents'):
-    if getHeppyOption('selectComponents')=='MC':
+if getCMGOption('selectComponents'):
+    if getCMGOption('selectComponents')=='MC':
         selectedComponents = mcSamples
-    elif getHeppyOption('selectComponents')=='DATA':
+    elif getCMGOption('selectComponents')=='DATA':
         selectedComponents = dataSamples
     else:
-        selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
-autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it")
+        selectedComponents = byCompName(selectedComponents, getCMGOption('selectComponents').split(","))
+autoAAA(selectedComponents, quiet=not(getCMGOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it")
 if year==2018:
     configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),150 if preprocessor else 10,12)
     configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),70 if preprocessor else 10,12)
@@ -153,7 +153,7 @@ if preprocessor:
             if comp.isMC and "Fall17MiniAODv2" not in comp.dataset:
                 print "Warning: %s is MiniAOD v1, dataset %s" % (comp.name, comp.dataset)
                 comp.preprocessor = preproc_mcv1
-    if getHeppyOption("fast"):
+    if getCMGOption("fast"):
         for comp in selectedComponents:
             comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = ("""
 process.selectEl = cms.EDFilter("PATElectronRefSelector",
@@ -214,7 +214,7 @@ if analysis == "frqcd":
 
 
 # print summary of components to process
-if getHeppyOption("justSummary"): 
+if getCMGOption("justSummary"): 
     printSummary(selectedComponents)
     sys.exit(0)
 
@@ -239,7 +239,7 @@ POSTPROCESSOR = PostProcessor(None, [], modules = modules,
         cut = cut, prefetch = True, longTermCache = False,
         branchsel = branchsel_in, outputbranchsel = branchsel_out, compression = compression)
 
-test = getHeppyOption("test")
+test = getCMGOption("test")
 if test == "94X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
     TTLep_pow.files = ["/afs/cern.ch/user/g/gpetrucc/cmg/NanoAOD_94X_TTLep.root"]

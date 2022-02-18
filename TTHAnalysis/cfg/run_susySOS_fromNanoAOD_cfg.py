@@ -1,18 +1,18 @@
 import re, os, sys
 from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions, doTestN, configureSplittingFromTime, cropToLumi
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
-from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+from CMGTools.Production.globalOptions import getCMGOption
 
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 def byCompName(components, regexps):
     return [ c for c in components if any(re.match(r, c.name) for r in regexps) ]
 
-year = int(getHeppyOption("year", "2018"))
-analysis = getHeppyOption("analysis", "main")
-preprocessor = getHeppyOption("nanoPreProcessor")
+year = int(getCMGOption("year", "2018"))
+analysis = getCMGOption("analysis", "main")
+preprocessor = getCMGOption("nanoPreProcessor")
 
-if getHeppyOption("nanoPreProcessor"):
+if getCMGOption("nanoPreProcessor"):
     if year == 2018:
         from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18MiniAOD import samples as mcSamples_
         from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import samples as allData
@@ -379,7 +379,7 @@ elif year == 2016:
 
 
 mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
-if getHeppyOption('applyTriggersInMC'):
+if getCMGOption('applyTriggersInMC'):
     raise RuntimeError, 'Applying triggers in MC might bias the input PU distribution for the PU reweighting! If really sure comment out this line.'
     for comp in mcSamples:
         comp.triggers = mcTriggers
@@ -394,23 +394,23 @@ for pd, triggers in DatasetsAndTriggers:
     vetoTriggers += triggers[:]
 
 selectedComponents = mcSamples + dataSamples
-if getHeppyOption('selectComponents'):
-    if getHeppyOption('selectComponents')=='MC':
+if getCMGOption('selectComponents'):
+    if getCMGOption('selectComponents')=='MC':
         selectedComponents = mcSamples
-    elif getHeppyOption('selectComponents')=='DATA':
+    elif getCMGOption('selectComponents')=='DATA':
         selectedComponents = dataSamples
     else:
-        selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
-autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
+        selectedComponents = byCompName(selectedComponents, getCMGOption('selectComponents').split(","))
+autoAAA(selectedComponents, quiet=not(getCMGOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it") # must be done before mergeExtensions
 configureSplittingFromTime(mcSamples,500 if preprocessor else 10,10)
 configureSplittingFromTime(dataSamples,160 if preprocessor else 10,10)
 selectedComponents, _ = mergeExtensions(selectedComponents, verbose=True)
 
 # create and set preprocessor if requested
-if getHeppyOption("nanoPreProcessor"):
+if getCMGOption("nanoPreProcessor"):
     from CMGTools.Production.nanoAODPreprocessor import nanoAODPreprocessor
     suffix = ''
-    if getHeppyOption("FastSim"):
+    if getCMGOption("FastSim"):
         suffix = 'fast'
     preproc_cfg = {2016: ("mc94X2016%s"%suffix,"data94X2016"),
                    2017: ("mc94Xv2%s"%suffix,"data94Xv2"),
@@ -436,7 +436,7 @@ if getHeppyOption("nanoPreProcessor"):
                 print "Warning: %s is MiniAOD v1, dataset %s" % (comp.name, comp.dataset)
                 comp.preprocessor = preproc_mcv1
 
-    if getHeppyOption("fast"):
+    if getCMGOption("fast"):
         for comp in selectedComponents:
             comp.preprocessor._cfgHasFilter = True
             comp.preprocessor._inlineCustomize = ("""
@@ -466,7 +466,7 @@ process.nanoAOD_step.insert(0, cms.Sequence(process.selectEl + process.selectMu 
 cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
 
 # print summary of components to process
-if getHeppyOption("justSummary"): 
+if getCMGOption("justSummary"): 
     printSummary(selectedComponents)
     sys.exit(0)
 
@@ -477,8 +477,8 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 modules = susySOS_sequence_step1
 cut = susySOS_skim_cut
 # Switch to Tag and Probe skimming/sequence
-if getHeppyOption("TnP"):
-    collection = getHeppyOption("TnPCollection", "None")
+if getCMGOption("TnP"):
+    collection = getCMGOption("TnPCollection", "None")
     if collection == "None":
         raise RuntimeError("You omitted the TnP collection to run on!")
     if collection != "Muon" and collection != "Electron":
@@ -494,7 +494,7 @@ POSTPROCESSOR = PostProcessor(None, [], modules = modules,
         cut = cut, prefetch = True, longTermCache = True,
         branchsel = branchsel_in, outputbranchsel = branchsel_out, compression = compression)
 
-test = getHeppyOption("test")
+test = getCMGOption("test")
 if test == "94X-MC":
     TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
     TTLep_pow.files = ["/afs/cern.ch/user/g/gpetrucc/cmg/NanoAOD_94X_TTLep.root"]

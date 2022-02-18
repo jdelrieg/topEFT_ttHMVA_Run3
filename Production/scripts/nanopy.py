@@ -6,17 +6,17 @@ from math import ceil
 import ROOT
 
 def _loadHeppyGlobalOptions(options):
-    from PhysicsTools.HeppyCore.framework.heppy_loop import _heppyGlobalOptions
+    from CMGTools.Production.globalOptions import _cmgToolsProdGlobalOptions
     for opt in options.extraOptions:
         if "=" in opt:
             (key,val) = opt.split("=",1)
-            _heppyGlobalOptions[key] = val
+            _cmgToolsProdGlobalOptions[key] = val
         else:
-            _heppyGlobalOptions[opt] = True
+            _cmgToolsProdGlobalOptions[opt] = True
     if options.optionFile:
         opt = json.load(open(options.optionFile, 'r'))
         for key,val in opt.iteritems(): 
-            _heppyGlobalOptions[key] = val
+            _cmgToolsProdGlobalOptions[key] = val
 
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if not comp.files: return

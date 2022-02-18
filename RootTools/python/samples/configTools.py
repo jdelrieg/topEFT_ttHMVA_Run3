@@ -1,4 +1,4 @@
-from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+from CMGTools.Production.globalOptions import getCMGOption
 
 # from python/framework/heppy_loop.py in PhysicsTools/HeppyCore, to rewrite better
 def splitComponents(comps):
@@ -124,12 +124,11 @@ def prescaleComponents(selectedComponents, factor):
 
 def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
     import CMGTools.RootTools.fwlite.Config as cfg
-    from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
     from CMGTools.TTHAnalysis.tools.EOSEventsWithDownload import EOSEventsWithDownload
     event_class = EOSEventsWithDownload
     EOSEventsWithDownload.aggressive = xrd_aggressive 
-    if getHeppyOption("nofetch") or getHeppyOption("isCrab") or xrd_aggressive <= -3:
-        event_class = Events
+    if getCMGOption("nofetch") or getCMGOption("isCrab") or xrd_aggressive <= -3:
+        raise RuntimeError, "Not implemented anymore"
     return cfg.Config( components = selectedComponents,
                      sequence = sequence,
                      services = services,  
@@ -140,13 +139,13 @@ def insertEventSelector(sequence):
     from CMGTools.Heppy.analyzers.core.EventSelector import eventSelector
     eventSelector = cfg.Analyzer(EventSelector, 
             name="EventSelector",
-            toSelect = [ eval("("+x.replace(":",",")+")") for x in getHeppyOption('events').split(",") ],
+            toSelect = [ eval("("+x.replace(":",",")+")") for x in getCMGOption('events').split(",") ],
     )
     sequence.insert(0, eventSelector)
     print "Will select events", eventSelector.toSelect
 
 def doTest1(comp, url=None, sequence=None, cache=False):
-    from PhysicsTools.HeppyCore.framework.heppy_loop import setHeppyOption
+    from CMGTools.Production.globalOptions import setCMGOption
     comp.files = [ url if url else comp.files[0] ]
     if cache:
         import os
@@ -155,9 +154,9 @@ def doTest1(comp, url=None, sequence=None, cache=False):
             os.system("xrdcp %s %s" % (comp.files[0],tmpfil))
         comp.files = [ tmpfil ]
     comp.splitFactor = 1
-    comp.fineSplitFactor = 5 if getHeppyOption('multi') else 1
-    if getHeppyOption('events'): insertEventSelector(sequence)
-    if not getHeppyOption('fetch'): setHeppyOption('nofetch')
+    comp.fineSplitFactor = 5 if getCMGOption('multi') else 1
+    if getCMGOption('events'): insertEventSelector(sequence)
+    if not getCMGOption('fetch'): setCMGOption('nofetch')
     return [ comp ]
 
 def doTestN(test, selectedComponents):
