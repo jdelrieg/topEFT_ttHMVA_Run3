@@ -1,5 +1,0 @@
-from CMGTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer
-from CMGTools.Heppy.analyzers.gen.GenHeavyFlavourAnalyzer import GenHeavyFlavourAnalyzer
-from CMGTools.Heppy.analyzers.gen.HiggsDecayModeAnalyzer import HiggsDecayModeAnalyzer
-from CMGTools.Heppy.analyzers.gen.PDFWeightsAnalyzer import PDFWeightsAnalyzer
-from CMGTools.Heppy.analyzers.gen.LHEWeightAnalyzer import LHEWeightAnalyzer
