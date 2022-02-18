@@ -6,7 +6,7 @@ import json
 import os
 import shutil
 import pickle
-from PhysicsTools.HeppyCore.utils.batchmanager import BatchManager
+from CMGTools.Production.batchmanager import BatchManager
 
 from CMGTools.RootTools.samples.configTools import split
 

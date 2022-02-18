@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from datetime import datetime
 from optparse import OptionParser
+from collections import defaultdict
 
 import sys
 import os
@@ -42,9 +44,27 @@ class BatchManager:
         self.parser_.add_option("-n", "--negate", action="store_true",
                                 dest="negate", default=False,
                                 help="create jobs, but does not submit the jobs.")
+        self.parser_.add_option("-B", "--bulk", action="store_true",
+                                dest="bulk", default=False,
+                                help="Do bulk submission (works only for run_condor_simple.sh at the moment).")
         self.parser_.add_option("-b", "--batch", dest="batch",
-                                help="batch command. default is: 'bsub -q 8nh < batchScript.sh'. You can also use 'nohup < ./batchScript.sh &' to run locally.",
+                                help="""batch command to submit job. 
+                                    ==> LSF submission to a queue, e.g. 8nh:
+                                          'bsub -q 8nh < ./batchScript.sh'
+                                    ==> HTCondor submission using AFS to transfer files
+                                    ==> with max 240 minutes of wall clock runtime:
+                                          'run_condor_simple.sh -t 240 ./batchScript.sh' 
+                                    ==> Same but with HTCondor internal file transfer:
+                                          'run_condor.sh -t 240 ./batchScript.sh' 
+
+                                    The default is '%default'.""",
                                 default="bsub -q 8nh < ./batchScript.sh")
+        self.parser_.add_option( "--option",
+                                dest="extraOptions",
+                                type="string",
+                                action="append",
+                                default=[],
+                                help="Save one extra option (either a flag, or a key=value pair) that can be then accessed from the job config file")
 
     def ParseOptions(self):
         (self.options_,self.args_) = self.parser_.parse_args()
@@ -69,20 +89,20 @@ class BatchManager:
                     if ld_lib_path != "None":
                         os.environ['LD_LIBRARY_PATH'] = ld_lib_path  # back to original to avoid conflicts
                 else:
-                    print "remote directory must start with /pnfs/psi.ch to send to the tier3 at PSI"
-                    print self.remoteOutputDir_, "not valid"
+                    print("remote directory must start with /pnfs/psi.ch to send to the tier3 at PSI")
+                    print(self.remoteOutputDir_, "not valid")
                     sys.exit(1)
             else: # assume EOS
                 if not castortools.isLFN( self.remoteOutputDir_ ):
-                    print 'When providing an output directory, you must give its LFN, starting by /store. You gave:'
-                    print self.remoteOutputDir_
+                    print('When providing an output directory, you must give its LFN, starting by /store. You gave:')
+                    print(self.remoteOutputDir_)
                     sys.exit(1)
                 self.remoteOutputDir_ = castortools.lfnToEOS( self.remoteOutputDir_ )
                 dirExist = castortools.isDirectory( self.remoteOutputDir_ )
                 # nsls = 'nsls %s > /dev/null' % self.remoteOutputDir_
                 # dirExist = os.system( nsls )
                 if dirExist is False:
-                    print 'creating ', self.remoteOutputDir_
+                    print('creating ', self.remoteOutputDir_)
                     if castortools.isEOSFile( self.remoteOutputDir_ ):
                         # the output directory is currently a file..
                         # need to remove it.
@@ -102,7 +122,7 @@ class BatchManager:
 
 
     def PrepareJobs(self, listOfValues, listOfDirNames=None):
-        print 'PREPARING JOBS ======== '
+        print('PREPARING JOBS ======== ')
         self.listOfJobs_ = []
 
         if listOfDirNames is None:
@@ -111,7 +131,7 @@ class BatchManager:
         else:
             for value, name in zip( listOfValues, listOfDirNames):
                 self.PrepareJob( value, name )
-        print "list of jobs:"
+        print("list of jobs:")
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint( self.listOfJobs_)
 
@@ -129,7 +149,7 @@ class BatchManager:
         if outputDir==None:
             today = datetime.today()
             outputDir = 'OutCmsBatch_%s' % today.strftime("%d%h%y_%H%M%S")
-            print 'output directory not specified, using %s' % outputDir
+            print('output directory not specified, using %s' % outputDir)
 
         self.outputDir_ = os.path.abspath(outputDir)
 
@@ -151,49 +171,70 @@ class BatchManager:
 
         calls PrepareJobUser, which should be overloaded by the user.
         '''
-        print 'PrepareJob : %s' % value
+        print('PrepareJob : %s' % value)
         dname = dirname
         if dname  is None:
             dname = 'Job_{value}'.format( value=value )
         jobDir = '/'.join( [self.outputDir_, dname])
-        print '\t',jobDir
+        print('\t',jobDir)
         self.mkdir( jobDir )
         self.listOfJobs_.append( jobDir )
         self.PrepareJobUser( jobDir, value )
 
     def PrepareJobUser(self, value ):
         '''Hook allowing user to define how one of his jobs should be prepared.'''
-        print '\to be customized'
+        print('\to be customized')
 
 
     def SubmitJobs( self, waitingTimeInSec=0 ):
         '''Submit all jobs. Possibly wait between each job'''
 
         if(self.options_.negate):
-            print '*NOT* SUBMITTING JOBS - exit '
+            print('*NOT* SUBMITTING JOBS - exit ')
             return
-        print 'SUBMITTING JOBS ======== '
+        print('SUBMITTING JOBS ======== ')
+        root = os.getcwd()
+        if self.options_.bulk:
+            if self.mode == "LXPLUS-CONDOR-SIMPLE": 
+                bulkcmd = self.options_.batch.replace("run_condor_simple.sh","run_condor_simple.sh --bulk %s ")
+            else:
+                raise RuntimeError("Bulk submission currently implemented only for run_condor_simple.sh")
+            bulks = defaultdict(int); nobulk = []
+            for jobDir in self.listOfJobs_:
+                m = re.match(r"(.*)_Chunk\d+$", jobDir)
+                if m: bulks[m.group(1)] += 1;
+                else: nobulk.append(jobDir)
+            for jobDir, njobs in bulks.iteritems():
+                pardir, sample = os.path.dirname(jobDir), os.path.basename(jobDir)
+                print('Bulk submission for %s (%d chunks)' % (sample, njobs))
+                os.chdir( pardir )
+                print("  executing: ", ( bulkcmd % sample ))
+                os.system( bulkcmd % sample )
+                os.chdir(root)
+                print('  waiting %s seconds...' % waitingTimeInSec)
+                time.sleep( waitingTimeInSec )
+                print('  done.')
+            self.listOfJobs_ = nobulk
         for jobDir  in self.listOfJobs_:
-            root = os.getcwd()
             # run it
-            print 'processing ', jobDir
+            print('processing ', jobDir)
             os.chdir( jobDir )
             self.SubmitJob( jobDir )
             # and come back
             os.chdir(root)
-            print 'waiting %s seconds...' % waitingTimeInSec
+            print('waiting %s seconds...' % waitingTimeInSec)
             time.sleep( waitingTimeInSec )
-            print 'done.'
+            print('done.')
 
     def SubmitJob( self, jobDir ):
         '''Hook for job submission.'''
-        print 'submitting (to be customized): ', jobDir
+        print('submitting (to be customized): ', jobDir)
         os.system( self.options_.batch )
 
 
     def SubmitJobArray( self, numbOfJobs = 1 ):
         '''Hook for array job submission.'''
-        print 'Submitting array with %s jobs'  % numbOfJobs
+        print('Submitting array with %s jobs'  % numbOfJobs)
 
     def CheckBatchScript( self, batchScript ):
 
@@ -201,13 +242,13 @@ class BatchManager:
             return
 
         if( os.path.isfile(batchScript)== False ):
-            print 'file ',batchScript,' does not exist'
+            print('file ',batchScript,' does not exist')
             sys.exit(3)
 
         try:
             ifile = open(batchScript)
         except:
-            print 'cannot open input %s' % batchScript
+            print('cannot open input %s' % batchScript)
             sys.exit(3)
         else:
             for line in ifile:
@@ -215,14 +256,14 @@ class BatchManager:
                 m=p.match(line)
                 if m:
                     if os.path.isdir( os.path.expandvars(m.group(1)) ):
-                        print 'output directory ',  m.group(1), 'already exists!'
-                        print 'exiting'
+                        print('output directory ',  m.group(1), 'already exists!')
+                        print('exiting')
                         sys.exit(2)
                     else:
                         if self.options_.negate==False:
                             os.mkdir( os.path.expandvars(m.group(1)) )
                         else:
-                            print 'not making dir', self.options_.negate
+                            print('not making dir', self.options_.negate)
 
     # create a directory
     def mkdir( self, dirname ):
@@ -230,19 +271,20 @@ class BatchManager:
         mkdir = 'mkdir -p %s' % dirname
         ret = os.system( mkdir )
         if( ret != 0 ):
-            print 'please remove or rename directory: ', dirname
+            print('please remove or rename directory: ', dirname)
             sys.exit(4)
 
 
     def RunningMode(self, batch):
 
-        '''Return "LXPUS", "PSI", "NAF", "LOCAL", or None,
+        '''Return "LXPLUS", "PSI", "NAF", "LOCAL", or None,
 
-        "LXPLUS" : batch command is bsub, and logged on lxplus
-        "PSI"    : batch command is qsub, and logged to t3uiXX
-        "NAF"    : batch command is qsub, and logged on naf
-        "IC"     : batch command is qsub, and logged on hep.ph.ic.ac.uk
-        "LOCAL"  : batch command is nohup.
+        "LXPLUS-LSF" : batch command is bsub, and logged on lxplus
+        "LXPLUS"     : batch command is condor, and logged on lxplus
+        "PSI"        : batch command is qsub, and logged to t3uiXX
+        "NAF"        : batch command is qsub, and logged on naf
+        "IC"         : batch command is qsub, and logged on hep.ph.ic.ac.uk
+        "LOCAL"      : batch command is nohup.
 
         In all other cases, a CmsBatchException is raised
         '''
@@ -250,8 +292,10 @@ class BatchManager:
         hostName = os.environ['HOSTNAME']
 
         onLxplus = hostName.startswith('lxplus')
+        onLPC    = hostName.startswith('cmslpc')
         onPSI    = hostName.startswith('t3ui')
         onNAF =  hostName.startswith('naf')
+        onIC =  ('ic.ac.uk' in hostName)
 
         batchCmd = batch.split()[0]
 
@@ -260,26 +304,51 @@ class BatchManager:
                 err = 'Cannot run %s on %s' % (batchCmd, hostName)
                 raise ValueError( err )
             else:
-                print 'running on LSF : %s from %s' % (batchCmd, hostName)
-                return 'LXPLUS'
+                print('running on LSF : %s from %s' % (batchCmd, hostName))
+                return 'LXPLUS-LSF'
+        elif batchCmd == "run_condor.sh":
+            if not (onLxplus):
+                err = 'Cannot run %s on %s' % (batchCmd, hostName)
+                raise ValueError( err )
+            else:
+                print('running on CONDOR (using condor file transfer): %s from %s' % (batchCmd, hostName))
+                return 'LXPLUS-CONDOR-TRANSFER'
+
+        elif batchCmd == "run_condor_lpc.sh":
+            if not (onLPC):
+                err = 'Cannot run %s on %s' % (batchCmd, hostName)
+                raise ValueError( err )
+            else:
+                print('running on CONDOR (using condor file transfer): %s from %s' % (batchCmd, hostName))
+                return 'LXPLUS-CONDOR-TRANSFER'
+
+
+        elif batchCmd == "run_condor_simple.sh":
+            if not onLxplus:
+                err = 'Cannot run %s on %s' % (batchCmd, hostName)
+                raise ValueError( err )
+            else:
+                print('running on CONDOR (simple shared-filesystem version) : %s from %s' % (batchCmd, hostName))
+                return 'LXPLUS-CONDOR-SIMPLE'
 
         elif batchCmd == "qsub":
             if onPSI:
-                print 'running on SGE : %s from %s' % (batchCmd, hostName)
+                print('running on SGE : %s from %s' % (batchCmd, hostName))
                 return 'PSI'
             elif onNAF:
-                print 'running on NAF : %s from %s' % (batchCmd, hostName)
+                print('running on NAF : %s from %s' % (batchCmd, hostName))
                 return 'NAF'
             elif onIC:
-                print 'running on IC : %s from %s' % (batchCmd, hostName)
+                print('running on IC : %s from %s' % (batchCmd, hostName))
                 return 'IC'
             else:
                 err = 'Cannot run %s on %s' % (batchCmd, hostName)
                 raise ValueError( err )
 
         elif batchCmd == 'nohup' or batchCmd == './batchScript.sh':
-            print 'running locally : %s on %s' % (batchCmd, hostName)
+            print('running locally : %s on %s' % (batchCmd, hostName))
             return 'LOCAL'
+
         else:
             err = 'unknown batch command: X%sX' % batchCmd
             raise ValueError( err )
