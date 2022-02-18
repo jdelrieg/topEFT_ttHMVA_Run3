@@ -1,8 +1,10 @@
+from __future__ import print_function
+import six
 
 def printWeights( weights ):
-    for key, value in weights.iteritems():
-        print key
-        print value 
+    for key, value in six.iteritems(weights):
+        print(key)
+        print(value)
 
 class Weight( object ):
     '''make names uniform wrt Component.

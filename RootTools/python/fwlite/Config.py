@@ -1,6 +1,6 @@
 from CMGTools.RootTools.fwlite.Weight import Weight
 import glob
-
+import copy
 
 def printComps(comps, details=False):
     '''
@@ -44,6 +44,12 @@ class CFG(object):
         all = [ header ]
         all.extend(varlines)
         return '\n'.join( all )
+
+        def clone(self,**kwargs):
+            out = copy.copy(self)
+            for k,v in kwargs.iteritems():
+                setattr(out,k,v)
+            return out
 
 class Analyzer( CFG ):
     '''Base analyzer configuration, see constructor'''
@@ -111,8 +117,8 @@ class Component( CFG ):
 
 class DataComponent( Component ):
 
-    def __init__(self, name, files, intLumi, triggers, json=None):
-        super(DataComponent, self).__init__(name, files, triggers)
+    def __init__(self, name, files, intLumi=None, triggers=[], json=None):
+        super(DataComponent, self).__init__(name, files, triggers=triggers)
         self.isData = True 
         self.intLumi = intLumi
         self.json = json
@@ -142,10 +148,10 @@ class EmbedComponent( Component ):
 
         
 class MCComponent( Component ):
-    def __init__(self, name, files, triggers, xSection,
-                 nGenEvents, 
+    def __init__(self, name, files, triggers=[], xSection=1,
+                 nGenEvents=None, 
                  # vertexWeight,tauEffWeight, muEffWeight,
-                 effCorrFactor, **kwargs ):
+                 effCorrFactor=None, **kwargs ):
         super( MCComponent, self).__init__( name = name,
                                             files = files,
                                             triggers = triggers, **kwargs )
