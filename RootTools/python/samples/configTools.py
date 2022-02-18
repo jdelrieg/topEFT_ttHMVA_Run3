@@ -1,7 +1,7 @@
 from CMGTools.Production.globalOptions import getCMGOption
 
 # from python/framework/heppy_loop.py in PhysicsTools/HeppyCore, to rewrite better
-def splitComponents(comps):
+def split(comps):
     splitComps = []
     for comp in comps:
         if hasattr( comp, 'fineSplitFactor') and comp.fineSplitFactor>1:
@@ -133,16 +133,6 @@ def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
                      sequence = sequence,
                      services = services,  
                      events_class = event_class)
-
-def insertEventSelector(sequence):
-    if not sequence: raise RuntimeError, "to apply an event selection, I need a sequence"
-    from CMGTools.Heppy.analyzers.core.EventSelector import eventSelector
-    eventSelector = cfg.Analyzer(EventSelector, 
-            name="EventSelector",
-            toSelect = [ eval("("+x.replace(":",",")+")") for x in getCMGOption('events').split(",") ],
-    )
-    sequence.insert(0, eventSelector)
-    print "Will select events", eventSelector.toSelect
 
 def doTest1(comp, url=None, sequence=None, cache=False):
     from CMGTools.Production.globalOptions import setCMGOption

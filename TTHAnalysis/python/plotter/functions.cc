@@ -9,7 +9,7 @@
 #include "TGraphAsymmErrors.h"
 #include "TH1F.h"
 #include "TFile.h"
-#include "CMGTools/Heppy/interface/Davismt2.h"
+#include "PhysicsTools/Heppy/interface/Davismt2.h"
 #include "TSystem.h"
 
 TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");

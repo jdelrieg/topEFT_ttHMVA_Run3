@@ -5,7 +5,7 @@ from copy import copy
 from math import ceil
 import ROOT
 
-def _loadHeppyGlobalOptions(options):
+def _loadCMGGlobalOptions(options):
     from CMGTools.Production.globalOptions import _cmgToolsProdGlobalOptions
     for opt in options.extraOptions:
         if "=" in opt:
@@ -22,7 +22,7 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if not comp.files: return
 
     if isinstance(pp, str) or isinstance(pp, unicode):
-        _loadHeppyGlobalOptions(options)
+        _loadCMGGlobalOptions(options)
         cfo = imp.load_source(os.path.basename(pp).rstrip('.py'), pp, open(pp,'r'))
         pp = cfo.POSTPROCESSOR
 
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     outdir = args[0] 
 
     # this must be done before calling the source
-    _loadHeppyGlobalOptions(options)
+    _loadCMGGlobalOptions(options)
     ROOT.gROOT.LoadMacro(os.environ['CMSSW_BASE'] + '/src/CMGTools/Production/src/hasfiredtriggers.cc+')
 
     cfg = args[1]
