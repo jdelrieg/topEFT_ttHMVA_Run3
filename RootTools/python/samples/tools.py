@@ -164,7 +164,7 @@ python samplefile.py checkdecl:
                     print "WARNING: no fracNegWeights for component %s dataset %s" % (d.name, dataset)
    if "checkdecl" in args:
         if localobjs == None: raise RuntimeError("you have to runMain(samples,localobjs=locals())")
-        import PhysicsTools.HeppyCore.framework.config as cfg
+        import CMGTools.RootTools.fwlite.Config as cfg
         ok = 0
         for name,obj in localobjs.iteritems():
             if name == "comp": continue # local variable used in loops

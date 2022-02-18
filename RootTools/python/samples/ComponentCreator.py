@@ -1,4 +1,4 @@
-import PhysicsTools.HeppyCore.framework.config as cfg
+import CMGTools.RootTools.fwlite.Config as cfg
 from CMGTools.Production import eostools
 from CMGTools.Production.dataset import createDataset, createMyDataset
 import re

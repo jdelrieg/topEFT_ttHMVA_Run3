@@ -96,7 +96,7 @@ def prescaleComponents(selectedComponents, factor):
 
 
 def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
-    import PhysicsTools.HeppyCore.framework.config as cfg
+    import CMGTools.RootTools.fwlite.Config as cfg
     from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
     from CMGTools.TTHAnalysis.tools.EOSEventsWithDownload import EOSEventsWithDownload
     event_class = EOSEventsWithDownload

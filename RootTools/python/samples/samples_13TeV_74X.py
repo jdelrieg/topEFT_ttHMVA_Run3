@@ -1,4 +1,4 @@
-import PhysicsTools.HeppyCore.framework.config as cfg
+import CMGTools.RootTools.fwlite.Config as cfg
 import os
 
 #####COMPONENT CREATOR
