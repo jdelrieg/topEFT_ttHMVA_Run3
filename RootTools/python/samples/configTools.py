@@ -1,6 +1,9 @@
 from CMGTools.Production.globalOptions import getCMGOption
 
 # from python/framework/heppy_loop.py in PhysicsTools/HeppyCore, to rewrite better
+import copy
+def chunks(l, n):
+    return [l[i:i+n] for i in range(0, len(l), n)]
 def split(comps):
     splitComps = []
     for comp in comps:
