@@ -1,34 +1,44 @@
 from CMGTools.Production.globalOptions import getCMGOption
-
-# from python/framework/heppy_loop.py in PhysicsTools/HeppyCore, to rewrite better
 import copy
-def chunks(l, n):
-    return [l[i:i+n] for i in range(0, len(l), n)]
-def split(comps):
-    splitComps = []
-    for comp in comps:
-        if hasattr( comp, 'fineSplitFactor') and comp.fineSplitFactor>1:
-            subchunks = range(comp.fineSplitFactor)
-            for ichunk, chunk in enumerate([(f,i) for f in comp.files for i in subchunks]):
-                newComp = copy.deepcopy(comp)
-                newComp.files = [chunk[0]]
-                newComp.fineSplit = ( chunk[1], comp.fineSplitFactor )
-                newComp.name = '{name}_Chunk{index}'.format(name=newComp.name,
-                                                       index=ichunk)
-                splitComps.append( newComp )
-        elif hasattr( comp, 'splitFactor') and comp.splitFactor>1:
-            chunkSize = len(comp.files) / comp.splitFactor
-            if len(comp.files) % comp.splitFactor:
-                chunkSize += 1
-            for ichunk, chunk in enumerate( chunks( comp.files, chunkSize)):
-                newComp = copy.deepcopy(comp)
-                newComp.files = chunk
-                newComp.name = '{name}_Chunk{index}'.format(name=newComp.name,
-                                                       index=ichunk)
-                splitComps.append( newComp )
+
+
+def fineSplitComponent(c):
+    splitted = []
+    for f in c.files:
+        for i in range(c.fineSplitFactor):
+            idx = len(splitted)
+            nc = copy.deepcopy(c)
+            nc.name = c.name + '_Chunk%d'%idx
+            nc.files = [f]
+            nc.fineSplit = (idx,c.fineSplitFactor)
+            splitted.append(nc)
+    return splitted
+
+def coarseSplitComponent(c):
+    splitted = []
+    n_files = len(c.files)
+    chunk_size = n_files / c.splitFactor
+    if n_files % c.splitFactor:
+        chunk_size += 1
+    for i in range(0, n_files, chunk_size):
+        nc = copy.deepcopy(c)
+        nc.name = c.name + '_Chunk%d'%len(splitted)
+        nc.files = c.files[i:i+chunk_size]
+        splitted.append(nc)
+    return splitted
+
+def split(components):
+    splitted = []
+    for c in components:
+        doFineSplit = hasattr( c, 'fineSplitFactor') and c.fineSplitFactor>1
+        doSplit = hasattr( c, 'splitFactor') and c.splitFactor>1
+        if doFineSplit:
+            splitted.extend(fineSplitComponent(c))
+        elif doSplit:
+            splitted.extend(coarseSplitComponent(c))
         else:
-            splitComps.append( comp )
-    return splitComps
+            splitted.append(c)
+    return splitted
 
 def redefineRunRange(selectedComponents,run_range):
     from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
