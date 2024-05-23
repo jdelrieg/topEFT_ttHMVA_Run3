@@ -12,7 +12,7 @@ args = sys.argv[1:]
 
 
 def printHist(hist):
-    print hist.GetNbinsX(), hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax()
+    print(hist.GetNbinsX(), hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax())
 
 class Efficiency(object):
     def __init__(self, region, file, legend='', rebin=None):
@@ -39,7 +39,7 @@ class Efficiency(object):
         self.hists_denom = {}
         load(self.dir_denom, self.hists_denom, rebin)
         self.hists_eff = {}
-        for histName, num in self.hists_num.iteritems():
+        for histName, num in self.hists_num.items():
             denom = self.hists_denom[histName]
             # eff = TGraphAsymmErrors( num.GetNbinsX() )
             eff = num.Clone( '_'.join([histName,'eff']) )
@@ -52,9 +52,9 @@ class Efficiency(object):
         self.ytitle = None
 
     def formatHistos(self, style):
-        map( style.formatHisto, self.hists_eff.values() )
-        map( style.formatHisto, self.hists_num.values() )
-        map( style.formatHisto, self.hists_denom.values() )
+        list(map( style.formatHisto, list(self.hists_eff.values()) ))
+        list(map( style.formatHisto, list(self.hists_num.values()) ))
+        list(map( style.formatHisto, list(self.hists_denom.values()) ))
 
     def draw(self, name, ymin=0, ymax=1.1, same=False):
         if not same:
@@ -97,7 +97,7 @@ parser.add_option("-M", "--max",
 
 options, args = parser.parse_args()
 if len(args)<3:
-    print 'provide at least 3 arguments: <region> <var> <input files>'
+    print('provide at least 3 arguments: <region> <var> <input files>')
     sys.exit(1)
 
 options.ymin = float(options.ymin)
@@ -109,10 +109,10 @@ files = args[2:]
 
 
 def setMVAStyle():
-    mitStyles = map(copy.deepcopy, [sBlack]*3)
-    danStyles = map(copy.deepcopy, [sBlue]*3)
+    mitStyles = list(map(copy.deepcopy, [sBlack]*3))
+    danStyles = list(map(copy.deepcopy, [sBlue]*3))
     def setMarkStyle(styles, start):
-        for style, mark in zip(styles, range(start,start+3)):
+        for style, mark in zip(styles, list(range(start,start+3))):
             style.markerStyle = mark
     setMarkStyle(mitStyles, 20)
     setMarkStyle(danStyles, 24)
@@ -135,7 +135,7 @@ styles[1].markerStyle = 25
 keeper = []
 
 def setup( fileName, index ):
-    print 'setup', fileName
+    print('setup', fileName)
     ffileName = '/'.join( [fileName, 'EfficiencyAnalyzer.root'] )
     file = TFile( ffileName)
     legend = ''
@@ -143,7 +143,7 @@ def setup( fileName, index ):
     m = pattern.match( fileName )
     if m is not None:
         legend = m.group(1)
-        print legend
+        print(legend)
     eff = Efficiency( region, file, legend, options.rebin)
     eff.formatHistos( styles[index] )
     eff.ytitle='Efficiency'

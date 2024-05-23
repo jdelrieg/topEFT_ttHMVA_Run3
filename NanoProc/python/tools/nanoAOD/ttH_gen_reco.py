@@ -40,7 +40,7 @@ class TTH_gen_reco(Module):
         all_leps = [l for l in Collection(event,"LepGood")]
         nFO = getattr(event,"nLepFO_Recl")
         chosen = getattr(event,"iLepFO_Recl")
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
         jets = [j for j in Collection(event,"JetSel_Recl")]
         gen  = [g for g in Collection(event,"GenPart")]
 

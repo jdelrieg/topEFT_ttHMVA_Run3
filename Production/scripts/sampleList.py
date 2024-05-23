@@ -87,7 +87,7 @@ class Table(object):
     
 
 def printDataset(info):
-    print '|', ' | '.join(info), '|  |  |'
+    print('|', ' | '.join(info), '|  |  |')
     
 if __name__ == '__main__':
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args)!=1:
-        print parser.usage()
+        print(parser.usage())
         sys.exit(1)
 
     txtlist = open( args[0] )
@@ -145,26 +145,26 @@ if __name__ == '__main__':
     set_datasetsInInputTable = set(datasetsInInputTable)
     set_datasetsInTxt = set(datasetsInTxt)
 
-    print '-'*70
-    print extable
-    print '-'*70
-    print newtable
-    print '#'*70
+    print('-'*70)
+    print(extable)
+    print('-'*70)
+    print(newtable)
+    print('#'*70)
     newtable.absorb( extable )
-    print newtable
-    print '#'*70
+    print(newtable)
+    print('#'*70)
     paths = []
     for line in newtable.lines:
         paths.append(line['path'])
     for p in sorted(paths):
-        print p
-    print
-    print
-    print 'number of lines in text file    = ', len(datasetsInTxt)
-    print 'number of lines in input table  = ', len(extable.lines) 
-    print 'number of lines in output table = ', len(newtable.lines) 
-    print 'datasets added in text file since last time:'
+        print(p)
+    print()
+    print()
+    print('number of lines in text file    = ', len(datasetsInTxt))
+    print('number of lines in input table  = ', len(extable.lines)) 
+    print('number of lines in output table = ', len(newtable.lines)) 
+    print('datasets added in text file since last time:')
     pprint.pprint( set_datasetsInTxt - set_datasetsInInputTable )
-    print 'datasets removed from text file since last time or added to the twiki(!):'
+    print('datasets removed from text file since last time or added to the twiki(!):')
     pprint.pprint( set_datasetsInInputTable - set_datasetsInTxt)
     

@@ -25,7 +25,7 @@ plots = "python mcPlots.py -f lepton-efficiency/mca_ewkino_nopresel.txt lepton-e
 debug = ('debug' in do)
 
 def cmd(cmd):
-	print cmd
+	print(cmd)
 	if not debug:
 		os.system(cmd)
 

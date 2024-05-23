@@ -19,7 +19,7 @@ class RootFile(object):
         out = None
         try:
             out = rt.TFile.Open(self.fileName,'RECREATE')
-            for name, plots in self.plots.iteritems():
+            for name, plots in self.plots.items():
                 out.cd()
                 
                 dir = os.path.dirname(name)
@@ -40,7 +40,7 @@ class RootFile(object):
                     plots[0].Write(objname)
                 else:
                     index = 0
-                    for i in xrange(len(plots)):
+                    for i in range(len(plots)):
                         p = plots[i]
                         p.Write('%s_%i' % (objname,i))
             #needed so that the object can be deleted 

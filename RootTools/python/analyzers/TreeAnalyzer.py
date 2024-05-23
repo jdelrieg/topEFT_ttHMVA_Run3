@@ -18,7 +18,7 @@ class TreeAnalyzer( Analyzer ):
         self.declareVariables()
         
     def declareVariables(self):
-        print 'TreeAnalyzer.declareVariables : overload this function.'
+        print('TreeAnalyzer.declareVariables : overload this function.')
         # self.tree.addVar('float', 'vismass')
         # self.tree.book()
         pass

@@ -99,7 +99,7 @@ class LeptonJetReCleaner:
                 ret['i'+lab].append(refcollection.index(lep))
         ret['i'+lab] = self.sortIndexListByFunction(ret['i'+lab],refcollection,sortby)
         ret['nLep'+labext] = len(ret['i'+lab])
-        ret['LepGood_is'+labext] = [(1 if i in ret['i'+lab] else 0) for i in xrange(len(refcollection))]
+        ret['LepGood_is'+labext] = [(1 if i in ret['i'+lab] else 0) for i in range(len(refcollection))]
         lepspass = [ refcollection[il] for il in ret['i'+lab]  ]
         if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
         for lep in lepspass:
@@ -108,7 +108,7 @@ class LeptonJetReCleaner:
                 ret['i'+lab+'V'].append(refcollection.index(lep))
         ret['i'+lab+'V'] = self.sortIndexListByFunction(ret['i'+lab+'V'],refcollection,sortby)
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
-        ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
+        ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in range(len(refcollection))]
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
         ret['i'+lab] = ret['i'+lab] + [0]*(pad_zeros_up_to-len(ret['i'+lab]))
         ret['i'+lab+'V'] = ret['i'+lab+'V'] + [0]*(pad_zeros_up_to-len(ret['i'+lab+'V']))
@@ -234,7 +234,7 @@ class LeptonJetReCleaner:
         self.ev = event
         fullret = {}
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
-        if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
+        if not self.coneptdef: raise RuntimeError('Choose the definition to be used for cone pt')
         for lep in leps: lep.conept = self.coneptdef(lep)
         tausc = [t for t in Collection(event,"TauGood","nTauGood")]
         tausd = [t for t in Collection(event,"TauOther","nTauOther")] 
@@ -245,9 +245,9 @@ class LeptonJetReCleaner:
             if not hasattr(event,"nJet"+self.systsJEC[var]):
                 _var = 0
                 if not self.debugprinted:
-                    print '-'*15
-                    print 'WARNING: jet energy scale variation %s not found, will set it to central value'%self.systsJEC[var]
-                    print '-'*15
+                    print('-'*15)
+                    print('WARNING: jet energy scale variation %s not found, will set it to central value'%self.systsJEC[var])
+                    print('-'*15)
             jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
@@ -280,13 +280,13 @@ class LeptonJetReCleaner:
         ### attach labels and return
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
-        for k,v in ret.iteritems(): 
+        for k,v in ret.items(): 
             fullret[k+self.label] = v
         fullret.update(retwlabel)
         fullret.update(rettlabel)
-        for k,v in tauret.iteritems(): 
+        for k,v in tauret.items(): 
             fullret["TauSel%s_%s" % (self.label,k)] = v
-        for k,v in jetret.iteritems(): 
+        for k,v in jetret.items(): 
             fullret["JetSel%s_%s" % (self.label,k)] = v
         return fullret
 
@@ -371,12 +371,12 @@ if __name__ == '__main__':
                 lambda lep : lep.miniRelIso < 0.05 and lep.sip3d < 4 and _susy2lss_lepId_CB(lep),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4 and not (lep.jetDR > 0.5*10/min(50,max(lep.pt,200)) and lep.pt*(1/lep.jetPtRatio-1) > 25)))
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf1(ev)
-            print self.sf2(ev)
-            print self.sf3(ev)
-            print self.sf4(ev)
-            print self.sf5(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf1(ev))
+            print(self.sf2(ev))
+            print(self.sf3(ev))
+            print(self.sf4(ev))
+            print(self.sf5(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

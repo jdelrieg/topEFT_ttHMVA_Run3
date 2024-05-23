@@ -5,12 +5,12 @@ from CMGTools.Production.scanToVEventRange import *
 if __name__ == '__main__':
     # eventRanges = scanToVEventRange( testString )
 
-    print 'paste your TTree::Scan text below. It should like:'
-    print testString
+    print('paste your TTree::Scan text below. It should like:')
+    print(testString)
 
     lines = []
     while input!='':
-        input = raw_input()
+        input = input()
         lines.append( input )
 
     lines.pop() # removing last empty line
@@ -21,4 +21,4 @@ if __name__ == '__main__':
 
     eventRanges = scanToVEventRange( lines )
     
-    print eventRanges
+    print(eventRanges)

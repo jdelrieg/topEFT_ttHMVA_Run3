@@ -129,10 +129,10 @@ class SimpleJetPlots (Analyzer) :
         else:
             event.genLeptons = [ lep for lep in self.mchandles['genParticles'].product() if lep.status() == 3 and (abs(lep.pdgId()) == 11 or abs(lep.pdgId()) == 13 or abs(lep.pdgId()) == 15) ]  
         
-        event.NoCHSgenJets = map (GenJet, self.mchandles['NoCHSgenJets'].product ())
+        event.NoCHSgenJets = list(map (GenJet, self.mchandles['NoCHSgenJets'].product ()))
         event.myNoCHSGenJets = [GenJet (jet) for jet in event.NoCHSgenJets if (jet.pt ()>self.cfg_ana.genPtCut)]
         event.selNoCHSGenJets = cleanObjectCollection (event.myNoCHSGenJets, event.genLeptons, 0.2)
-        event.YeCHSgenJets = map (GenJet, self.mchandles['YeCHSgenJets'].product ())
+        event.YeCHSgenJets = list(map (GenJet, self.mchandles['YeCHSgenJets'].product ()))
         event.myYeCHSGenJets = [GenJet (jet) for jet in event.YeCHSgenJets if (jet.pt ()>self.cfg_ana.genPtCut)]
         event.selYeCHSGenJets = cleanObjectCollection (event.myYeCHSGenJets, event.genLeptons, 0.2)
         
@@ -170,7 +170,7 @@ class SimpleJetPlots (Analyzer) :
         
         #PG matching between CHS and non CHS
         event.YeNoCHSmatch = matchObjectCollection2 (event.noNegCleanYeCHSJets, event.noNegCleanNoCHSJets, 0.1)
-        for yejet, nojet in event.YeNoCHSmatch.iteritems():
+        for yejet, nojet in event.YeNoCHSmatch.items():
             if nojet == None: 
                 continue
             self.YeNoCHSRatio_eta.Fill (yejet.eta (), yejet.pt () * yejet.jecFactor(0) / (nojet.pt () * nojet.jecFactor(0)))

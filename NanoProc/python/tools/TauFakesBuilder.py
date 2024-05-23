@@ -74,8 +74,8 @@ class TauFakesBuilder:
 
     def matchJetWithTau(self):
 
-        if self.debug==1: print "Full jets collection has length: ", len(self.uncleanJets)
-        if self.debug==1: print "Full taus collection has length: ", len(self.tausFO)
+        if self.debug==1: print("Full jets collection has length: ", len(self.uncleanJets))
+        if self.debug==1: print("Full taus collection has length: ", len(self.tausFO))
         
         for ijet in range(len(self.uncleanJets)):
             jet = self.uncleanJets[ijet]
@@ -87,19 +87,19 @@ class TauFakesBuilder:
             if jetIsMatched:
                 self.matchedJets.append(ijet)
             else:
-                if self.debug==1: print "Appending jet with index ", ijet, " to the unmatchedJets array"
+                if self.debug==1: print("Appending jet with index ", ijet, " to the unmatchedJets array")
                 self.unmatchedJets.append(ijet)
 
-        if self.debug==1: print "Matched jets: ", len(self.matchedJets)
-        if self.debug==1: print "Unmatched jets: ", len(self.unmatchedJets)
+        if self.debug==1: print("Matched jets: ", len(self.matchedJets))
+        if self.debug==1: print("Unmatched jets: ", len(self.unmatchedJets))
 
         if self.debug==4:
             if len(self.tausFO) != len(self.matchedJets):
-                print "---------------------------------------------------------"
-                print "Full jets collection has length: ", len(self.uncleanJets)
-                print "Full taus collection has length: ", len(self.tausFO)
-                print "Matched jets: ", len(self.matchedJets)
-                print "Unmatched jets: ", len(self.unmatchedJets)
+                print("---------------------------------------------------------")
+                print("Full jets collection has length: ", len(self.uncleanJets))
+                print("Full taus collection has length: ", len(self.tausFO))
+                print("Matched jets: ", len(self.matchedJets))
+                print("Unmatched jets: ", len(self.unmatchedJets))
 
 
         return None
@@ -121,10 +121,10 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def isIn(self, object, collection):
         delta = math.pow(10,-6)
-        if self.debug==2: print "Collection size", len(collection)
+        if self.debug==2: print("Collection size", len(collection))
         for i in range(len(collection)):
             it = collection[i]
-            if self.debug: print it
+            if self.debug: print(it)
             if abs(it.pt-object.pt) < delta and abs(it.eta-object.eta)<delta and abs(it.phi-object.phi)<delta and abs(it.mass-object.mass)<delta: return i
         return -1
 
@@ -133,7 +133,7 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def listBranches(self):
 
-        if self.debug==1: print "Creating branches"
+        if self.debug==1: print("Creating branches")
         biglist = [
 
             ("nJetMatchedToTau_y", "I"),
@@ -142,7 +142,7 @@ class TauFakesBuilder:
             ("JetMatchedToTau_n" , "F",  20, "nJetMatchedToTau_n")
 
             ]
-        if self.debug==1: print " branch created"
+        if self.debug==1: print(" branch created")
         return biglist
 
 
@@ -169,22 +169,22 @@ class TauFakesBuilder:
 
         ### HERE MUST SAVE JETS
 
-        if self.debug==2: print "len unmatchedJets: ", len(self.unmatchedJets)
+        if self.debug==2: print("len unmatchedJets: ", len(self.unmatchedJets))
         
         self.ret["nJetMatchedToTau_n"   ] = len(self.unmatchedJets)
         for iJet, iInd in enumerate(self.unmatchedJets):
-            if self.debug==3: print "IJET: ", iJet, " IIND: ", iInd
-            if self.debug==3: print "umatchedJets[", iJet, "] = ", self.unmatchedJets[iJet]
-            if self.debug==3: print "control"
+            if self.debug==3: print("IJET: ", iJet, " IIND: ", iInd)
+            if self.debug==3: print("umatchedJets[", iJet, "] = ", self.unmatchedJets[iJet])
+            if self.debug==3: print("control")
             self.ret[ "JetMatchedToTau_n" ][iJet] = self.unmatchedJets[iJet]
 
-        if self.debug==2: print "len matchedJets: ", len(self.matchedJets)
+        if self.debug==2: print("len matchedJets: ", len(self.matchedJets))
         
         self.ret["nJetMatchedToTau_y"   ] = len(self.matchedJets)
         for iJet, iInd in enumerate(self.matchedJets):
-            if self.debug==3: print "IJET: ", iJet, " IIND: ", iInd
-            if self.debug==3: print "matchedJets[", iJet, "] = ", self.matchedJets[iJet]
-            if self.debug==3: print "control"
+            if self.debug==3: print("IJET: ", iJet, " IIND: ", iInd)
+            if self.debug==3: print("matchedJets[", iJet, "] = ", self.matchedJets[iJet])
+            if self.debug==3: print("control")
             self.ret[ "JetMatchedToTau_y" ][iJet] = self.matchedJets[iJet]
 
 
@@ -235,12 +235,12 @@ if __name__ == '__main__':
                 lambda lep : lep.miniRelIso < 0.05 and lep.sip3d < 4 and _susy2lss_lepId_CB(lep),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4 and not (lep.jetDR > 0.5*10/min(50,max(lep.pt,200)) and lep.pt*(1/lep.jetPtRatio-1) > 25)))
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf1(ev)
-            print self.sf2(ev)
-            print self.sf3(ev)
-            print self.sf4(ev)
-            print self.sf5(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf1(ev))
+            print(self.sf2(ev))
+            print(self.sf3(ev))
+            print(self.sf4(ev))
+            print(self.sf5(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

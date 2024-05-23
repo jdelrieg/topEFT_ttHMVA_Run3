@@ -24,13 +24,13 @@ class ttHLepQCDFakeRateAnalyzer( Module ):
         vnames = []
         for v in self.jetFloats[:]:
             if not inputTree.GetBranch("Jet_"+v): 
-                print "Skip missing Jet_"+v
+                print("Skip missing Jet_"+v)
                 continue
             self.out.branch("LepGood_awayJet_"+v, "F", lenVar="nLepGood")
             vnames.append(v)
         for v in self.jetInts[:]:
             if not inputTree.GetBranch("Jet_"+v): 
-                print "Skip missing Jet_"+v
+                print("Skip missing Jet_"+v)
                 continue
             self.out.branch("LepGood_awayJet_"+v, "I", lenVar="nLepGood")
             vnames.append(v)

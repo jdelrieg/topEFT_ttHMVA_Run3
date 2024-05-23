@@ -1,8 +1,4 @@
-# urllib2 work-alike interface
-# ...from urllib2...
-from urllib2 import \
-     URLError, \
-     HTTPError
+from urllib.error import URLError, HTTPError
 # ...and from mechanize
 from _auth import \
      HTTPProxyPasswordMgr, \
@@ -39,7 +35,7 @@ from _http import \
      HTTPRefreshProcessor, \
      HTTPRobotRulesProcessor, \
      RobotExclusionError
-import httplib
+import http.client
 if hasattr(httplib, 'HTTPS'):
     from _urllib2_fork import HTTPSHandler
 del httplib

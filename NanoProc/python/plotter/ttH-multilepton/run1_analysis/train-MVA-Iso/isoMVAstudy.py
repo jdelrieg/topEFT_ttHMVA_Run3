@@ -12,7 +12,7 @@ class trainMVAIso:
         self.knownVars={}
         self.cut = "(%s)"%cut
         if not noAuto:
-            if not tree: raise RuntimeError, "You must pass a tree to use the automatic training behaviour"
+            if not tree: raise RuntimeError("You must pass a tree to use the automatic training behaviour")
             self.setTree(tree)
             self.autoAddVariables()
             self.train()
@@ -57,7 +57,7 @@ class trainMVAIso:
     def train(self,isSigCut="LepGood_mcMatchId!=0", isBkgCut="LepGood_mcMatchId==0", trainOpt="GoodvsBad"):
         if trainOpt=="GoodvsBad":
             self.factory.PrepareTrainingAndTestTree(ROOT.TCut(self.joincuts(self.cut,isSigCut)),ROOT.TCut(self.joincuts(self.cut,isBkgCut)),'' if 'Boosted' not in self.nametags else 'nTrain_Signal=10000:nTrain_Background=50000:nTest_Signal=10000:nTest_Background=50000')
-        else: raise RuntimeError, 'Unknown training requested'
+        else: raise RuntimeError('Unknown training requested')
         BDTGopt = "!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:nEventsMin=100:NNodesMax=9:UseNvars=9:MaxDepth=8:CreateMVAPdfs";
         self.factory.BookMethod(ROOT.TMVA.Types.kBDT, "BDTG", BDTGopt)
         self.factory.TrainAllMethods();

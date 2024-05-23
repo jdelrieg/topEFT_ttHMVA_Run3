@@ -3,4 +3,4 @@
 import sys
 import CMGTools.Production.eostools as eostools
 
-print eostools.eosDirSize( sys.argv[1] )
+print(eostools.eosDirSize( sys.argv[1] ))

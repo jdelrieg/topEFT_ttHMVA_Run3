@@ -11,18 +11,18 @@ def replicaPdfBand(file, base, pdf, reference, eigenvectors, norm=False, relativ
     if not bool(href): return None
     bins = href.GetNbinsX()
     refnorm = href.Integral()
-    values = [ [0 for b in xrange(bins) ] for r in xrange(eigenvectors+1) ]
-    for e in xrange(eigenvectors+1):
+    values = [ [0 for b in range(bins) ] for r in range(eigenvectors+1) ]
+    for e in range(eigenvectors+1):
         hist = file.Get("%s_%s_%d" % (base,pdf,e))
         if norm: hist.Scale(refnorm/hist.Integral())
-        for b in xrange(bins):
+        for b in range(bins):
             val  = hist.GetBinContent(b+1)
             vref = href.GetBinContent(b+1) if relative else 1
             values[e][b] = val/vref if vref else 1
     ret = ROOT.TGraphAsymmErrors(bins)
-    for b in xrange(bins):
-        avg = sum([values[i][b] for i in xrange(1,eigenvectors+1)])/eigenvectors
-        rms = sqrt(sum([(values[i][b]-avg)**2  for i in xrange(1,eigenvectors+1)])/eigenvectors)
+    for b in range(bins):
+        avg = sum([values[i][b] for i in range(1,eigenvectors+1)])/eigenvectors
+        rms = sqrt(sum([(values[i][b]-avg)**2  for i in range(1,eigenvectors+1)])/eigenvectors)
         ret.SetPoint(b, href.GetBinCenter(b+1), avg)
         dx = 0.5*href.GetBinWidth(b+1)
         ret.SetPointError(b, dx, dx, rms, rms)
@@ -36,19 +36,19 @@ def eigenPdfBand(file, base, pdf, reference, eigenvectors, norm=False, relative=
     if not bool(href): return None
     bins = href.GetNbinsX()
     refnorm = href.Integral()
-    values = [ [0,0,0]  for b in xrange(bins) ]
+    values = [ [0,0,0]  for b in range(bins) ]
     central = file.Get("%s_%s_%d" % (base,pdf,0))
     if norm: central.Scale(refnorm/central.Integral())
-    for b in xrange(bins):
+    for b in range(bins):
         val  = central.GetBinContent(b+1)
         vref = href.GetBinContent(b+1) if relative else 1
         values[b][0] = val/vref if vref else 1
-    for e in xrange(eigenvectors/2):
+    for e in range(eigenvectors/2):
         h1 = file.Get("%s_%s_%d" % (base,pdf,2*e+1))
         h2 = file.Get("%s_%s_%d" % (base,pdf,2*e+2))
         if norm: h1.Scale(refnorm/h1.Integral())
         if norm: h2.Scale(refnorm/h2.Integral())
-        for b in xrange(bins):
+        for b in range(bins):
             vref = href.GetBinContent(b+1) if relative else 1
             if vref == 0: continue
             d1 = (h1.GetBinContent(b+1) - central.GetBinContent(b+1))/vref
@@ -58,7 +58,7 @@ def eigenPdfBand(file, base, pdf, reference, eigenvectors, norm=False, relative=
             values[b][1] += dlo**2
             values[b][2] += dhi**2
     ret = ROOT.TGraphAsymmErrors(bins)
-    for b in xrange(bins):
+    for b in range(bins):
         ret.SetPoint(b, href.GetBinCenter(b+1), values[b][0])
         dx = 0.5*href.GetBinWidth(b+1)
         ret.SetPointError(b, dx, dx, sqrt(values[b][1]), sqrt(values[b][2]))
@@ -72,8 +72,8 @@ def pdf4LHCEnv(*bands):
     n = ret.GetN()
     for b in bands:
         if b.GetN() != n: 
-            raise RuntimeError, "Band %s has %d entries, unlike reference who has %d" % (b.GetName(), b.GetN(), bands[0].GetName(), n)
-    for i in xrange(n):
+            raise RuntimeError("Band %s has %d entries, unlike reference who has %d" % (b.GetName(), b.GetN(), bands[0].GetName(), n))
+    for i in range(n):
         hi = max([b.GetY()[i]+b.GetErrorYhigh(i) for b in bands])
         lo = min([b.GetY()[i]+b.GetErrorYhigh(i) for b in bands])
         mid = 0.5*(hi+lo) if midpoint else ret.GetY()[i]
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         bandN.Sort()
         xmin = bandN.GetX()[0]-bandN.GetErrorXlow(0)
         xmax = bandN.GetX()[bandN.GetN()-1]+bandN.GetErrorXhigh(bandN.GetN()-1)
-        ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in xrange(bandN.GetN())])
+        ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in range(bandN.GetN())])
         if var == "nJet25": xmin = 1.5 if "3l" in argv[1] else 3.5
         ## Prepare split screen
         c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()

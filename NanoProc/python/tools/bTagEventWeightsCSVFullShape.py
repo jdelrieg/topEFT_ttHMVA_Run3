@@ -62,9 +62,9 @@ class BTagEventWeightFriend(Module):
  #           jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
             jets = [j for j in Collection(event,"JetSel"+self.recllabel)]
             jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
+            if (_var==0): jets = [x for x in jets if x.pt>jetptcut]
+            elif (_var==1): jets = [x for x in jets if x.pt_jesTotalUp>jetptcut]
+            elif (_var==-1): jets = [x for x in jets if x.pt_jesTotalDown>jetptcut]
             if (_var==0): jetcorr = [1 for x in jets]
             elif (_var==1): jetcorr = [ x.pt_jesTotalUp/x.pt if x.pt != 0 else 1 for x in jets]
             elif (_var==-1): jetcorr = [ x.pt_jesTotalDown/x.pt  if x.pt != 0 else 1 for x in jets]

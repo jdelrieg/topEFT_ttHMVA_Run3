@@ -21,7 +21,7 @@ class isrReweight( Module ):
         with open(isrWfile) as f:
             self.weights = json.load(f)
         #changing json dict keys from str to tuples
-        oldks = self.weights.keys()
+        oldks = list(self.weights.keys())
         for k in oldks:
             self.weights[eval(k)] = self.weights.pop(k)
 
@@ -41,15 +41,15 @@ class isrReweight( Module ):
 
     def getNormWeight(self, m1, m2):
         k = (m1, m2)
-        if k in self.normWeights.keys():
+        if k in list(self.normWeights.keys()):
             return self.normWeights[k]
         else:
-            print "WARNING! Normalization constant for ISR reweighting not found for mass combination (%s, %s). Assigning -1. " %(str(m1),str(m2))
+            print("WARNING! Normalization constant for ISR reweighting not found for mass combination (%s, %s). Assigning -1. " %(str(m1),str(m2)))
             return -1
 
     def getISRw(self, pt):
         ret=-1.
-        for k in  self.weights.keys():
+        for k in  list(self.weights.keys()):
             if pt >= k[0] and pt < k[1]:
                 ret = self.weights[k]
                 break

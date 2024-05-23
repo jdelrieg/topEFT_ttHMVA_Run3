@@ -43,17 +43,17 @@ if __name__ == '__main__':
     file3 = TaggedFile( 'test.root' )
 
     file1.tag('myCut', 'pt>20')
-    print 'before closing'
+    print('before closing')
     file1.file.ls()
     
-    print file1.file.GetName()
-    print file2.file.GetName()
-    print file3.file.GetName()
+    print(file1.file.GetName())
+    print(file2.file.GetName())
+    print(file3.file.GetName())
 
     fileName = file1.file.GetName()
     file1.file.Close()
 
-    print 'after reopening'
+    print('after reopening')
     reOpened = TFile( fileName )
     reOpened.ls() 
 

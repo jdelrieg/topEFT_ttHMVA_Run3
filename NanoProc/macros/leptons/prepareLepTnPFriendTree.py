@@ -15,7 +15,7 @@ class LepTreeProducer(Module):
                           "mcMatchId"],
             tagVars = [ "pt", "eta", "relIso03", "mcMatchId" ] ):
         Module.__init__(self,name,booker)
-        print "Booked ",name
+        print("Booked ",name)
         self.evSel = evSel
         self.probeSel = probeSel
         self.tagSel = tagSel
@@ -77,7 +77,7 @@ def run(myArgs):
     el = EventLoop([ muTnP, elTnP ])
     el.loop([t], eventRange=range)
     booker.done()
-    print "Done",outfile
+    print("Done",outfile)
     return True
 
 if __name__ == '__main__':
@@ -91,14 +91,14 @@ if __name__ == '__main__':
     parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
     (options, args) = parser.parse_args()
     if len(args) != 2: 
-        print "python prepareLepTnPFriendTree.py inputTree.root outputTree.root "
+        print("python prepareLepTnPFriendTree.py inputTree.root outputTree.root ")
         exit()
     if options.chunk != -1:
         ic = options.chunk
         start = ic*options.chunkSize
         end   = min(options.maxEntries, (ic+1)*options.chunkSize)
-        print "Running %s (entries %d-%d)" % (args[1], start, end)
-        run((args[0], args[1], xrange(start,end)))
+        print("Running %s (entries %d-%d)" % (args[1], start, end))
+        run((args[0], args[1], range(start,end)))
         exit()
     else:
         f = ROOT.TFile.Open(args[0])
@@ -109,25 +109,25 @@ if __name__ == '__main__':
 
         tasks = []
         chunks = int(ceil(entries/float(options.chunkSize)))
-        for ic in xrange(chunks):
+        for ic in range(chunks):
             start = ic*options.chunkSize
             end   = min(entries, (ic+1)*options.chunkSize)
             oname = "%s.chunk%d.root" % (args[1].replace(".root",""), ic)
-            print "  Chunk %s (%d-%d)" % (oname,start,end)
+            print("  Chunk %s (%d-%d)" % (oname,start,end))
             if options.pretend: continue
             if options.queue:
-                print "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -M {max} -c {ic} {input} {output}".format(
+                print("bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -M {max} -c {ic} {input} {output}".format(
                     queue = options.queue, dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], 
-                    self=sys.argv[0], chunkSize=options.chunkSize, max=entries,  ic=ic, input=args[0], output=oname)
+                    self=sys.argv[0], chunkSize=options.chunkSize, max=entries,  ic=ic, input=args[0], output=oname))
                 continue
             else:
-                tasks.append((args[0],oname,xrange(start,end)))
+                tasks.append((args[0],oname,range(start,end)))
         if options.pretend: exit()
         if options.jobs > 0:
-            print "Running in parallel using %d jobs" % options.jobs
+            print("Running in parallel using %d jobs" % options.jobs)
             from multiprocessing import Pool
             Pool(options.jobs).map(run, tasks)
         else:
-            print "Running sequentially"
-            map(run, tasks)
+            print("Running sequentially")
+            list(map(run, tasks))
 

@@ -27,5 +27,5 @@ if __name__ == '__main__':
     dump = 'source = '
     dump += source.dumpPython()
     dump = dump.replace("'/store","\n'/store")
-    print 'import FWCore.ParameterSet.Config as cms'
-    print dump
+    print('import FWCore.ParameterSet.Config as cms')
+    print(dump)

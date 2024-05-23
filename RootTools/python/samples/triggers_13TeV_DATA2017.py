@@ -83,4 +83,4 @@ triggers_SOS_eleTnP = ["HLT_Ele35_WPTight_Gsf"]
 triggers_SOS_muTnP = ["HLT_IsoMu27"]
 
 ### Wrap all in a dictionary for easier importing of multiple years
-all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in locals().items() if x.startswith("triggers_") and isinstance(y,list))
+all_triggers = dict((x.replace("triggers_",""),y) for (x,y) in list(locals().items()) if x.startswith("triggers_") and isinstance(y,list))

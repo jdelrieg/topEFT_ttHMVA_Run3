@@ -16,7 +16,7 @@ def evalEff(tree,expr,cut,maxN):
 def get_Eff_ND(sigTree, bkgTree, expr, scut="1", bcut="1", maxN=1e9):
     sigEff = evalEff(sigTree,expr,scut,maxN)
     bkgEff = evalEff(bkgTree,expr,bcut,maxN)
-    print 'Signal efficiency:',sigEff,'Background efficiency:',bkgEff
+    print('Signal efficiency:',sigEff,'Background efficiency:',bkgEff)
     return (sigEff,bkgEff)
 
 def optimize_Eff_ND(sigTree, bkgTree, plotexpr, targetEff, params, scut="1", bcut="1", algo="RandomSampling", stopThr = 1e-3, maxN=1e9, maxSteps=1000):
@@ -43,7 +43,7 @@ def optimize_Eff_ND(sigTree, bkgTree, plotexpr, targetEff, params, scut="1", bcu
         points1d = ceil(pow(maxSteps,1.0/nparams))
         npoints = pow(points1d,nparams)
         xstep = [0]*nparams
-        xstepwidth = [(params[i][2]-params[i][1])/points1d for i in xrange(nparams)]
+        xstepwidth = [(params[i][2]-params[i][1])/points1d for i in range(nparams)]
         maxSteps = int(npoints)
     elif algo=="RandomSampling":
         pass
@@ -52,28 +52,28 @@ def optimize_Eff_ND(sigTree, bkgTree, plotexpr, targetEff, params, scut="1", bcu
         sigmas  = [ (0.5*(x2-x1)) for (n,x1,x2,op) in params ]
         maxN /= 5; stepthr = maxSteps/5
         sigmaexp = log(30)/maxSteps
-    else: raise RuntimeError, 'Unknown algo'
+    else: raise RuntimeError('Unknown algo')
     reports = maxSteps/20
     while step<maxSteps:
         step = step+1
         if algo == "Scan":
             count = step
-            for i in xrange(nparams):                
+            for i in range(nparams):                
                 xstep[i] = count%points1d
                 count/=points1d
-            vals = [params[i][1]+xstepwidth[i]*(xstep[i]+0.5) for i in xrange(nparams)]
+            vals = [params[i][1]+xstepwidth[i]*(xstep[i]+0.5) for i in range(nparams)]
         elif algo == "RandomSampling":
-            vals = [random.uniform(params[i][1],params[i][2]) for i in xrange(nparams)]
+            vals = [random.uniform(params[i][1],params[i][2]) for i in range(nparams)]
         elif algo == "SGRandom":
             if step <= stepthr:
-                vals = [random.uniform(params[i][1],params[i][2]) for i in xrange(nparams)]
+                vals = [random.uniform(params[i][1],params[i][2]) for i in range(nparams)]
                 if step == stepthr: maxN *= 5
             else:
                 sigscale = exp(-step*sigmaexp)
                 #if (step%reports==0): print 'Ongoing: sigscale',sigscale,'centers:',centers
-                vals = [crop(random.gauss(centers[i],sigmas[i]*sigscale),params[i][1],params[i][2]) for i in xrange(nparams)]
+                vals = [crop(random.gauss(centers[i],sigmas[i]*sigscale),params[i][1],params[i][2]) for i in range(nparams)]
         expr = plotexpr
-        for i in xrange(nparams):
+        for i in range(nparams):
             expr=expr.replace(params[i][0],str(vals[i]))
         sigEff = evalEff(sigTree,expr,scut,maxN)
         bkgEff = evalEff(bkgTree,expr,bcut,maxN)
@@ -83,16 +83,16 @@ def optimize_Eff_ND(sigTree, bkgTree, plotexpr, targetEff, params, scut="1", bcu
             if algo == "SGRandom":
                 centers = vals
             if (bkgEff/minBkgEff>1-stopThr) and "Random" in algo:
-                print 'Will stop here!'
+                print('Will stop here!')
                 step=maxSteps+1
             minBkgEff = bkgEff
             minBkgEff_vals = vals
             minBkgEff_sigEff = sigEff
-            print 'Found better WP!','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in xrange(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff,'Iter:',step
-    print 'Best WP:','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in xrange(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff
+            print('Found better WP!','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in range(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff,'Iter:',step)
+    print('Best WP:','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in range(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff)
     vals = minBkgEff_vals 
     expr = plotexpr
-    for i in xrange(nparams):
+    for i in range(nparams):
         expr=expr.replace(params[i][0],str(vals[i]))
     return (expr, vals, minBkgEff_sigEff, minBkgEff)
 
@@ -126,7 +126,7 @@ if __name__=="__main__":
        for (L,I) in reversed([("L", 1), ("M", 2), ("T",3), ("VT",4)]):
            (effs,effb) = get_Eff_ND(t2,t,"multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatio,LepGood_jetPtRel,%d)" % I,scut,bcut)
            oldWPs.append( (L, I, effs, effb) )
-       print oldWPs
+       print(oldWPs)
 
    newWPs = []
    for targetEff in [ effs-0.001 for (L,I,effs,effb) in oldWPs ]:
@@ -134,7 +134,7 @@ if __name__=="__main__":
        #mIso = "LepGood_miniRelIso<miniIsoCut && (LepGood_jetPtRatio>ptRatioCut || LepGood_jetPtRel>ptRelCut)"
        #optimize_Eff_ND(t,t,mIso,targetEff,params,scut,bcut,algo="Scan",scanPointsND=1000)
 
-       print 'training 2015v2, target efficiency ',targetEff,"params:",params2
+       print('training 2015v2, target efficiency ',targetEff,"params:",params2)
        mIso = "LepGood_miniRelIso<miniIsoCut && (LepGood_jetPtRatio_LepAwareJECv2>ptRatioCut || LepGood_jetPtRelv2>ptRelCut)"
        #optimize_Eff_ND(t,t,mIso,targetEff,params2,scut,bcut,maxN=1e4,maxSteps=1000) 
        #optimize_Eff_ND(t,t,mIso,targetEff,params2,scut,bcut,maxN=1e4,maxSteps=1000,algo="RandomSampling") 

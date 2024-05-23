@@ -22,11 +22,11 @@ options.tree = 'treeProducerSusyMultilepton'
 options.lumi = 36.8
 
 try:
-    print "Processing %s" % args[1]
+    print("Processing %s" % args[1])
     mca    = MCAnalysis(args[0], options)
     evcuts = CutsFile(args[1], options)
 except IndexError:
-    print "Please provide at least two arguments"
+    print("Please provide at least two arguments")
     parser.print_help()
     sys.exit(1)
 
@@ -62,7 +62,7 @@ def makeLeptonCategories():
                                             ptlo1,etalo1,ptlo2,etalo2)
             categories.append((name,cut))
 
-    print "... processing {} lepton categories".format(len(categories))
+    print("... processing {} lepton categories".format(len(categories)))
     # for name,cut in categories:
     #     print name, cut
     return categories
@@ -96,7 +96,7 @@ def main():
 
     allspecs = makePlotAndCutSpecs()
     for n,(name, pspec, cspec) in enumerate(allspecs):
-        print '... processing %d/%d: %s' %(n,len(allspecs),name)
+        print('... processing %d/%d: %s' %(n,len(allspecs),name))
 
         pmap = mca.getPlots(pspec,cspec.allCuts(),makeSummary=False)
         for proc in ['DY', 'data']:

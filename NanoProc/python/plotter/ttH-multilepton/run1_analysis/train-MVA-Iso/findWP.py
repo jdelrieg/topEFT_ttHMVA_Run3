@@ -35,35 +35,35 @@ def optimize_Eff_ND(sigTree, bkgTree, plotexpr, targetEff, params, scut="1", bcu
         points1d = ceil(pow(scanPointsND,1.0/nparams))
         npoints = pow(points1d,nparams)
         xstep = [0]*nparams
-        xstepwidth = [(params[i][2]-params[i][1])/points1d for i in xrange(nparams)]
+        xstepwidth = [(params[i][2]-params[i][1])/points1d for i in range(nparams)]
         maxsteps = int(npoints)
-    else: raise RuntimeError, 'Unknown algo'
+    else: raise RuntimeError('Unknown algo')
     algo_ = 0 if algo=="RandomSampling" else 1
     reports = maxsteps/100
     while step<maxsteps:
         step = step+1
         if algo_==1:
             count = step
-            for i in xrange(nparams):                
+            for i in range(nparams):                
                 xstep[i] = count%points1d
                 count/=points1d
-        vals = [random.uniform(params[i][1],params[i][2]) for i in xrange(nparams)] if algo_==0 else [params[i][1]+xstepwidth[i]*(xstep[i]+0.5) for i in xrange(nparams)]
+        vals = [random.uniform(params[i][1],params[i][2]) for i in range(nparams)] if algo_==0 else [params[i][1]+xstepwidth[i]*(xstep[i]+0.5) for i in range(nparams)]
         expr = plotexpr
-        for i in xrange(nparams):
+        for i in range(nparams):
             expr=expr.replace(params[i][0],str(vals[i]))
         sigEff = evalEff(sigTree,expr,scut,maxN)
         bkgEff = evalEff(bkgTree,expr,bcut,maxN)
-        if (step%reports==0): print 'Ongoing: step',step,vals
+        if (step%reports==0): print('Ongoing: step',step,vals)
         if (sigEff<targetEff): continue
         if (bkgEff<minBkgEff):
             if (bkgEff/minBkgEff>1-stopThr):
-                print 'Will stop here!'
+                print('Will stop here!')
                 step=maxsteps+1
             minBkgEff = bkgEff
             minBkgEff_vals = vals
             minBkgEff_sigEff = sigEff
-            print 'Found better WP!','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in xrange(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff
-    print 'Best WP:','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in xrange(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff
+            print('Found better WP!','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in range(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff)
+    print('Best WP:','Cut values:',[("%s: %f"%(params[i][0],minBkgEff_vals[i])) for i in range(nparams)],'Signal efficiency:',minBkgEff_sigEff,'Background efficiency:',minBkgEff)
 
 
 
@@ -83,10 +83,10 @@ if __name__=="__main__":
 
    import sys
    if sys.argv[1]=="1":
-       print 'training 2015'
+       print('training 2015')
        mIso = "LepGood_miniRelIso<miniIsoCut && (LepGood_jetPtRatio>ptRatioCut || LepGood_jetPtRel>ptRelCut)"
        optimize_Eff_ND(t,t,mIso,targetEff,params,"genWeight*(LepGood_mcMatchId!=0)","genWeight*(LepGood_mcMatchId==0)",algo="Scan",scanPointsND=1000)
    elif sys.argv[1]=="2":
-       print 'training 2015v2'
+       print('training 2015v2')
        mIso = "LepGood_miniRelIso<miniIsoCut && (LepGood_jetPtRatio_LepAwareJECv2>ptRatioCut || LepGood_jetPtRelv2>ptRelCut)"
        optimize_Eff_ND(t,t,mIso,targetEff,params,"genWeight*(LepGood_mcMatchId!=0)","genWeight*(LepGood_mcMatchId==0)",algo="Scan",scanPointsND=1000)

@@ -30,7 +30,7 @@ class TestEosTools(unittest.TestCase):
 
     def checkDirsAndFiles(self, dir):
         filesAndDirs = listFiles( dir )
-        print filesAndDirs
+        print(filesAndDirs)
 
     def testCpFromEOS(self):
         xrdcp( '/store/cmst3/user/cbern/Tests/', self.localdir)
@@ -106,7 +106,7 @@ class TestEosTools(unittest.TestCase):
     def testChmod(self):
         
         _, _, ret = chmod(os.path.dirname(self.eosfile),'775')
-        self.assertEquals(ret, 0)
+        self.assertEqual(ret, 0)
         
     def testMatchingFiles(self):
         

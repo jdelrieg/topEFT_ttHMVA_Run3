@@ -35,7 +35,7 @@ class Looper(object):
         self.cfg_comp = cfg_comp
         self.classes = {}
         #TODO: should be a diclist? 
-        self.analyzers = map( self._buildAnalyzer, sequence )
+        self.analyzers = list(map( self._buildAnalyzer, sequence ))
         self.nEvents = getattr(cfg_comp, 'maxEvents', nEvents)
         self.firstEvent = firstEvent
         self.nPrint = int(nPrint)
@@ -43,7 +43,7 @@ class Looper(object):
         try:
             self.events = Events( self.cfg_comp.files )
         except RuntimeError:
-            print 'cannot find any file matching pattern', self.cfg_comp.files
+            print('cannot find any file matching pattern', self.cfg_comp.files)
             raise
         
 
@@ -68,7 +68,7 @@ class Looper(object):
             # obviously, can't load a module twice
             # so keep track of the needed classes, instead several instances are built
             theClass = self.classes[className]
-            print 'found class', theClass
+            print('found class', theClass)
             obj = theClass( cfg_ana, self.cfg_comp, self.outDir ) 
         except KeyError:
             file = None
@@ -82,16 +82,16 @@ class Looper(object):
                 # creating an analyzer
                 #if hasattr( cfg_ana, 'instanceName'):
                 #    cfg_ana.name = cfg_ana.instanceName
-                print 'loading class', theClass
-                print '  from', file
+                print('loading class', theClass)
+                print('  from', file)
                 obj = theClass( cfg_ana, self.cfg_comp, self.outDir )
             finally:
                 try:
                     file.close()
                 except AttributeError:
-                    print 'problem loading module', cfg_ana.name
-                    print 'please make sure that the module name is correct.'
-                    print 'if it is, is this module in your path, as defined below?'
+                    print('problem loading module', cfg_ana.name)
+                    print('please make sure that the module name is correct.')
+                    print('if it is, is this module in your path, as defined below?')
                     pprint.pprint( sorted( sys.path )) 
         return obj
 
@@ -120,15 +120,15 @@ class Looper(object):
                 #     break
                 if iEv%100 ==0:
                     if iEv == 100:
-                        print 'event', iEv
+                        print('event', iEv)
                         self.start_time = time.time()
                     elif iEv > 100:
-                        print 'event %d (%.1f ev/s)' % (iEv, (iEv-100)/float(time.time() - self.start_time))
+                        print('event %d (%.1f ev/s)' % (iEv, (iEv-100)/float(time.time() - self.start_time)))
                 self.process( iEv )
                 if iEv<self.nPrint:
-                    print self.event
+                    print(self.event)
         except UserWarning:
-            print 'Stopped loop following a UserWarning exception'
+            print('Stopped loop following a UserWarning exception')
         for analyzer in self.analyzers:
             analyzer.endLoop()
         self.logger.warning('')

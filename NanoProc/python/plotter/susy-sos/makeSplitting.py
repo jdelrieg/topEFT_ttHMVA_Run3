@@ -200,7 +200,7 @@ class bare_production:
          for tk in tasks:
             if tk.pr not in jobs: jobs[tk.pr]=[]
             jobs[tk.pr].append(tk)
-         return jobs.values()
+         return list(jobs.values())
 
       def splitStrategyByWhat(keyer):
          jobs = {}
@@ -208,10 +208,10 @@ class bare_production:
             key = keyer(tk)
             if key not in jobs: jobs[key]=[]
             jobs[key].append(tk)
-         return jobs.values()
+         return list(jobs.values())
 
-      jobs=filter(lambda job: any([tk.pr=='background' for tk in job]),splitStrategyByWhat(lambda tk: (tk.yr,tk.cat,tk.pr=='background')))
-      jobs+=filter(lambda job: all([tk.pr!='background' for tk in job]),splitStrategyByWhat(lambda tk: (tk.pr,tk.yr)))
+      jobs=[job for job in splitStrategyByWhat(lambda tk: (tk.yr,tk.cat,tk.pr=='background')) if any([tk.pr=='background' for tk in job])]
+      jobs+=[job for job in splitStrategyByWhat(lambda tk: (tk.pr,tk.yr)) if all([tk.pr!='background' for tk in job])]
 
       prepSubmission(odir,'card_submission',duration)
 
@@ -260,18 +260,18 @@ class merge_and_fit:
                   out.append("rm %s"%f2) # remove temporary file
                   cards.append(('sos_'+cat+'_'+yr,os.path.dirname(f2)+'/sos_%s.txt'%cat))
             if badPoint:
-               print 'Skipping %s because not all bare inputs are present'%pr
+               print('Skipping %s because not all bare inputs are present'%pr)
                return []
 
          out.append('export ORIGDIR=\$(pwd)')
          cdir = '%s_merged/cards/%s'%(odir,fullpoint)
          out.append("mkdir -p %s && cd %s && set +e"%(cdir,cdir))
          flags = {
-            'all': lambda (x,y): True,
-            '2lep': lambda (x,y): ('2los_' in x or 'cr_' in x),
-            '3lep': lambda (x,y): ('3l_' in x or 'cr_' in x),
+            'all': lambda x_y: True,
+            '2lep': lambda x_y1: ('2los_' in x_y1[0] or 'cr_' in x_y1[0]),
+            '3lep': lambda x_y2: ('3l_' in x_y2[0] or 'cr_' in x_y2[0]),
          }
-         for tag,filt in flags.iteritems():
+         for tag,filt in flags.items():
             cn = 'card_%s_%s.txt'%(fullpoint,tag)
             if not onlyFit: out.append("combineCards.py %s > %s"%(' '.join(['%s=%s'%(x,y) for x,y in filter(filt,cards)]), cn))
             elif not os.path.exists(cdir+'/'+cn): return []
@@ -305,7 +305,7 @@ class merge_and_fit:
 
       # print the failed jobs to ease resubmission
       if len(self.missingFiles):
-         print len(self.missingFiles), "missing signal files found"
+         print(len(self.missingFiles), "missing signal files found")
          resub=[]
          for f in self.missingFiles:
             signal = f.split('/')[-2]
@@ -318,8 +318,8 @@ class merge_and_fit:
                   lines = bash(cmd)
                   if len(lines)>1:
                      resub.append(j)
-         print len(resub), "jobs to resubmit"
-         for r in resub: print r
+         print(len(resub), "jobs to resubmit")
+         for r in resub: print(r)
             
 
 if __name__ == '__main__':

@@ -30,13 +30,13 @@ cuts = "(xsec/1.e5)*(%s)"%(sys.argv[5].replace('hardcoded',cuts_hardcoded),)
 cutb = "(xsec/1.e5)*(%s)"%(sys.argv[6].replace('hardcoded',cutb_hardcoded),)
 outfname = sys.argv[9]
 
-print cuts
-print cutb
+print(cuts)
+print(cutb)
 
 tsig.Draw("%s>>htemp(%s)"%(var,bins),cuts)
 hsig = ROOT.gDirectory.Get('htemp').Clone('hsig')
 if tsig2:
-    print 'Using a second sig histo, weighted by %s'%sys.argv[10]
+    print('Using a second sig histo, weighted by %s'%sys.argv[10])
     tsig2.Draw("%s>>htemp(%s)"%(var,bins),"(%s)*(%s)"%(cuts,sys.argv[10]))
     hsig2 = ROOT.gDirectory.Get('htemp').Clone('hsig2')
     hsig.Add(hsig2)
@@ -44,12 +44,12 @@ if tsig2:
 tbkg.Draw("%s>>htemp(%s)"%(var,bins),cutb)
 hbkg = ROOT.gDirectory.Get('htemp').Clone('hbkg')
 if tbkg2:
-    print 'Using a second bkg histo, weighted by %s'%sys.argv[11]
+    print('Using a second bkg histo, weighted by %s'%sys.argv[11])
     tbkg2.Draw("%s>>htemp(%s)"%(var,bins),cutb,sys.argv[11])
     hbkg2 = ROOT.gDirectory.Get('htemp').Clone('hbkg2')
     hbkg.Add(hbkg2)
 
-print 'normalization (with under/overflow): signal %f, background %f'%(hsig.Integral(0,hsig.GetNbinsX()+1),hbkg.Integral(0,hbkg.GetNbinsX()+1))
+print('normalization (with under/overflow): signal %f, background %f'%(hsig.Integral(0,hsig.GetNbinsX()+1),hbkg.Integral(0,hbkg.GetNbinsX()+1)))
 
 hsig.Scale(1./hsig.Integral(0,hsig.GetNbinsX()+1))
 hbkg.Scale(1./hbkg.Integral(0,hbkg.GetNbinsX()+1))
@@ -57,7 +57,7 @@ hw = hbkg.Clone('h_weights')
 hw.Divide(hsig)
 
 max_w = 10.
-for i in xrange(hw.GetNbinsX()):
+for i in range(hw.GetNbinsX()):
     if hw.GetBinContent(i+1)>max_w: hw.SetBinContent(i+1,max_w)
 
 newf = ROOT.TFile(outfname,"recreate")
@@ -71,10 +71,10 @@ newt.Branch('addW',w,'addW[nLepGood]/F')
 for ev in tsig:
     n[0] = ev.nLepGood
     _v = getattr(ev,var)
-    for i in xrange(100):
+    for i in range(100):
         w[i] = hw.GetBinContent(hw.FindBin(_v[i])) if i<n[0] else 0.
     newt.Fill()
-print 'Filled %d entries'%newt.GetEntries()
+print('Filled %d entries'%newt.GetEntries())
 hw.Write()
 newf.Write()
 newf.Close()
@@ -92,10 +92,10 @@ if tsig2:
     for ev in tsig2:
         n[0] = ev.nLepGood
         _v = getattr(ev,var)
-        for i in xrange(100):
+        for i in range(100):
             w[i] = hw.GetBinContent(hw.FindBin(_v[i])) if i<n[0] else 0.
         newt.Fill()
-    print 'Filled %d entries'%newt.GetEntries()
+    print('Filled %d entries'%newt.GetEntries())
     hw.Write()
     newf.Write()
     newf.Close()

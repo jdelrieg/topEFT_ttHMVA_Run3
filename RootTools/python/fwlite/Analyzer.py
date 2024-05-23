@@ -58,7 +58,7 @@ class Analyzer(object):
         '''Automatically called by Looper, for all analyzers.
         each analyzer in the sequence will be passed the same event instance.
         each analyzer can access, modify, and store event information, of any type.'''
-        print self.cfg_ana.name
+        print(self.cfg_ana.name)
         self.readCollections( iEvent )
 
     def readCollections(self, iEvent ):
@@ -67,13 +67,13 @@ class Analyzer(object):
         # if not self.beginLoopCalled:
         #    # necessary in case the user calls process to go straight to a given event, before looping
         #    self.beginLoop()
-        for str,handle in self.handles.iteritems():
+        for str,handle in self.handles.items():
             handle.Load( iEvent )
         if self.cfg_comp.isMC:
-            for str,handle in self.mchandles.iteritems():
+            for str,handle in self.mchandles.items():
                 handle.Load( iEvent )
         if self.cfg_comp.isEmbed:
-            for str,handle in self.embhandles.iteritems():
+            for str,handle in self.embhandles.items():
                 handle.Load( iEvent )
 
     def write(self):

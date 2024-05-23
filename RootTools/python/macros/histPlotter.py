@@ -17,7 +17,7 @@ for key in file.GetListOfKeys():
     obj = file.Get(key.GetName())
     if type(obj) in histTypes:
         hists.append(obj)
-        print type(obj), key.GetName()
+        print(type(obj), key.GetName())
         locals()[key.GetName()] = obj
 
 

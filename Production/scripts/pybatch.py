@@ -88,8 +88,8 @@ else
 fi
 """.format(idx=jobDir[jobDir.find("_Chunk")+6:].strip("/"), srm=(remoteDir+jobDir[jobDir.rfind("/"):jobDir.find("_Chunk")]).split("/eos/cms",1)[1]) + dirCopy
    else:
-       print "choose location not supported yet: ", remoteDir
-       print 'path must start with "/pnfs/psi.ch" or "/eos/cms/store"'
+       print("choose location not supported yet: ", remoteDir)
+       print('path must start with "/pnfs/psi.ch" or "/eos/cms/store"')
        sys.exit(1)
 
    script = """#!/bin/bash
@@ -156,8 +156,8 @@ else
 fi
 """.format(idx=jobDir[jobDir.find("_Chunk")+6:].strip("/"), srm='srm://t3se01.psi.ch'+remoteDir+jobDir[jobDir.rfind("/"):jobDir.find("_Chunk")]) + dirCopy
    else:
-       print "remote directory not supported yet: ", remoteDir
-       print 'path must start with "/pnfs/psi.ch"'
+       print("remote directory not supported yet: ", remoteDir)
+       print('path must start with "/pnfs/psi.ch"')
        sys.exit(1)
 
 
@@ -243,8 +243,8 @@ class MyBatchManager( BatchManager ):
          
    def PrepareJobUser(self, jobDir, value ):
        '''Prepare one job. This function is called by the base class.'''
-       print value
-       print components[value]
+       print(value)
+       print(components[value])
 
        #prepare the batch script
        scriptFileName = jobDir+'/batchScript.sh'
@@ -288,7 +288,7 @@ if __name__ == '__main__':
     handle.close()
 
     components = split( [comp for comp in config.components if len(comp.files)>0] )
-    listOfValues = range(0, len(components))
+    listOfValues = list(range(0, len(components)))
     listOfNames = [comp.name for comp in components]
 
     batchManager.PrepareJobs( listOfValues, listOfNames )

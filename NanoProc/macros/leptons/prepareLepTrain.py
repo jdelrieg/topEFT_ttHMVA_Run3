@@ -53,13 +53,13 @@ class LepTreeProducer(Module):
 f = ROOT.TFile.Open(args[0]+"/"+options.tree+"/"+options.tree+"_tree.root")
 t = f.Get(options.tree)
 nchunks = int(ceil(t.GetEntries()/float(options.chunkSize)))
-print "Reading %s (%d entries, %d chunks)" % (args[0], t.GetEntries(), nchunks)
+print("Reading %s (%d entries, %d chunks)" % (args[0], t.GetEntries(), nchunks))
 f.Close()
 
 def run(ichunk):
     global args, options, nchunks
     if options.chunks and (ichunk not in options.chunks): return None
-    print "Processing %s, chunk %d" % (args[0], ichunk)
+    print("Processing %s, chunk %d" % (args[0], ichunk))
     f = ROOT.TFile.Open(args[0]+"/"+options.tree+"/"+options.tree+"_tree.root")
     t = f.Get(options.tree)
     t.vectorTree = options.vectorTree
@@ -72,13 +72,13 @@ def run(ichunk):
     booker = Booker(fname)
     prod = LepTreeProducer("rec",booker)
     if len(args) >= 3 and args[2] == "NoCorr": 
-        print "Will not apply corrections"
+        print("Will not apply corrections")
         prod.corr = False
     else:
-        print "Will apply corrections"
+        print("Will apply corrections")
         prod.corr = True
     el = EventLoop([ prod, ])
-    r = xrange(int(ichunk*options.chunkSize),min(int((ichunk+1)*options.chunkSize),t.GetEntries()))
+    r = range(int(ichunk*options.chunkSize),min(int((ichunk+1)*options.chunkSize),t.GetEntries()))
     el.loop([t], eventRange=r)
     booker.done()
     f.Close()
@@ -86,7 +86,7 @@ def run(ichunk):
 if options.jobs > 0:
     from multiprocessing import Pool
     pool = Pool(options.jobs)
-    pool.map(run, xrange(nchunks))
+    pool.map(run, range(nchunks))
 else:
-    for ichunk in xrange(nchunks): run(ichunk)
+    for ichunk in range(nchunks): run(ichunk)
 

@@ -1,7 +1,7 @@
-#!/usr/bin/env python
-from __future__ import print_function
+#!/usr/bin/env python3
+
 import sys
-import imp
+import importlib.util
 import json
 import os
 import shutil
@@ -60,7 +60,7 @@ do
          continue
       fi
       echo "remote copy succeeded"
-      remsize=$(eos find --size {srm}/${{ff}}_{idx}.root | cut -d= -f3) 
+      remsize=$(eos find --size {srm}/${{ff}}_{idx}.root | cut -d= -f2) 
       locsize=$(cat `pwd`/$f | wc -c)
       ok=$(($remsize==$locsize))
       if [ $ok -ne 1 ]; then
@@ -126,7 +126,7 @@ class MyBatchManager( BatchManager ):
        scriptFile.close()
        os.system('chmod +x %s' % scriptFileName)
        shutil.copyfile(cfgFileName, jobDir+'/pycfg.py')
-       cfgFile = open(jobDir+'/config.pck','w')
+       cfgFile = open(jobDir+'/config.pck','wb')
        pickle.dump( components[value] , cfgFile )
        from CMGTools.Production.globalOptions import _cmgToolsProdGlobalOptions
        optjsonfile = open(jobDir+'/options.json','w')
@@ -154,10 +154,13 @@ if __name__ == '__main__':
             _cmgToolsProdGlobalOptions[opt] = True
 
     cfgFileName = args[0]
-    cfo = imp.load_source("pycfg", cfgFileName, open(cfgFileName, 'r'))
+    spec = importlib.util.spec_from_file_location(os.path.basename(cfgFileName).rstrip('.py'), cfgFileName)
+    cfo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module( cfo )
+
 
     components = split( [comp for comp in cfo.selectedComponents if len(comp.files)>0] )
-    listOfValues = range(0, len(components))
+    listOfValues = list(range(0, len(components)))
     listOfNames = [comp.name for comp in components]
 
     batchManager.PrepareJobs( listOfValues, listOfNames )

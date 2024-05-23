@@ -21,7 +21,7 @@ class Regions1D( object ):
         self.complete = complete
 
     def regionNames(self):
-        names = self.regions.values()
+        names = list(self.regions.values())
         if not self.complete:
             names.append('None')
         return names
@@ -32,9 +32,9 @@ class Regions1D( object ):
     def _checkOverlap(self):
         self.overlapChecked = True
         overlap = False
-        for region in self.regions.keys():
+        for region in list(self.regions.keys()):
             min, max = region
-            for other in self.regions.keys():
+            for other in list(self.regions.keys()):
                 omin, omax = other 
                 if min < omin and omin < max:
                     return True
@@ -53,7 +53,7 @@ class Regions1D( object ):
             if overlap:
                 raise ValueError( 'Please define non-overlapping regions' )
         last = None
-        for region, name in sorted(self.regions.iteritems() ):
+        for region, name in sorted(self.regions.items() ):
             min, max = region
             if min > var:
                 break
@@ -73,7 +73,7 @@ class Regions1D( object ):
             return 'None'
 
     def __str__(self):
-        tmp = '\n'.join( map(str, sorted(self.regions.iteritems() )) )
+        tmp = '\n'.join( map(str, sorted(self.regions.items() )) )
         return tmp
 
 
@@ -85,6 +85,6 @@ if __name__ == '__main__':
     reg.addRegion( 'low_mT', 0, 50)
     reg.addRegion( 'high_mT', 80, float('+inf') )
 
-    print reg.test(20)
-    print reg.test(60)
-    print reg.test(100124)
+    print(reg.test(20))
+    print(reg.test(60))
+    print(reg.test(100124))

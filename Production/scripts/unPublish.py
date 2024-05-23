@@ -109,7 +109,7 @@ Default is $USER.""",
                 dataset.rstrip("/")
                 unPublish(dataset,fileown,options.username,options.development)
             except NameError as err:
-                print err.args, "\nDataset not published"
+                print(err.args, "\nDataset not published")
     # For singular file input
     else:
         dataset = args[0].rstrip("/")

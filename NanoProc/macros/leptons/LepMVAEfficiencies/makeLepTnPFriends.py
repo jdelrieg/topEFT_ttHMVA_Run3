@@ -64,7 +64,7 @@ for n in range(len(ETABINS2D_MU)-1):
                        elo=ETABINS2D_MU[n], ehi=ETABINS2D_MU[n+1]) ) )
 LEPSEL.extend(LEPSEL2D)
 
-MASSBINS  = range(61,122,1)
+MASSBINS  = list(range(61,122,1))
 PTBINS    = [10.,15.,20.,25.,30.,37.5,45.,60.,80.,100.]
 ETABINS   = [0.,0.25,0.50,0.75,1.00,1.25,1.50,2.00,2.50]
 NVERTBINS = [0,4,7,8,9,10,11,12,13,14,15,16,17,19,22,25,30]
@@ -361,7 +361,7 @@ def projectFromTree(hist, varname, sel, tree, option=''):
     try:
         tree.Project(hist.GetName(),varname, sel, option)
         return True
-    except Exception, e:
+    except Exception as e:
         raise e
 
 def getHistoFromTree(tree, sel, bins, var="mass",
@@ -399,7 +399,7 @@ def putPHPIndex(odir):
     LOC = '/afs/cern.ch/user/s/stiegerb/www/ttH/index.php'
     try:
         os.symlink(LOC, os.path.join(odir,'index.php'))
-    except OSError, e:
+    except OSError as e:
         if e.errno == 17:  # 'File exists'
             pass
 
@@ -505,16 +505,17 @@ def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
 
     return nsig.getVal(), nsig.getError()
 
-def getPassTotalHistos((key, output,
+def getPassTotalHistos(xxx_todo_changeme):
+    (key, output,
                         tag, floc, pairsel,
                         probnum, probdenom, var, bins,
-                        options)):
+                        options) = xxx_todo_changeme
     totalsel  = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
 
     bincut = "({var}>={binlo}&&{var}<{binhi})"
     binsels = []
-    for nbin in xrange(len(bins)-1):
+    for nbin in range(len(bins)-1):
         binlo, binhi = bins[nbin], bins[nbin+1]
         binsels.append(bincut.format(var=var,binlo=binlo,binhi=binhi))
 
@@ -534,7 +535,7 @@ def getPassTotalHistos((key, output,
     dofit = [proc in ['data','DY']] and not options.cutNCount
 
     for n,binsel in enumerate(binsels):
-        print "  ... processing %-36s" % binsel,
+        print("  ... processing %-36s" % binsel, end=' ')
         totalbinsel = "%s&&%s" % (totalsel, binsel)
         htotalbin = getHistoFromTree(tree,totalbinsel,MASSBINS,"mass",
                                    hname="%s_total_%d"%(var,n),
@@ -552,8 +553,8 @@ def getPassTotalHistos((key, output,
         ntot,toterr   = getNSignalEvents(htotalbin,
                                          dofit=dofit,
                                          odir=plotDir)
-        print 'pass: %8.1f +- %5.1f' % (npass,passerr),
-        print 'tot:  %8.1f +- %5.1f' % (ntot,toterr),
+        print('pass: %8.1f +- %5.1f' % (npass,passerr), end=' ')
+        print('tot:  %8.1f +- %5.1f' % (ntot,toterr), end=' ')
 
         ## Some cheating (i.e. taking cut&count in some cases):
         ##  npass > ntot (can only happen if the fit goes wrong)
@@ -566,14 +567,15 @@ def getPassTotalHistos((key, output,
         hpassed.SetBinError(n+1, passerr)
         htotal.SetBinContent(n+1, ntot)
         htotal.SetBinError(n+1, toterr)
-        print "DONE"
+        print("DONE")
 
     output[key] = (hpassed, htotal)
 
-def getPassTotalHistosSimple((key, output,
+def getPassTotalHistosSimple(xxx_todo_changeme1):
+    (key, output,
                               tag, floc, pairsel,
                               probnum, probdenom, var, bins,
-                              options)):
+                              options) = xxx_todo_changeme1
     totalsel  = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
 
@@ -595,7 +597,7 @@ def makePassedFailed(proc,fnames,indir,
     try:
         with open('.xsecweights.pck', 'r') as cachefile:
             xsecweights = pickle.load(cachefile)
-            print '>>> Read xsecweights from cache (.xsecweights.pck)'
+            print('>>> Read xsecweights from cache (.xsecweights.pck)')
     except IOError:
         print ("Please run makeXSecWeights.py first to apply "
                "cross section weights.")
@@ -605,14 +607,14 @@ def makePassedFailed(proc,fnames,indir,
     for pname in fnames:
         floc = osp.join(indir, "%s%s"%(pname,stump))
         if not osp.isfile(floc):
-            print "Missing file: %s" % floc
-            raw_input(" ... press key to continuing without")
+            print("Missing file: %s" % floc)
+            input(" ... press key to continuing without")
             continue
 
-        print '... processing', pname
+        print('... processing', pname)
         if proc != 'data':
             weight = LUMI*xsecweights.get(pname, 1.0/LUMI)
-            print '    weighting histos by', weight
+            print('    weighting histos by', weight)
         else: weight = 1.0
 
         tasks = []    # do the fit for these
@@ -626,7 +628,7 @@ def makePassedFailed(proc,fnames,indir,
             result_dict = {}
 
         for lep,lepsel,_ in LEPSEL:
-            for sname,sel in SELECTIONS.iteritems():
+            for sname,sel in SELECTIONS.items():
                 if sname == 'ttH' and proc != 'ttH': continue
                 if sname.startswith('runs') and proc != 'data': continue
                 finalsel = '(%s)&&(%s)' % (lepsel, sel)
@@ -654,14 +656,14 @@ def makePassedFailed(proc,fnames,indir,
                             tasks.append(task)
 
 
-        print 'Have %d tasks to process' % (len(tasks)+len(tasks_cc))
+        print('Have %d tasks to process' % (len(tasks)+len(tasks_cc)))
 
         if options.jobs > 1:
             Pool(options.jobs).map(getPassTotalHistos, tasks)
             Pool(options.jobs).map(getPassTotalHistosSimple, tasks_cc)
         else:
-            map(getPassTotalHistos, tasks)
-            map(getPassTotalHistosSimple, tasks_cc)
+            list(map(getPassTotalHistos, tasks))
+            list(map(getPassTotalHistosSimple, tasks_cc))
 
         for key in [t[0] for t in tasks+tasks_cc]:
             hpass, htot = result_dict[key]
@@ -675,7 +677,7 @@ def makePassedFailed(proc,fnames,indir,
             else:
                 result[key] = (hpass,htot)
 
-        print '      %s done' % pname
+        print('      %s done' % pname)
 
     return result
 
@@ -683,9 +685,9 @@ def makeEfficiencies(passedtotal):
     result = {}
 
     # Calculate raw efficiencies
-    for proc, histos in passedtotal.iteritems():
+    for proc, histos in passedtotal.items():
         proc_effs = {}
-        for key,(p,f) in histos.iteritems():
+        for key,(p,f) in histos.items():
             eff = TEfficiency(p, f)
             proc_effs[key] = eff
         result[proc] = proc_effs
@@ -749,7 +751,7 @@ def makePlots(efficiencies, options):
                          'DY MC, %s' % fitlabel,
                          includeInRatio=False)
 
-                for selname in SELECTIONS.keys():
+                for selname in list(SELECTIONS.keys()):
                     if selname == 'inclusive': continue
                     plot.add(efficiencies['data'][(lep, selname, nname, var)],
                          'Data %s'%selname, includeInRatio=True)
@@ -822,7 +824,7 @@ def make2DMap(efficiencies, options):
 
             sfhistos[(lepton,nname)] = sfhisto_2d
 
-    for (lepton,nname),histo in sfhistos.iteritems():
+    for (lepton,nname),histo in sfhistos.items():
         fname = 'lepMVAEffSF_%s_%s.root' % (lepton, nname)
         floc = osp.join(options.outDir,fname)
         ofile = ROOT.TFile(floc, 'RECREATE')
@@ -830,12 +832,12 @@ def make2DMap(efficiencies, options):
         histo.Write('sf')
         ofile.Write()
         ofile.Close()
-        print " wrote %s" % floc
+        print(" wrote %s" % floc)
 
 def main(args, options):
     try:
         if not osp.exists(args[0]):
-            print "Input directory does not exists: %s" % args[0]
+            print("Input directory does not exists: %s" % args[0])
             sys.exit(-1)
     except IndexError:
         parser.print_usage()
@@ -845,22 +847,22 @@ def main(args, options):
     cachefilename = "tnppassedtotal.pck"
     if not osp.isfile(cachefilename):
         passedtotal = {}
-        for proc,fnames in INPUTS.iteritems():
+        for proc,fnames in INPUTS.items():
             passedtotal[proc] = makePassedFailed(proc,fnames,args[0],options,stump='.root')
 
-        print "#"*30
-        print "ALL DONE"
-        print "#"*30
+        print("#"*30)
+        print("ALL DONE")
+        print("#"*30)
 
         with open(cachefilename, 'w') as cachefile:
             pickle.dump(passedtotal, cachefile, pickle.HIGHEST_PROTOCOL)
-            print ('>>> Wrote tnp passed total histograms to cache (%s)' %
-                                                        cachefilename)
+            print(('>>> Wrote tnp passed total histograms to cache (%s)' %
+                                                        cachefilename))
     else:
         with open(cachefilename, 'r') as cachefile:
             passedtotal = pickle.load(cachefile)
-            print ('>>> Read tnp passed total histograms from cache (%s)' %
-                                                        cachefilename)
+            print(('>>> Read tnp passed total histograms from cache (%s)' %
+                                                        cachefilename))
 
     os.system('mkdir -p %s'%options.outDir)
     if 'www' in options.outDir: putPHPIndex(options.outDir)

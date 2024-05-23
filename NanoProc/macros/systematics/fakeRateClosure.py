@@ -18,7 +18,7 @@ def haddThem(tdir, var, procs, norm=False):
         else:
             ret.Add(hist)
     if ret == None: 
-        print "missing %s_%s in %s" % (var,P,tdir.GetName())
+        print("missing %s_%s in %s" % (var,P,tdir.GetName()))
         return None
         #tdir.ls()
         #raise RuntimeError
@@ -70,7 +70,7 @@ if __name__ == "__main__":
             ratio = hmc.Clone()
             ratio.Divide(hdd)
             c2, ndf = 0,0
-            for b in xrange(1,unity.GetNbinsX()+1):
+            for b in range(1,unity.GetNbinsX()+1):
                 c = unity.GetBinContent(b)
                 unity.SetBinError(b, unity.GetBinError(b)/c if c else 0)
                 unity.SetBinContent(b, 1.0 if c else 0)

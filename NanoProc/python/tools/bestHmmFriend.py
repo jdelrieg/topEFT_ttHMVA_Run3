@@ -13,7 +13,7 @@ class BestHmm:
         nFO = getattr(event,"nLepFO"+self.label)
         ileps = getattr(event,"iLepFO"+self.label)
         leps = Collection(event,"LepGood","nLepGood")
-        ilepsFO = [ileps[i] for i in xrange(nFO)]
+        ilepsFO = [ileps[i] for i in range(nFO)]
 
         best_pair = None
         best_dm = 9e9

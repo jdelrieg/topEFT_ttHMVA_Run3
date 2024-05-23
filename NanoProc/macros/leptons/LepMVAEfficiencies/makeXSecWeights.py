@@ -8,7 +8,7 @@ def fillXSecsFromSamplesFile(filename):
     if not xsections:
         xsections = {}
 
-    print "Filling cross sections from %s" % filename
+    print("Filling cross sections from %s" % filename)
 
     pattern = re.compile(r'.*?makeMCComponent\s*\(\s*\"([\w]*?)\"')
     with open(filename, 'r') as infile:
@@ -35,7 +35,7 @@ def fillXSecsFromSamplesFile(filename):
                 raise RuntimeError("Error: unable to parse xsection string: %s, from line %s" % (xsec_string, line))
             # Check if we already know about this sample and the values are different
             if xsections.get(sample_name, xsec) != xsec:
-                print 'Warning: ambiguous cross section for %s in %s' % (sample, filename)
+                print('Warning: ambiguous cross section for %s in %s' % (sample, filename))
 
             xsections[sample_name] = xsec
 
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     try:
         with open(options.cachefile, 'r') as cachefile:
             xsecweights = pickle.load(cachefile)
-            print ('>>> Read xsecweights from cache (%s)' % options.cachefile)
+            print(('>>> Read xsecweights from cache (%s)' % options.cachefile))
     except IOError:
         xsecweights = {}
 
@@ -117,13 +117,13 @@ if __name__ == '__main__':
             newweight = 1000*float(xsec)/float(nevs)
             oldweight = xsecweights.setdefault(procdir,newweight)
             if not oldweight == newweight:
-                print '...replacing %-36s'% procdir,
-                print 'old:', oldweight,
-                print 'new:', newweight, '(%f/%d)'%(xsec,nevs)
+                print('...replacing %-36s'% procdir, end=' ')
+                print('old:', oldweight, end=' ')
+                print('new:', newweight, '(%f/%d)'%(xsec,nevs))
                 xsecweights[procdir] = newweight
             else:
-                print '...adding %-36s' % procdir,
-                print '  ', newweight, '(%f/%d)'%(xsec,nevs)
+                print('...adding %-36s' % procdir, end=' ')
+                print('  ', newweight, '(%f/%d)'%(xsec,nevs))
         except TypeError:
             if not procdir in xsections and '2016' in procdir:
                 xsecweights[procdir] = 1.0
@@ -133,8 +133,8 @@ if __name__ == '__main__':
             notfound.append(procdir)
 
     if notfound:
-        print "No weights found for %d samples:" % len(notfound), notfound
+        print("No weights found for %d samples:" % len(notfound), notfound)
 
     with open(options.cachefile, 'w') as cachefile:
         pickle.dump(xsecweights, cachefile, pickle.HIGHEST_PROTOCOL)
-        print ('>>> Wrote xsecweights to cache (%s)' % options.cachefile)
+        print(('>>> Wrote xsecweights to cache (%s)' % options.cachefile))

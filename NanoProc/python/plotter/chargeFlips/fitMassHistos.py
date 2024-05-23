@@ -44,7 +44,7 @@ def putPHPIndex(odir):
     LOC = '/afs/cern.ch/user/s/stiegerb/www/ttH/index.php'
     try:
         os.symlink(LOC, os.path.join(odir,'index.php'))
-    except OSError, e:
+    except OSError as e:
         if e.errno == 17:  # 'File exists'
             pass
 
@@ -154,22 +154,22 @@ def doMassFits(infile, options):
     tf = ROOT.TFile.Open(infile, "READ")
     result = {} # histkey -> (nSig, nSigE)
     allhistos = [tf.Get(k.GetName()) for k in tf.GetListOfKeys()]
-    print " Doing fits for %d histos" % len(allhistos)
+    print(" Doing fits for %d histos" % len(allhistos))
     for histo in allhistos:
         try:
-            print ("...processing %-75s" % ("%s with %d entries" %
-                      (histo.GetName(), histo.GetEntries()))),
+            print(("...processing %-75s" % ("%s with %d entries" %
+                      (histo.GetName(), histo.GetEntries()))), end=' ')
 
             nSig, nSigE, nBkg, nBkgE  = getNSignalEvents(histo,
                                            dofit=True if not options.cutNCount else False,
                                            odir=options.outDir)
 
-            print " %s done: S: %.2f +- %.2f, B: %.2f +- %.2f %s" % (bcolors.OKGREEN,
-                                           nSig, nSigE, nBkg, nBkgE, bcolors.ENDC)
+            print(" %s done: S: %.2f +- %.2f, B: %.2f +- %.2f %s" % (bcolors.OKGREEN,
+                                           nSig, nSigE, nBkg, nBkgE, bcolors.ENDC))
             result[histo.GetName()] = (nSig, nSigE, nBkg, nBkgE)
 
         except ReferenceError:
-            print " WARNING: Problem with %s, continuing without" % histo.GetName()
+            print(" WARNING: Problem with %s, continuing without" % histo.GetName())
             continue
 
     return result
@@ -187,7 +187,7 @@ def parseCatFromHistName(name):
 def main(args, options):
     try:
         if not osp.exists(args[0]):
-            print "Input file does not exists: %s" % args[0]
+            print("Input file does not exists: %s" % args[0])
             sys.exit(-1)
     except IndexError:
         parser.print_usage()
@@ -197,31 +197,31 @@ def main(args, options):
     cachefilename = "fitresults.pck"
     if not osp.isfile(cachefilename):
         fitresults = doMassFits(args[0], options)
-        print "ALL DONE"
+        print("ALL DONE")
 
         with open(cachefilename, 'w') as cachefile:
             pickle.dump(fitresults, cachefile, pickle.HIGHEST_PROTOCOL)
-            print ('>>> Wrote fit results to cache (%s)' %
-                                                        cachefilename)
+            print(('>>> Wrote fit results to cache (%s)' %
+                                                        cachefilename))
     else:
         with open(cachefilename, 'r') as cachefile:
             fitresults = pickle.load(cachefile)
-            print ('>>> Read fit results from cache (%s)' %
-                                                        cachefilename)
+            print(('>>> Read fit results from cache (%s)' %
+                                                        cachefilename))
 
     # Remove non-parsable histos
-    fitresults = {k:v for k,v in fitresults.iteritems() if parseCatFromHistName(k)}
+    fitresults = {k:v for k,v in fitresults.items() if parseCatFromHistName(k)}
 
     # Parse categories and bins from the histogram names
-    parsedresults = {parseCatFromHistName(k):v for k,v in fitresults.iteritems()}
-    ptbins  = sorted(list(set([float(p) for _,p1,_,p2,_,_ in parsedresults.keys() for p in (p1,p2)])))
-    etabins = sorted(list(set([float(e) for _,_,e1,_,e2,_ in parsedresults.keys() for e in (e1,e2)])))
+    parsedresults = {parseCatFromHistName(k):v for k,v in fitresults.items()}
+    ptbins  = sorted(list(set([float(p) for _,p1,_,p2,_,_ in list(parsedresults.keys()) for p in (p1,p2)])))
+    etabins = sorted(list(set([float(e) for _,_,e1,_,e2,_ in list(parsedresults.keys()) for e in (e1,e2)])))
 
-    categories = sorted(list(set([(p1,e1,p2,e2) for _,p1,e1,p2,e2,_ in parsedresults.keys()])))
+    categories = sorted(list(set([(p1,e1,p2,e2) for _,p1,e1,p2,e2,_ in list(parsedresults.keys())])))
 
-    print "Found %d categories:" %len(categories)
+    print("Found %d categories:" %len(categories))
     for proc in ['data', 'DY']:
-        print 'assembling equations for %s' % proc
+        print('assembling equations for %s' % proc)
         eqfilename = 'equations_%s.dat' % proc
         with open(eqfilename, 'w') as eqfile:
             for p1,e1,p2,e2 in categories:
@@ -231,13 +231,13 @@ def main(args, options):
                 line = ('%2.0f, %5.3f, %2.0f, %5.3f: NSS/NOS '
                         '(%8.2f+-%6.2f)/(%11.2f+-%7.2f) = (%.6f+-%.6f)' %
                           (p1, e1, p2, e2, nss, nsse, nos, nose, ratio, ratioerr))
-                print line
+                print(line)
                 eqfile.write("%d %d %d %d %.6f %.6f\n" % (ptbins.index(p1), etabins.index(e1),
                                                           ptbins.index(p2), etabins.index(e2),
                                                           ratio, ratioerr))
                 # eqfile.write("%2.0f %5.3f %2.0f %5.3f %.5f %.5f\n" % (p1, e1, p2, e2, ratio, ratioerr))
 
-        print "Wrote system of equations to %s" % eqfilename
+        print("Wrote system of equations to %s" % eqfilename)
 
     return 0
 

@@ -33,13 +33,13 @@ parser.add_option("--s2v", "--scalar2vector",     dest="doS2V",    action="store
  
 (options, args) = parser.parse_args()
 
-if options.cut and options.cutfile: raise RuntimeError, "You can't specify both a cut and a cutfile"
+if options.cut and options.cutfile: raise RuntimeError("You can't specify both a cut and a cutfile")
 
 jsonmap = {}
 if options.json:
     J = json.load(open(options.json, 'r'))
-    for r,l in J.iteritems():
-        jsonmap[long(r)] = l
+    for r,l in J.items():
+        jsonmap[int(r)] = l
     stderr.write("Loaded JSON %s with %d runs\n" % (options.json, len(jsonmap)))
 
 def testJson(ev):
@@ -64,10 +64,10 @@ class BaseDumper(Module):
         if self.options.events and ( (ev.run, ev.lumi, ev.evt) not in self.options.events ):
             return False
         if self.options.fmt: 
-            print string.Formatter().vformat(options.fmt.replace("\\t","\t"),[],ev)
+            print(string.Formatter().vformat(options.fmt.replace("\\t","\t"),[],ev))
             return True
-        print "run %6d lumi %4d event %11d : met %.1f ht %.1f central jets %d (CSV loose %d, CSV medium %d) leptons %d/%d taus %d/%d" % (
-                ev.run, ev.lumi, ev.evt, ev.met_pt, ev.htJet20j, ev.nJet, ev.nBJetsLoose20, ev.nBJetsMedium20, ev.nLepGood, ev.nLepOther, ev.nTauGood, getattr(ev,'nTauOther',0))
+        print("run %6d lumi %4d event %11d : met %.1f ht %.1f central jets %d (CSV loose %d, CSV medium %d) leptons %d/%d taus %d/%d" % (
+                ev.run, ev.lumi, ev.evt, ev.met_pt, ev.htJet20j, ev.nJet, ev.nBJetsLoose20, ev.nBJetsMedium20, ev.nLepGood, ev.nLepOther, ev.nTauGood, getattr(ev,'nTauOther',0)))
         lepsg = Collection(ev,"LepGood","nLepGood") 
         lepsb = Collection(ev,"LepOther","nLepOther") 
         tausg = Collection(ev,"TauGood","nTauGood") 
@@ -75,41 +75,41 @@ class BaseDumper(Module):
         jets = Collection(ev,"Jet","nJet") 
         ivfs = Collection(ev,"SV","nSV") 
         for i,(lt,l) in enumerate([("good",l) for l in lepsg] + [("bad ",l) for l in lepsb]):
-            print "    lep %s %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f  id %d/% d  miniRelIso %6.3f sip3d %5.2f dxy %+4.3f dz %+4.3f  lostHits %d " % (
-                    lt, i+1, l.pdgId,l.pt,l.eta,l.phi, l.looseIdOnly,l.tightId, l.miniRelIso, l.sip3d, l.dxy, l.dz, l.lostHits),
+            print("    lep %s %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f  id %d/% d  miniRelIso %6.3f sip3d %5.2f dxy %+4.3f dz %+4.3f  lostHits %d " % (
+                    lt, i+1, l.pdgId,l.pt,l.eta,l.phi, l.looseIdOnly,l.tightId, l.miniRelIso, l.sip3d, l.dxy, l.dz, l.lostHits), end=' ')
             if self.options.ismc:
-                print "   mcMatch %8d/%d mcGamma %d" % (l.mcMatchId, l.mcMatchAny, l.mcPromptGamma),
-            print ""
+                print("   mcMatch %8d/%d mcGamma %d" % (l.mcMatchId, l.mcMatchAny, l.mcPromptGamma), end=' ')
+            print("")
             #if abs(l.pdgId) == 11:
             #    print "   tightId %d mvaId %5.3f misHit %d conVeto %d tightCh %d mvaIdTrig %5.3f" % (l.tightId, l.mvaId, l.lostHits, l.convVeto, l.tightCharge, l.mvaIdTrig)
             #else:
             #    print "   tightId %d lostHits %2d tightCh %d" % (l.tightId, l.lostHits, l.tightCharge)
         for i,(lt,l) in enumerate([("good",l) for l in tausg] + [("bad ",l) for l in tausb]):
-            print "    tau %s %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   decModeId %d/%d idMVA %d idMVANew %d   dxy %+4.3f dz %+4.3f " % (
-                    lt, i+1, l.pdgId,l.pt,l.eta,l.phi, l.idDecayMode, l.idDecayModeNewDMs, l.idMVA,l.idMVANewDM, l.dxy, l.dz),
-            if self.options.ismc: print "   mcMatch %+3d" % l.mcMatchId,
-            print ""
+            print("    tau %s %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   decModeId %d/%d idMVA %d idMVANew %d   dxy %+4.3f dz %+4.3f " % (
+                    lt, i+1, l.pdgId,l.pt,l.eta,l.phi, l.idDecayMode, l.idDecayModeNewDMs, l.idMVA,l.idMVANewDM, l.dxy, l.dz), end=' ')
+            if self.options.ismc: print("   mcMatch %+3d" % l.mcMatchId, end=' ')
+            print("")
         for i,j in enumerate(jets):
-            print "    jet %d:  pt %6.1f eta %+4.2f phi %+4.2f   btag %4.3f  dPhi(j,MET) %+4.2f MT(j,MET) %6.1f   raw pt %6.1f " % (
-                     i+1, j.pt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)), deltaPhi(j.phi,ev.met_phi), sqrt(2*j.pt*ev.met_pt*(1-cos(j.phi-ev.met_phi))), j.rawPt),
+            print("    jet %d:  pt %6.1f eta %+4.2f phi %+4.2f   btag %4.3f  dPhi(j,MET) %+4.2f MT(j,MET) %6.1f   raw pt %6.1f " % (
+                     i+1, j.pt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)), deltaPhi(j.phi,ev.met_phi), sqrt(2*j.pt*ev.met_pt*(1-cos(j.phi-ev.met_phi))), j.rawPt), end=' ')
             if self.options.ismc:
-                print "  mcMatch %8d/%d mcPt %5.1f" % (j.mcMatchId, j.hadronFlavour, j.mcPt),
-            print ""
+                print("  mcMatch %8d/%d mcPt %5.1f" % (j.mcMatchId, j.hadronFlavour, j.mcPt), end=' ')
+            print("")
         for i,ivf in enumerate(ivfs):
-            print "    IVF %d:  pt %5.1f eta %+4.2f phi %+4.2f  mass %4.1f  ntracks %1d  chi2/ndf %5.1f/%5.1f  cos(theta) % .3f  dxy %4.3f  ip3d %6.3f  sip2d %4.1f  sip3d %4.1f  jet pt %6.1f dR %.2f  dPhi(ivf,MET) %+4.2f  MT(ivf,MET)%6.1f   dR(ivf,ISR) %4.2f  MT(ivf,ISR) %6.1f " % (
+            print("    IVF %d:  pt %5.1f eta %+4.2f phi %+4.2f  mass %4.1f  ntracks %1d  chi2/ndf %5.1f/%5.1f  cos(theta) % .3f  dxy %4.3f  ip3d %6.3f  sip2d %4.1f  sip3d %4.1f  jet pt %6.1f dR %.2f  dPhi(ivf,MET) %+4.2f  MT(ivf,MET)%6.1f   dR(ivf,ISR) %4.2f  MT(ivf,ISR) %6.1f " % (
                      i+1, ivf.pt, ivf.eta, ivf.phi, ivf.mass, ivf.ntracks, ivf.chi2, ivf.ndof, ivf.cosTheta, ivf.dxy, ivf.ip3d, ivf.dxy/ivf.edxy, ivf.sip3d,
                              ivf.jetPt, ivf.jetDR,
                              deltaPhi(ivf.phi,ev.met_phi), sqrt(2*ivf.pt*ev.met_pt*(1-cos(ivf.phi-ev.met_phi))),
                              deltaR(ivf.eta,ivf.phi,ev.ISRJet_eta,ev.ISRJet_phi) if ev.ISRJet_pt > 0 else 0, 
-                             sqrt(2*ivf.pt*ev.ISRJet_pt*(1-cos(ivf.phi-ev.ISRJet_phi))) if ev.ISRJet_pt > 0 else 0),
+                             sqrt(2*ivf.pt*ev.ISRJet_pt*(1-cos(ivf.phi-ev.ISRJet_phi))) if ev.ISRJet_pt > 0 else 0), end=' ')
             if self.options.ismc:
-                print "  mcMatch %d/%d mcFlav %d/%d" % (ivf.mcMatchNTracks, ivf.mcMatchNTracksHF, ivf.mcFlavFirst,ivf.mcFlavHeaviest),
-            print ""
-        print "    met %6.2f (phi %+4.2f)  ht %.1f mht %6.2f" % (ev.met_pt, ev.met_phi, ev.htJet20j, ev.mhtJet20)
-        print "    primary vertices %d (first is good? %s)" % (ev.nVert, ev.firstPVIsGood != 0)
-        print ""
-        print ""
-        print ""
+                print("  mcMatch %d/%d mcFlav %d/%d" % (ivf.mcMatchNTracks, ivf.mcMatchNTracksHF, ivf.mcFlavFirst,ivf.mcFlavHeaviest), end=' ')
+            print("")
+        print("    met %6.2f (phi %+4.2f)  ht %.1f mht %6.2f" % (ev.met_pt, ev.met_phi, ev.htJet20j, ev.mhtJet20))
+        print("    primary vertices %d (first is good? %s)" % (ev.nVert, ev.firstPVIsGood != 0))
+        print("")
+        print("")
+        print("")
 
 cut = None
 if options.cutfile:
@@ -122,7 +122,7 @@ if options.events:
     rles = []
     for ids in options.events:
         for i in ids.split(","):
-            (r,l,e) = map(int, i.strip().split(":"))
+            (r,l,e) = list(map(int, i.strip().split(":")))
             rles.append((r,l,e))
     options.events = rles
  

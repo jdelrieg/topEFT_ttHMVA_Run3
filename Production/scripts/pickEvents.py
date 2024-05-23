@@ -27,8 +27,8 @@ def decodeEventInfo( string ):
         event = m.group(3)
         return ( run, lumi, event )
     else:
-        print string, 'does not match pattern: ', spat
-        print 'please specify your event information correctly, like run:lumi:event.'
+        print(string, 'does not match pattern: ', spat)
+        print('please specify your event information correctly, like run:lumi:event.')
         sys.exit(2)
 
 def decodeEventsInfo( eventsInfo ): 
@@ -82,7 +82,7 @@ cfo = imp.load_source("pycfg", cfg, handle)
 process = cfo.process
 handle.close()
 
-print dbsQuery
+print(dbsQuery)
 dbsOut = os.popen('dbs search --query %s' % dbsQuery)
 
 process.source.fileNames = getFiles( dbsOut )

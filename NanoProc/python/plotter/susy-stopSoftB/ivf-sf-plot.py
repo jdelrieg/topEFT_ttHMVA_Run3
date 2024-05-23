@@ -30,14 +30,14 @@ for line in txtdata.split("\n"):
     fields = line.strip().split()
     if len(fields) != 6: continue
     (gen,kind) = fields[:2]
-    (sf,stat,bkg,mcst) = map(float,fields[2:])
+    (sf,stat,bkg,mcst) = list(map(float,fields[2:]))
     if kind not in data: data[kind] = []
     data[kind].append( (gen, (sf,stat,bkg,mcst)) )
 
 
 c1 = ROOT.TCanvas("c1","c1")
 c1.SetBottomMargin(0.25)
-for kind,gens in data.iteritems():
+for kind,gens in data.items():
     ngens = len(gens)
     hist   = ROOT.TH1F("none", "all",ngens,0,ngens);
     hist_a = ROOT.TH1F("all",  "all",ngens,0,ngens);

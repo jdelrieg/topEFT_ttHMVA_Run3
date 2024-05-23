@@ -25,12 +25,12 @@ class BTagCSVFullShape(object):
 
     def init(self):
         if self.verbose:
-            print "Initializing btag calibrator from %s" % self.csvfile
+            print("Initializing btag calibrator from %s" % self.csvfile)
         self.calibrator = BTagCalibration(self.algo, self.csvfile)
 
     def create_readers(self):
         if self.verbose:
-            print "Setting up btag calibration readers"
+            print("Setting up btag calibration readers")
 
         self.v_sys = getattr(ROOT, 'vector<string>')()
         for syst in self.iterative_systs:

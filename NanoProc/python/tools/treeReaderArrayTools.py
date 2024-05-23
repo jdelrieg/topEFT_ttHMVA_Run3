@@ -18,9 +18,9 @@ def getArrayReader(tree, branchName):
     """Make- a reader for branch branchName containing a variable-length value array. 
        If you are sure nobody has yet read from the tree, you can set isClean to True and save some overhead."""
     if branchName not in tree._ttras:
-       if not tree.GetBranch(branchName): raise RuntimeError, "Can't find branch '%s'" % branchName
+       if not tree.GetBranch(branchName): raise RuntimeError("Can't find branch '%s'" % branchName)
        leaf = tree.GetBranch(branchName).GetLeaf(branchName)
-       if not bool(leaf.GetLeafCount()): raise RuntimeError, "Branch %s is not a variable-length value array" % branchName
+       if not bool(leaf.GetLeafCount()): raise RuntimeError("Branch %s is not a variable-length value array" % branchName)
        typ = _rootType2Python[leaf.GetTypeName()]
        tree._ttras[branchName] = _makeArrayReader(tree, typ, branchName)
     return tree._ttras[branchName]
@@ -29,9 +29,9 @@ def getValueReader(tree, branchName):
     """Make a reader for branch branchName containing a single value. 
        If you are sure nobody has yet read from the tree, you can set isClean to True and save some overhead."""
     if branchName not in tree._ttrvs:
-       if not tree.GetBranch(branchName): raise RuntimeError, "Can't find branch '%s'" % branchName
+       if not tree.GetBranch(branchName): raise RuntimeError("Can't find branch '%s'" % branchName)
        leaf = tree.GetBranch(branchName).GetLeaf(branchName)
-       if bool(leaf.GetLeafCount()) or leaf.GetLen() != 1: raise RuntimeError, "Branch %s is not a value" % branchName
+       if bool(leaf.GetLeafCount()) or leaf.GetLen() != 1: raise RuntimeError("Branch %s is not a value" % branchName)
        typ = _rootType2Python[leaf.GetTypeName()]
        tree._ttrvs[branchName] = _makeValueReader(tree, typ, branchName)
     return tree._ttrvs[branchName]
@@ -45,10 +45,10 @@ def readBranch(tree, branchName):
         return tree._ttrvs[branchName].Get()[0]
     else:
         branch = tree.GetBranch(branchName)
-        if not branch: raise RuntimeError, "Unknown branch %s" % branchName
+        if not branch: raise RuntimeError("Unknown branch %s" % branchName)
         leaf = branch.GetLeaf(branchName)
         if leaf.GetTypeName() not in _rootType2Python:
-            raise RuntimeError, "Branch %s has unsupported type %s" % (branchName, leaf.GetTypeName())
+            raise RuntimeError("Branch %s has unsupported type %s" % (branchName, leaf.GetTypeName()))
         typ = _rootType2Python[leaf.GetTypeName()]
         if leaf.GetLen() == 1 and not bool(leaf.GetLeafCount()): 
             _vr = _makeValueReader(tree, typ, branchName)
@@ -63,7 +63,7 @@ def readBranch(tree, branchName):
 
 ####### PRIVATE IMPLEMENTATION PART #######
 
-_rootType2Python = { 'Int_t':int, 'Long_t':long, 'UInt_t':int, 'ULong_t':long, 'ULong64_t':"unsigned long long",
+_rootType2Python = { 'Int_t':int, 'Long_t':int, 'UInt_t':int, 'ULong_t':int, 'ULong64_t':"unsigned long long",
                      'Float_t':float, 'Double_t':float }
 
 def _makeArrayReader(tree, typ, nam):
@@ -84,10 +84,10 @@ def _remakeAllReaders(tree):
     _ttreereader = ROOT.TTreeReader(tree)
     _ttreereader._isClean = True
     _ttrvs = {}
-    for k in tree._ttrvs.iterkeys():
+    for k in tree._ttrvs.keys():
         _ttrvs[k] = ROOT.TTreeReaderValue(tree._leafTypes[k])(_ttreereader,k)
     _ttras = {}
-    for k in tree._ttras.iterkeys():
+    for k in tree._ttras.keys():
         _ttras[k] = ROOT.TTreeReaderArray(tree._leafTypes[k])(_ttreereader,k)
     tree._ttrvs = _ttrvs
     tree._ttras = _ttras

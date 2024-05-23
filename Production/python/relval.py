@@ -27,7 +27,7 @@ def processRelVal( relval, cfgFileName, process, negate, tier=None, batch = None
     # changing the source to the chosen relval files
     process.source.fileNames = files
     
-    print process.source.fileNames
+    print(process.source.fileNames)
     
     # building cfg
 
@@ -38,7 +38,7 @@ def processRelVal( relval, cfgFileName, process, negate, tier=None, batch = None
 
     # building cmsBatch command
     
-    print relvalID
+    print(relvalID)
 
     dataset = relval.dataset
     if tier!=None:
@@ -51,8 +51,8 @@ def processRelVal( relval, cfgFileName, process, negate, tier=None, batch = None
     #    castorOutDir += '/' + tier
     #    outDir += '/' + tier
 
-    print 'local  output: ', outDir
-    print 'castor output:', castorOutDir
+    print('local  output: ', outDir)
+    print('castor output:', castorOutDir)
     
     # output directory creation will be handled by cmsBatch
     # os.system( 'mkdir -p ' + outDir )
@@ -60,7 +60,7 @@ def processRelVal( relval, cfgFileName, process, negate, tier=None, batch = None
     cmsBatch = "cmsBatch.py 1 tmpConfig.py -r %s -o %s -b '%s' " % (castorOutDir, outDir, batch)
     if negate:
         cmsBatch += ' -n'
-    print cmsBatch
+    print(cmsBatch)
     os.system( cmsBatch )
     addToDatasets( dataset ) 
 

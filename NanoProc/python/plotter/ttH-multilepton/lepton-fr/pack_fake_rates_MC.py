@@ -14,31 +14,31 @@ def makeH2D(name,xedges,yedges):
 
 def fillSliceY(th2,plot1d,yvalue):
     ybin = th2.GetYaxis().FindBin(yvalue)
-    for xbin in xrange(1,th2.GetNbinsX()+1):
+    for xbin in range(1,th2.GetNbinsX()+1):
         xval = th2.GetXaxis().GetBinCenter(xbin)
-        for i in xrange(plot1d.GetN()):
+        for i in range(plot1d.GetN()):
             x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
             if x-xm <= xval and xval <= x+xp:
                 th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
                 th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
 def readSliceY(th2,filename,plotname,yvalue):
     slicefile = ROOT.TFile.Open(filename)
-    if not slicefile: raise RuntimeError, "Cannot open "+filename
+    if not slicefile: raise RuntimeError("Cannot open "+filename)
     plot = slicefile.Get(plotname)
     if not plot: 
         slicefile.ls()
-        raise RuntimeError, "Cannot find "+plotname+" in "+filename
+        raise RuntimeError("Cannot find "+plotname+" in "+filename)
     fillSliceY(th2,plot,yvalue)
     slicefile.Close()
 def assemble2D(out,name,xedges,yedges,filepattern,plotname,yslices):
     out.cd()
     th2 = makeH2D(name,xedges,yedges)
     for yvalue,yname in yslices:
-        print th2
-        print filepattern
-        print yname
-        print plotname
-        print yvalue
+        print(th2)
+        print(filepattern)
+        print(yname)
+        print(plotname)
+        print(yvalue)
         readSliceY(th2,filepattern%yname,plotname,yvalue)
     out.WriteTObject(th2)
     return th2

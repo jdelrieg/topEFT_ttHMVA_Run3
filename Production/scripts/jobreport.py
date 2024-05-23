@@ -22,32 +22,32 @@ def createLoggerTemporaryFile( dataset_lfn_dir ):
 		os.system("cmsStage -f "+ os.path.join( eostools.eosToLFN(dataset_lfn_dir), "Logger.tgz") + " " + logger_file.name)
 		logger_tar_object = tarfile.open(fileobj = logger_file)
 		if len( logger_tar_object.getmembers() )==0: 
-			print "\nERROR: Failed to stage logger file"
+			print("\nERROR: Failed to stage logger file")
 			exit(-1)
 		return logger_tar_object
 	except:
-		print "\nERROR: Failed to stage logger file"
+		print("\nERROR: Failed to stage logger file")
 		exit(-1)
 
 def buildBadJobsList( dataset ):
 	badJobs = []
 	try:
 		# Open the file in the logger and get the value
-		print dataset.lfnDir
+		print(dataset.lfnDir)
 		logger_tar_object = checkForLogger( dataset.lfnDir )
 		nJobsFile = logger_tar_object.extractfile("Logger/logger_jobs.txt") #extract Logger/logger_jobs.txt if it exists    
 		nJobs = int(nJobsFile.read().split(": ")[1].split("\n")[0])         #read job number from file
 	except:
-		print "ERROR: No jobs file found in logger" 
+		print("ERROR: No jobs file found in logger") 
 		exit( -1 )
 
 	if nJobs == None:
-		print "ERROR:Invalid job number - Corrupt jobs report from Logger/logger_jobs.txt"
+		print("ERROR:Invalid job number - Corrupt jobs report from Logger/logger_jobs.txt")
 		exit( -1 )
 	else:
 		goodFiles = data.listOfGoodFiles()
 		goodJobNumbers =  sorted( map( jobNumber, goodFiles ) )
-		totalJobNumbers = range( 1, nJobs )
+		totalJobNumbers = list(range( 1, nJobs))
 	
 		badJobs = list( set(totalJobNumbers) - set(goodJobNumbers) ) 
 	return badJobs
@@ -62,10 +62,10 @@ def jobDir( allJobsDir, job ):
 
 def lsfReport( stdoutgz, unzip=False, nLines=100):
     sep_line = '-'*70
-    print
-    print sep_line
-    print stdoutgz
-    print
+    print()
+    print(sep_line)
+    print(stdoutgz)
+    print()
     stdout = None
     if unzip:
         stdout = gzip.open(stdoutgz)
@@ -75,7 +75,7 @@ def lsfReport( stdoutgz, unzip=False, nLines=100):
     nLines = min(nLines, len(lines))
     for line in lines[-nLines:]:
         line = line.rstrip('\n')
-        print line
+        print(line)
 
 def jobReport( allJobsDir, job, nLines=100):
     jdir = jobDir( allJobsDir, job )
@@ -91,7 +91,7 @@ def jobSubmit( allJobsDir, job, cmd):
     jdir = jobDir( allJobsDir, job )
     oldPwd = os.getcwd()
     os.chdir( jdir )
-    print cmd
+    print(cmd)
     os.system( cmd )
     os.chdir( oldPwd )
 
@@ -136,7 +136,7 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args)!=2:
-        print 'please provide the dataset name and the job directory in argument'
+        print('please provide the dataset name and the job directory in argument')
         sys.exit(1)
     
     dataset = args[0]
@@ -155,8 +155,8 @@ if __name__ == '__main__':
     else:
         # import pdb; pdb.set_trace()
         bjlsstr = options.badjoblists.split(';')
-        bjlsstr = filter(lambda x: len(x)>0, bjlsstr)
-        bjls = map(eval, bjlsstr)
+        bjlsstr = [x for x in bjlsstr if len(x)>0]
+        bjls = list(map(eval, bjlsstr))
         setOfBadJobs = set()
         for bjl in bjls:
             setOfBadJobs.update( set(bjl) )
@@ -173,4 +173,4 @@ if __name__ == '__main__':
         for job in badJobs:
             jobSubmit(allJobsDir, job, options.batch)
     else:
-        print badJobs
+        print(badJobs)

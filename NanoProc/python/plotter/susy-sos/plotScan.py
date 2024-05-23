@@ -78,7 +78,7 @@ HiggsPMSSM_xsec = {
 "220_1000" : 0.840,  "220_1200" : 0.836,  "220_300" : 0.936,  "220_400" : 0.888,  "220_500" : 0.866,  "220_600" : 0.862,  "220_800" : 0.847,\
 "240_1000" : 0.612,  "240_1200" : 0.609,  "240_300" : 0.683,  "240_400" : 0.643,  "240_500" : 0.627,  "240_600" : 0.622,  "240_800" : 0.613}
 HiggsPMSSM_xsec_unc = HiggsPMSSM_xsec.copy()
-for key in HiggsPMSSM_xsec_unc.keys(): HiggsPMSSM_xsec_unc[key] = HiggsPMSSM_xsec_unc[key]*0.06 # Assign 6% as in previous analysis
+for key in list(HiggsPMSSM_xsec_unc.keys()): HiggsPMSSM_xsec_unc[key] = HiggsPMSSM_xsec_unc[key]*0.06 # Assign 6% as in previous analysis
 T2XX_xsec = {
 250  : 21.5949,    275  : 13.3231,    300  : 8.51615,   325 : 5.60471,   350 : 3.78661,    375 : 2.61162,    400  : 1.83537,    425  : 1.31169,\
 450  : 0.948333,   475  : 0.697075,   500  : 0.51848,   525 : 0.390303,  550 : 0.296128,   575 : 0.226118,   600  : 0.174599,   625  : 0.136372,\
@@ -163,7 +163,7 @@ class MLFit:
             pars = f.Get(frname)
             if not pars: return
             pars_f = pars.floatParsFinal()
-            for i in xrange(pars_f.getSize()):
+            for i in range(pars_f.getSize()):
                 x = pars_f[i]
                 if x.GetName()!='r':
                     self.nuisances[x.GetName()] = (x.getVal(),x.getError())
@@ -184,7 +184,7 @@ class Significance:
 class SignalPoint:
     def __init__(self,indir,tag='all',unblind=False):
         self.modname = indir.split('/')[-1]
-        self.m1, self.m2 = map(lambda x: mass_from_str(x), self.modname.split('_')[-2:])
+        self.m1, self.m2 = [mass_from_str(x) for x in self.modname.split('_')[-2:]]
         self.indir = indir
         self.tag = tag
         self.unblind = unblind
@@ -230,8 +230,8 @@ class GraphSmoothing:
     def smoothedGraph(self,debug=False): # debug=True triggers a lot of printouts
         for i in range(self.graph.GetN()):
             self.buf[i] = self.graph.GetZ()[i]
-            if debug: print self.graph.GetZ()[i],"\t",
-        if debug: print
+            if debug: print(self.graph.GetZ()[i],"\t", end=' ')
+        if debug: print()
 
         smoothGraph = TGraph2D(self.graph.GetN())
 
@@ -245,23 +245,23 @@ class GraphSmoothing:
                 content = 0.0
                 norm = 0.0
                 iGraph = j*npx+i
-                if debug: print "\nGraph Bin =", iGraph
+                if debug: print("\nGraph Bin =", iGraph)
 
                 for m in range(self.ksize_y):
                     for n in range(self.ksize_x):
                         xb = i+(n-x_push)
                         yb = j+(m-y_push)
-                        if debug: print "xb =", xb; print "yb =", yb
+                        if debug: print("xb =", xb); print("yb =", yb)
                         if (xb >= 0) and (xb < npx) and (yb >= 0) and (yb < npy):
                             iBin = yb*npx + xb
-                            if debug: print "Buffer Bin =", iBin
+                            if debug: print("Buffer Bin =", iBin)
                             k = self.kernel[n][m]
                             if k!=0.0:
                                 norm = norm + k
                                 content = content + k*self.buf[iBin]
-                                if debug: print "Adding value", self.buf[iBin], " with weight", k, ". Resulting Sweights =", norm, " and Svalues =", content
+                                if debug: print("Adding value", self.buf[iBin], " with weight", k, ". Resulting Sweights =", norm, " and Svalues =", content)
                 if norm!=0.0:
-                    if debug: print "Previous value =", self.graph.GetZ()[iGraph], " Updated value =", content/norm
+                    if debug: print("Previous value =", self.graph.GetZ()[iGraph], " Updated value =", content/norm)
                     smoothGraph.SetPoint(iBin,self.graph.GetX()[iGraph],self.graph.GetY()[iGraph],content/norm)
 
         self.graph = smoothGraph
@@ -279,7 +279,7 @@ def getLimitHists(files, tag):
         key = str(int(massH))+"_"+str(int(massL)) if args.signalModel=="HiggsPMSSM" else int(massH)
         vals = {}
         if args.NPscan:
-            if f.mlfit.nuisances.has_key(args.NPscan):
+            if args.NPscan in f.mlfit.nuisances:
                 vals.update({'0' : f.mlfit.nuisances[args.NPscan][1 if args.NPerror else 0]})
             else: vals.update({'0' : None})
         elif args.signif:
@@ -293,7 +293,7 @@ def getLimitHists(files, tag):
                 vals['obs-1'] = xsec[key] / (xsec[key] - xsec_unc[key]) * f.limit.obs
             if vals['0']!=None:
                 vals['xs'] = xsec[key] * vals['0']
-        if args.prnt: print massH, massL, vals['0']
+        if args.prnt: print(massH, massL, vals['0'])
         lim = LimitPoint(massH, massL, vals)
         if vals['0']!=None: limits.append(lim)
     limits.sort(key=DeltaMsorting)
@@ -370,7 +370,7 @@ def plotLimits(limits_hists, limit_labels, label, outdir):
     h_bkgd.GetZaxis().SetTitleSize(0.042)
 
     for iLim, limit_hists in enumerate(limits_hists):
-        for var,lim in limit_hists.iteritems():
+        for var,lim in limit_hists.items():
             if var=='xs': continue
             if args.NPscan or args.signif: lim.SetContour(1,array.array('d',[-5]))
             else: lim.SetContour(1,array.array('d',[1]))
@@ -647,9 +647,9 @@ def run(indirs,tag,label,outdir):
             elif args.signalModel=="T2tt" or args.signalModel=="T2bW":
                 if x.m1 < 300 or x.m1 > 650 or x.m1-x.m2 < 10.0 or x.m1-x.m2 > 80.0: continue
             points[(x.m1,x.m2)] = x
-    print 'Found %d files'%len(points)
+    print('Found %d files'%len(points))
     if len(points)==0: raise RuntimeError("No points found")
-    lims = getLimitHists(points.values(),tag)
+    lims = getLimitHists(list(points.values()),tag)
     if not args.pretend: plotLimits([lims], [], label, outdir)
 
 def runMLL(indirs,tag,label,outdir):
@@ -659,7 +659,7 @@ def runMLL(indirs,tag,label,outdir):
     for mll in args.reweight:
         if mll=='none': continue
         files=glob.glob(indirs.format(MLL='-%s'%mll, TAG=tag))
-        print 'Found %d files'%len(files)
+        print('Found %d files'%len(files))
         if len(files)==0: raise RuntimeError("No files found")
         l = getLimitHists(files, mll)
         limCurves.append( l )
@@ -670,14 +670,14 @@ def runMLL(indirs,tag,label,outdir):
 
 
 outdir=args.outdir.rstrip("/")
-print "Scans will be saved in the folder '%s'..."%outdir
+print("Scans will be saved in the folder '%s'..."%outdir)
 
 rwt_comp = False
 for sel in args.indir:
     sel = sel.rstrip("/")
     name = sel.split("/")[-1]
     for tag in args.tag:
-        print "For tag "+tag+":"
+        print("For tag "+tag+":")
         for mll in args.reweight:
             run("%s_merged/cards/%s%s_*"%(sel,args.signalModel,'-%s'%mll if mll!='none' else ''),tag,"%s_%s%s"%(name,tag,'_%s'%mll if mll!='none' else ''),outdir)
 

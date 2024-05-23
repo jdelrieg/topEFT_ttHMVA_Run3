@@ -24,8 +24,8 @@ def makeH2D(name,xedges,yedges):
     return ROOT.TH2F(name,name,len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges))
 
 def fillPlot2D(th2,plot1d):
-    for xbin in xrange(1,th2.GetNbinsX()+1):
-        for ybin in xrange(1,th2.GetNbinsY()+1):
+    for xbin in range(1,th2.GetNbinsX()+1):
+        for ybin in range(1,th2.GetNbinsY()+1):
             xval = th2.GetXaxis().GetBinCenter(xbin)
             yval = th2.GetYaxis().GetBinCenter(ybin)
             xbin1d = int(ROOT.gROOT.ProcessLine("bin2Dto1D(%f,%f,%d);" % (xval,yval,binning_code)))
@@ -34,11 +34,11 @@ def fillPlot2D(th2,plot1d):
 
 def readPlot1D(th2,filename,plotname):
     slicefile = ROOT.TFile.Open(filename)
-    if not slicefile: raise RuntimeError, "Cannot open "+filename
+    if not slicefile: raise RuntimeError("Cannot open "+filename)
     plot = slicefile.Get(plotname)
     if not plot: 
         slicefile.ls()
-        raise RuntimeError, "Cannot find "+plotname+" in "+filename
+        raise RuntimeError("Cannot find "+plotname+" in "+filename)
     fillPlot2D(th2,plot)
     slicefile.Close()
 
@@ -49,7 +49,7 @@ def assemble2D(name,filename,plotname):
     try:
         readPlot1D(th2,filename,plotname)
     except RuntimeError:
-        print "Impossible to open file "+filename+", skipping..."
+        print("Impossible to open file "+filename+", skipping...")
         return
     c = ROOT.TCanvas("canv_"+th2.GetName(),"canv_"+th2.GetName())
     c.cd()

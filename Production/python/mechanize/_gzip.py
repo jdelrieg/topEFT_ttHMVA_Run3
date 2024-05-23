@@ -1,4 +1,4 @@
-from cStringIO import StringIO
+from io import StringIO
 
 import _response
 import _urllib2_fork

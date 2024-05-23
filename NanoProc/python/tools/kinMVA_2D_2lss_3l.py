@@ -239,21 +239,21 @@ class KinMVA_2D_2lss_3l:
             self._MVAs["kinMVA_3l_ttV"+self.systsJEC[var]] = MVATool("3l_ttV"+self.systsJEC[var], weights%"3l_ttV", getattr(self,"_vars_ttV_3l"+self.systsJEC[var]), specs = self._specs)
             self._MVAs["kinMVA_3l_ttV_withMEM"+self.systsJEC[var]] = MVATool("3l_ttV_withMEM"+self.systsJEC[var], weights%"3l_ttV_withMEM", getattr(self,"_vars_ttV_3l_withMEM"+self.systsJEC[var]), specs = self._specs) if self._useMEM_3l else self.put_minus_99
 
-        if not ('v8' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDTv8 and kinMVA_2lss_ttV_withHj_v8 to dummy value (-99) as requested'
-        if not ('rTT' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDTrTT and kinMVA_2lss_ttV_withHj_rTT to dummy value (-99) as requested'
-        if not ('httTT' in self._useTT_2lss): print 'WARNING: will set kinMVA_2lss_ttbar_withBDThttTT and kinMVA_2lss_ttV_withHj_httTT to dummy value (-99) as requested'
-        if not self._useMEM_3l: print 'WARNING: will set kinMVA_3l_ttbar_withMEM and kinMVA_3l_ttV_withMEM to dummy value (-99) as requested'
+        if not ('v8' in self._useTT_2lss): print('WARNING: will set kinMVA_2lss_ttbar_withBDTv8 and kinMVA_2lss_ttV_withHj_v8 to dummy value (-99) as requested')
+        if not ('rTT' in self._useTT_2lss): print('WARNING: will set kinMVA_2lss_ttbar_withBDTrTT and kinMVA_2lss_ttV_withHj_rTT to dummy value (-99) as requested')
+        if not ('httTT' in self._useTT_2lss): print('WARNING: will set kinMVA_2lss_ttbar_withBDThttTT and kinMVA_2lss_ttV_withHj_httTT to dummy value (-99) as requested')
+        if not self._useMEM_3l: print('WARNING: will set kinMVA_3l_ttbar_withMEM and kinMVA_3l_ttV_withMEM to dummy value (-99) as requested')
 
     def put_minus_99(self,event):
         return -99
     def listBranches(self):
-        return self._MVAs.keys()
+        return list(self._MVAs.keys())
     def __call__(self,event):
         out = {}
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
-        for name, mva in self._MVAs.iteritems():
+        for name, mva in self._MVAs.items():
             _mva = mva
-            for i,j in self.systsJEC.iteritems():
+            for i,j in self.systsJEC.items():
                 if j in name and (event.isData or not hasattr(event,"nJet25"+j+'_Recl')): _mva = self._MVAs[name.replace(j,"")] # do not calculate jecUp/jecDown on data, put them to nominal
             if '2lss' in name: out[name] = _mva(event) if event.nLepFO_Recl>=2 else -99
             elif '3l' in name: out[name] = _mva(event) if event.nLepFO_Recl>=3 else -99
@@ -274,8 +274,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = KinMVA_2D_2lss_3l(weights = './weights/%s_BDTG.weights.xml')
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

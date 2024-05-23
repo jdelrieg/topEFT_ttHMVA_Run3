@@ -23,7 +23,7 @@ loop = None
 
 def callBack( result ):
     pass
-    print 'production done:', str(result)
+    print('production done:', str(result))
 
 def runLoopAsync(comp, outDir, config, options):
     loop = runLoop( comp, outDir, config, options)
@@ -35,11 +35,11 @@ def runLoop( comp, outDir, config, options):
     loop = Looper( fullName, comp, config.sequence,
                    options.nevents, 0, 
                    nPrint = options.nprint)
-    print loop
+    print(loop)
     if options.iEvent is None:
         loop.loop()
         loop.write()
-        print loop
+        print(loop)
     else:
         # loop.InitOutput()
         iEvent = int(options.iEvent)
@@ -54,18 +54,18 @@ def createOutputDir(dir, components, force):
         os.mkdir(dir)
         return True
     except OSError:
-        print 'directory %s already exists' % dir
-        print 'contents: '
+        print('directory %s already exists' % dir)
+        print('contents: ')
         dirlist = [path for path in os.listdir(dir) if os.path.isdir( '/'.join([dir, path]) )]
         pprint( dirlist )
-        print 'component list: '
-        print [comp.name for comp in components]
+        print('component list: ')
+        print([comp.name for comp in components])
         if force is True:
-            print 'force mode, continue.'
+            print('force mode, continue.')
             return True
         else:
             while answer not in ['Y','y','yes','N','n','no']:
-                answer = raw_input('Continue? [y/n]')
+                answer = input('Continue? [y/n]')
             if answer.lower().startswith('n'):
                 return False
             elif answer.lower().startswith('y'):
@@ -102,18 +102,18 @@ def main( options, args ):
     
     if len(args) != 2:
         parser.print_help()
-        print 'ERROR: please provide the processing name and the component list'
+        print('ERROR: please provide the processing name and the component list')
         sys.exit(1)
         
     outDir = args[0]
     if os.path.exists(outDir) and not os.path.isdir( outDir ):
         parser.print_help()
-        print 'ERROR: when it exists, first argument must be a directory.'
+        print('ERROR: when it exists, first argument must be a directory.')
         sys.exit(2)
     cfgFileName = args[1]
     if not os.path.isfile( cfgFileName ):
         parser.print_help()
-        print 'ERROR: second argument must be an existing file (your input cfg).'
+        print('ERROR: second argument must be an existing file (your input cfg).')
         sys.exit(3)
 
     file = open( cfgFileName, 'r' )
@@ -124,11 +124,11 @@ def main( options, args ):
     selComps = [comp for comp in cfg.config.components if len(comp.files)>0]
     selComps = split(selComps)
     for comp in selComps:
-        print comp
+        print(comp)
     if len(selComps)>10:
-        print "WARNING: too many threads {tnum}, will just use a maximum of 10.".format(tnum=len(selComps))
+        print("WARNING: too many threads {tnum}, will just use a maximum of 10.".format(tnum=len(selComps)))
     if not createOutputDir(outDir, selComps, options.force):
-        print 'exiting'
+        print('exiting')
         sys.exit(0)
     if len(selComps)>1:
         shutil.copy( cfgFileName, outDir )
@@ -136,7 +136,7 @@ def main( options, args ):
         ## workaround for a scoping problem in ipython+multiprocessing
         import CMGTools.RootTools.fwlite.MultiLoop as ML 
         for comp in selComps:
-            print 'submitting', comp.name
+            print('submitting', comp.name)
             pool.apply_async( ML.runLoopAsync, [comp, outDir, cfg.config, options],
                               callback=ML.callBack)     
         pool.close()

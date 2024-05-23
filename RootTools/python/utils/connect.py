@@ -15,7 +15,7 @@ db.connect()
 def findFirstAncestor(dataset_id, info):
     cols, rows = db.sql("select parent_dataset_id, path_name, primary_dataset_entries, number_total_jobs, task_id, dataset_entries FROM dataset_details where dataset_id={dataset_id}".format(dataset_id=dataset_id))
     if len(rows)==0:
-        print 'cannot find dataset with id', dataset_id
+        print('cannot find dataset with id', dataset_id)
     elif len(rows)>1:
         assert(False)
     else:
@@ -80,7 +80,7 @@ class DatasetInfo(list):
         theStrs = [
             'primary_dataset_entries = {nentries}'.format(nentries=self.primary_dataset_entries)
             ]
-        theStrs.extend( map(str, self) )
+        theStrs.extend( list(map(str, self)) )
         return '\n'.join(theStrs)
 
 reTAU = re.compile('TAU\S+')
@@ -112,9 +112,9 @@ def processInfo(info):
             if dsInfo.primary_dataset_entries is None:
                 dsInfo.primary_dataset_entries=pde
             elif dsInfo.primary_dataset_entries != pde:
-                print 'WARNING! there can only be one value for primary_dataset_entries in the history of a dataset, see task',task_id
+                print('WARNING! there can only be one value for primary_dataset_entries in the history of a dataset, see task',task_id)
         else:
-            print 'WARNING! primary_dataset_entries==-1 for',path_name
+            print('WARNING! primary_dataset_entries==-1 for',path_name)
         # which step is that?
         base = os.path.basename(path_name)
         fraction = dataset_fraction
@@ -170,7 +170,7 @@ rePatMass = re.compile('M-(\d+)_')
 
 def findAlias(path_name, aliases):
     name = None
-    for dsname, alias in aliases.iteritems():
+    for dsname, alias in aliases.items():
         pat = re.compile(dsname)
         if pat.match(path_name):
             name = alias
@@ -186,9 +186,9 @@ def findAlias(path_name, aliases):
 
 
 def retrieveInfosFromBadPublished(ds) :
-    print '\n'*2
-    print 'WARNING!: has this dataset been published with -f option and some infos got lost? Trying to retrieve njobs informations manually'
-    print ds
+    print('\n'*2)
+    print('WARNING!: has this dataset been published with -f option and some infos got lost? Trying to retrieve njobs informations manually')
+    print(ds)
 
     num_of_files        = 0
     num_of_bad_jobs     = 0
@@ -256,7 +256,7 @@ def retrieveInfosFromBadPublished(ds) :
     elif len(num_of_bad_jobs_list)==0 :
       pass
     else :
-      print 'WARNING!: number of bad jobs in {INT} badly formatted \nimposing it to 0'.format(INT=ic)
+      print('WARNING!: number of bad jobs in {INT} badly formatted \nimposing it to 0'.format(INT=ic))
 
     ### clean up the user $HOME
     os.system('rm {HOME}/{INT}'.format(HOME = os.environ['HOME'], INT  = ic) )
@@ -265,8 +265,8 @@ def retrieveInfosFromBadPublished(ds) :
     njobs = num_of_files
     nbad  = num_of_bad_jobs
     nmiss = num_of_missing_jobs
-    print 'got these numbers: \n njobs = %d \n nbad  = %d \n nmiss = %d' %(njobs, nbad, nmiss)
-    print '\n'*2
+    print('got these numbers: \n njobs = %d \n nbad  = %d \n nmiss = %d' %(njobs, nbad, nmiss))
+    print('\n'*2)
 
     return njobs, nbad, nmiss
 
@@ -281,7 +281,7 @@ def connectSample(components, row, filePattern, aliases, cache, verbose):
     compName = findAlias(path_name, aliases)
     #import pdb ; pdb.set_trace()
     if compName is None:
-        print 'WARNING: cannot find alias for', path_name
+        print('WARNING: cannot find alias for', path_name)
         return False
     findFirstAncestor(id, info)
     dsInfo = processInfo(info)
@@ -306,7 +306,7 @@ def connectSample(components, row, filePattern, aliases, cache, verbose):
         else:
             eff = step['jobeff']
         if eff is None:
-            print 'WARNING: efficiency not determined for',compName
+            print('WARNING: efficiency not determined for',compName)
             eff = 0.0
         try:
             globalEff *= eff
@@ -316,11 +316,11 @@ def connectSample(components, row, filePattern, aliases, cache, verbose):
     comps = [comp for comp in components if comp.name == compName]
     if len(comps)>1:
         #import pdb ; pdb.set_trace()
-        print 'WARNING find several components for compName', compName
-        print map(str, comps)
+        print('WARNING find several components for compName', compName)
+        print(list(map(str, comps)))
         return False
     elif len(comps)==0:
-        print 'WARNING no component found for compName', compName
+        print('WARNING no component found for compName', compName)
         #import pdb; pdb.set_trace()
         return False
     comp = comps[0]
@@ -329,24 +329,24 @@ def connectSample(components, row, filePattern, aliases, cache, verbose):
              comp.name.startswith('embed_') ):
         comp.nGenEvents = nEvents
         if comp.nGenEvents is None:
-            print 'WARNING: nGenEvents is None, setting it to 1.'
+            print('WARNING: nGenEvents is None, setting it to 1.')
             comp.nGenEvents = 1.
         if comp.nGenEvents != 1.:
             comp.nGenEvents *= globalEff
         else:
             globalEff = -1.
             comp.nGenEvents = 0
-    print 'LOADING:', comp.name, path_name, nEvents, globalEff, taskurl
+    print('LOADING:', comp.name, path_name, nEvents, globalEff, taskurl)
     # print dsInfo
     comp.files = getFiles(path_name, file_owner, filePattern, cache)
     if comp.name.startswith('data_'):
         if globalEff<0.99:
-            print 'ARGH! data sample is not complete.', taskurl
-            print dsInfo
+            print('ARGH! data sample is not complete.', taskurl)
+            print(dsInfo)
     else:
         if globalEff<0.9:
-            print 'WEIRD! Efficiency is way too low ({globalEff})! you might have to edit your cfg manually.'.format(globalEff=globalEff)
-            print dsInfo
+            print('WEIRD! Efficiency is way too low ({globalEff})! you might have to edit your cfg manually.'.format(globalEff=globalEff))
+            print(dsInfo)
 
 
 def connect(components, samplePattern, filePattern, aliases, cache, verbose=False):
@@ -415,5 +415,5 @@ if __name__ == '__main__':
     info = []
     #findFirstAncestor(4470, info)
     # processInfo( info )
-    print groupInfo(3829,'cmgTuple')
+    print(groupInfo(3829,'cmgTuple'))
     # groupInfo(3829,'patTuple')

@@ -60,14 +60,14 @@ from sys import argv
 f = ROOT.TFile.Open(args[0]+"/"+options.tree+"/"+options.tree+"_tree.root")
 t = f.Get(options.tree)
 t.vectorTree = options.vectorTree
-print "Reading %s (%d entries)" % (args[0], t.GetEntries())
+print("Reading %s (%d entries)" % (args[0], t.GetEntries()))
 
 booker = Booker(args[1] if len(args) >= 2 else "lepTree.root")
 prod = LepTreeProducer("rec",booker)
 el = EventLoop([ prod, ])
 maxEv = (int(args[3]) if len(args) >= 4 else -1)
-print "max entries: ",maxEv
+print("max entries: ",maxEv)
 el.loop([t], maxEvents=maxEv)
 booker.done()
 
-print "Wrote %d entries" % total
+print("Wrote %d entries" % total)

@@ -12,7 +12,7 @@ def addShiftVariables(fileName, treeName=None):
             obj = file.Get(key.GetName())
             if type(obj) is TTree:
                 tree = obj
-                print 'found tree', key.GetName()
+                print('found tree', key.GetName())
                 break
     if tree == None:
         return False
@@ -52,6 +52,6 @@ if __name__ == '__main__':
     files = sys.argv[1:]
 
     for file in files:
-        print 'processing', file
+        print('processing', file)
         addShiftVariables( file )
 

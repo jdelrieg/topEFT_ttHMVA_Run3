@@ -64,7 +64,7 @@ destBaseDir = castorBaseDir.myCastorBaseDir()
 #    destBaseDir = castorBaseDir.defaultCastorBaseDir
 
 
-print 'starting prod for sample:', sampleName
+print('starting prod for sample:', sampleName)
 
 # preparing castor dir -----------------
 
@@ -73,14 +73,14 @@ print 'starting prod for sample:', sampleName
 if options.tier != "":
     sampleName += "/" + options.tier
 
-print "sampleName ",sampleName
+print("sampleName ",sampleName)
 outFile = destBaseDir
 outFile += sampleName
 
 # prepare local output dir:
 localOutputDir = './' + sampleName 
 mkdir = 'mkdir -p ' + localOutputDir
-print mkdir
+print(mkdir)
 os.system(mkdir)
 
 # the output castor directory will be prepared by cmsBatch
@@ -90,4 +90,4 @@ cmsBatch = 'cmsBatch.py %s %s -r %s -b "%s" -o %s' % (options.nInput, cfg, outFi
 addToDatasets( sampleName )
 
 
-print cmsBatch
+print(cmsBatch)

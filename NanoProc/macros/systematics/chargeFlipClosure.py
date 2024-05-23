@@ -18,7 +18,7 @@ def haddThem(tdir, var, procs, norm=False):
         else:
             ret.Add(hist)
     if ret == None: 
-        print "missing %s_%s in %s" % (var,P,tdir.GetName())
+        print("missing %s_%s in %s" % (var,P,tdir.GetName()))
         tdir.ls()
         raise RuntimeError
     if norm and ret.Integral() > 0: 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         plots = [(x,0,999) for x in ["nJet25","jet1pT","htJet25","htJet25ratio1224Lep","lepEta3","minDrllAFOS","bestMTopHad","finalMVA"]]
     else:
         plots = [("lep2Pt",0,999) ,("lep2Eta",0,999) ,("drl2j",0,999) ,("mtW1",0,999) ,("htJet25",0,999) ,("mhtJet25",0,999),("MVA_2LSS_4j_6var",0,999) ,("nJet25",0,999) ]
-    print plots
+    print(plots)
     for var,rebin,maxbins in plots:
         for L,N in ('', False), ('_norm',True):
             hdd = haddThem(fdd, var, "QF_tt", norm=N)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             ratio = hmc.Clone()
             ratio.Divide(hdd)
             c2, ndf = 0,0
-            for b in xrange(1,unity.GetNbinsX()+1):
+            for b in range(1,unity.GetNbinsX()+1):
                 c = unity.GetBinContent(b)
                 unity.SetBinError(b, unity.GetBinError(b)/c if c else 0)
                 unity.SetBinContent(b, 1.0 if c else 0)

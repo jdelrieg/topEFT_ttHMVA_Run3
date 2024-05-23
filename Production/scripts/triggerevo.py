@@ -11,7 +11,7 @@ class Menu(object):
     def __str__(self):
         tmp = [ str(self.header) ]
         tmp.append( ','.join( map(str, self.runs) ) )
-        data = ['\t{data}'.format(data=data) for data in self.datasets.values() ]
+        data = ['\t{data}'.format(data=data) for data in list(self.datasets.values()) ]
         tmp.extend( data )
         return '\n'.join( tmp )
 
@@ -25,7 +25,7 @@ class Dataset(object):
 
     def __str__(self):
         tmp = [ str(self.header) ]
-        data = ['\t\t{data}'.format(data=data) for data in self.paths.values() ]
+        data = ['\t\t{data}'.format(data=data) for data in list(self.paths.values()) ]
         tmp.extend( data )
         return '\n'.join( tmp )
 
@@ -84,7 +84,7 @@ def parseInputFile( fileName, datasets , nMenus=999999):
         # print line
         line = line.rstrip('\n')
         if runList:
-            currentMenu.runs = map(int, line.split(','))
+            currentMenu.runs = list(map(int, line.split(',')))
             # print currentMenu.runs
             # import pdb
             # pdb.set_trace()

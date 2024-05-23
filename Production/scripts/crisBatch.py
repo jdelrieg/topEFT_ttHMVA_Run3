@@ -82,8 +82,8 @@ class MyBatchManager( BatchManager ):
          
    def PrepareJobUser(self, jobDir, value ):
        '''Prepare one job. This function is called by the base class.'''
-       print value
-       print splitComponents[value]
+       print(value)
+       print(splitComponents[value])
 
        # import pdb; pdb.set_trace()
        #prepare the batch script
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 
 
     splitComponents = split( components )
-    listOfValues = range(0, len(splitComponents))
+    listOfValues = list(range(0, len(splitComponents)))
     listOfNames = [comp.name for comp in splitComponents]
 
     batchManager.PrepareJobs( listOfValues, listOfNames )

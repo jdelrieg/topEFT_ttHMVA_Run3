@@ -16,7 +16,7 @@ class TriggerJSON( dict ):
     def __str__(self):
         lines = []
         lumranges = [[1,999999]]
-        for path, js in sorted(self.iteritems()):
+        for path, js in sorted(self.items()):
             dic = {}
             for item in js:
                 dic[ str(item) ] = lumranges
@@ -28,7 +28,7 @@ class TriggerJSON( dict ):
         self.dirName = dirName 
         lumranges = [[1,999999]]
         self.files = {}
-        for path, js in sorted( self.iteritems()):
+        for path, js in sorted( self.items()):
             dic = {}
             for item in js:
                 dic[ str(item) ] = lumranges
@@ -44,8 +44,8 @@ class TriggerJSON( dict ):
         
         if not hasattr( self, 'dirName' ):
             self.write( tempfile.mkdtemp() )
-        for path, file in self.files.iteritems():
-            print 'computing lumi for', file, json
+        for path, file in self.files.items():
+            print('computing lumi for', file, json)
             tmpAnd = '/'.join( [self.dirName,
                                 '{path}_AND_{official}.json'.format(path=path,
                                                                     official=os.path.splitext(os.path.basename(json))[0]) ] ) 
@@ -55,13 +55,13 @@ class TriggerJSON( dict ):
             outLumi = '/'.join( [self.dirName, path + '.lumi'])
             lumiCalcCmd = ' '.join(['lumiCalc2.py overview -i {input} > {output}'.format(input = tmpAnd,
                                                                                          output = outLumi)])
-            print lumiCalcCmd
+            print(lumiCalcCmd)
             os.system( lumiCalcCmd )
 
 if __name__ == '__main__':
  
     tj = TriggerJSON()
     tj['HLT_blah'] = set([180241, 180252])
-    print tj
+    print(tj)
     tj.computeLumi('/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions11/7TeV/Prompt/Cert_160404-180252_7TeV_PromptReco_Collisions11_JSON.txt')
     # os.system('lumiCalc2.py ')

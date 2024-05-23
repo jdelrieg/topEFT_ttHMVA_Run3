@@ -24,7 +24,7 @@ cfgs = [
 
 def prepareTestBench(input):
     outputDir = 'Out_' + os.path.splitext( input )[0]
-    print 'preparing output directory', outputDir
+    print('preparing output directory', outputDir)
     try:
         os.mkdir(outputDir)
     except OSError:
@@ -32,17 +32,17 @@ def prepareTestBench(input):
     def copy( file ):
         os.system( ' '.join( ['cp',file,outputDir] ))
     copy(input)
-    map( copy, cfgs)
+    list(map( copy, cfgs))
     copy( 'base.py' )
     return outputDir 
 
 def processInput(input):
-    print 'processing', input
+    print('processing', input)
     outputDir = prepareTestBench(input) 
     baseDir = os.getcwd()
     os.chdir( outputDir )
     for cfg in cfgs:
-        print cfg
+        print(cfg)
         cmd = ['cmsRun', cfg, input]
         os.system( ' '.join(cmd) ) 
     os.chdir( baseDir )

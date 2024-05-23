@@ -42,7 +42,7 @@ def getCfg(path):
 def parseCfg(path):
     l = {}
     g = {}
-    execfile(path,g,l)
+    exec(compile(open(path, "rb").read(), path, 'exec'),g,l)
     return (l,g)
 
 def getOutputFiles(path):
@@ -84,7 +84,7 @@ class CFGTest(unittest.TestCase):
     def tearDownOnce(self):
         """Like tearDown, but only called at the end of all test cases"""
         #clean up the files
-        for key, val in self.__class__.cfgsRunOnceCache.iteritems():
+        for key, val in self.__class__.cfgsRunOnceCache.items():
             try:
                 os.remove(val[1])
                 os.remove(val[2])
@@ -97,25 +97,25 @@ class CFGTest(unittest.TestCase):
 
     def testSetupOnceFilesExist(self):
         """Tests that the files created by setUpOnce exist"""
-        for key, val in self.__class__.cfgsRunOnceCache.iteritems():
+        for key, val in self.__class__.cfgsRunOnceCache.items():
             self.assertTrue(os.path.exists(val[1]),"The file '%s' is missing" % val[1])
             self.assertTrue(os.path.exists(val[2]),"The file '%s' is missing" % val[2])
 
     def testSetupFilesExist(self):
         """Tests that the files created by setUp exist"""
-        for key, val in self.cfgsCache.iteritems():
+        for key, val in self.cfgsCache.items():
             self.assertTrue(os.path.exists(val[1]),"The file '%s' is missing" % val[1])
             self.assertTrue(os.path.exists(val[2]),"The file '%s' is missing" % val[2])
 
     def testSetupOnceExceptions(self):
         """Looks in the stdout and stderr for the word 'Exception'"""
-        for key, val in self.__class__.cfgsRunOnceCache.iteritems():
+        for key, val in self.__class__.cfgsRunOnceCache.items():
             self.assertFalse('Exception' in val[0],'The stdout should not have any exceptions')
             self.assertFalse('Exception' in val[3],'The stderr should not have any exceptions')
 
     def testSetupExceptions(self):
         """Looks in the stdout and stderr for the word 'Exception'"""
-        for key, val in self.cfgsCache.iteritems():
+        for key, val in self.cfgsCache.items():
             self.assertFalse('Exception' in val[0],'The stdout should not have any exceptions')
             self.assertFalse('Exception' in val[3],'The stderr should not have any exceptions')
 
@@ -129,10 +129,10 @@ class CFGTest(unittest.TestCase):
             self.cfgsCache[c] = (stdout,tupleFile,histFile,stderr)
 
     def tearDown(self):
-        for key, val in self.cfgsCache.iteritems():
+        for key, val in self.cfgsCache.items():
             try:
                 os.remove(val[1])
                 os.remove(val[2])
-            except Exception, e:
-                print 'tearDown: Error cleaning up',e
+            except Exception as e:
+                print('tearDown: Error cleaning up',e)
         self.cfgsCache.clear()

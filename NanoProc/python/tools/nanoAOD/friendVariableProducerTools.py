@@ -13,6 +13,6 @@ def declareOutput(module, wrappedOutputTree, branchList):
 
 def writeOutput(module, outputs):
     wrappedOutputTree = module.wrappedOutputTree
-    for k,v in outputs.iteritems():
+    for k,v in outputs.items():
         wrappedOutputTree.fillBranch(k, v) 
     

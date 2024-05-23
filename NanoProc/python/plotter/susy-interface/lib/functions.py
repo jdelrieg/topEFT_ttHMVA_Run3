@@ -1,4 +1,5 @@
 import sys, os, subprocess, datetime
+from functools import reduce
 
 def bash(cmd):
 	#print cmd

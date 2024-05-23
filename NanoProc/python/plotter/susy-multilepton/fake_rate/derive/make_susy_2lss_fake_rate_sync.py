@@ -120,7 +120,7 @@ if (dotable or dodump):
         B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
         if dodump:
             B0 += ' '+str(sys.argv[2])
-        print B0
+        print(B0)
 
 if doplot:
     for run in runs:
@@ -130,7 +130,7 @@ if doplot:
         B0=' '.join(['echo',run[0],';',RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/derive/susy_2lss_fake_rate_plots_debug_sync.txt"])
         run[0]=run[6]+'_ON_'+run[0]
         B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5],"--pdir "+OUTDIR+'_'+run[0]])
-        print B0
+        print(B0)
 
 if doeff:
     for run in runs:
@@ -142,5 +142,5 @@ if doeff:
         run[0]=run[6]+'_ON_'+run[0]
         B0 += ' '.join([' ',"--legend=TL --ytitle 'Fake rate' --groupBy cut",'--sP '+run[6],"-o "+OUTDIR+'_'+run[0]+"/plots.root",' --sP '+run[7]])
         B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),run[5]])
-        print B0
+        print(B0)
 

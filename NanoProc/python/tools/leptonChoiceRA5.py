@@ -51,20 +51,20 @@ class LeptonChoiceRA5:
         self.lepSFFileNameFastSim = lepSFFileNameFastSim # [muons,electrons]
         self.systsLEPSF={0:"", 1:"_lepSFUp", -1:"_lepSFDown", 2:"_lepSF_FS_Up", -2:"_lepSF_FS_Down"}
         if self.isFastSim:
-            print '-'*15
-            print 'WARNING: will apply trigger efficiency for FastSim'
-            print '-'*15
+            print('-'*15)
+            print('WARNING: will apply trigger efficiency for FastSim')
+            print('-'*15)
         if whichApplication=="Fakes": self.whichApplication = self.appl_Fakes
         elif whichApplication=="Flips": self.whichApplication = self.appl_Flips
         elif whichApplication=="WZ": self.whichApplication = self.appl_WZ
-        else: raise RuntimeError, 'Unknown whichApplication'
+        else: raise RuntimeError('Unknown whichApplication')
         self.lepChoiceMethod = None
         self.apply = False
         if self.whichApplication == self.appl_Fakes:
             if lepChoiceMethod=="TTSync": self.lepChoiceMethod = self.style_TTSync
             elif lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
             elif lepChoiceMethod=="sort_FO": self.lepChoiceMethod = self.style_sort_FO
-            else: raise RuntimeError, 'Unknown lepChoiceMethod'
+            else: raise RuntimeError('Unknown lepChoiceMethod')
             if FRFileName:
                 self.apply = True
                 self.initFRhistos(FRFileName)
@@ -73,7 +73,7 @@ class LeptonChoiceRA5:
                 self.apply = True
                 self.initFlipAppHistos(FRFileName)
         if not self.apply:
-            print 'WARNING: running leptonChoiceRA5 %s in pure tagging mode (no weights applied)'%label
+            print('WARNING: running leptonChoiceRA5 %s in pure tagging mode (no weights applied)'%label)
 
     def listBranches(self):
         label = self.label
@@ -100,7 +100,7 @@ class LeptonChoiceRA5:
     def __call__(self,event):
 
         if not hasattr(self,"checked_fastsim_data"):
-            if self.isFastSim and event.isData: raise RuntimeError,'Running with isFastSim on data!'
+            if self.isFastSim and event.isData: raise RuntimeError('Running with isFastSim on data!')
             self.checked_fastsim_data = True
 
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
@@ -208,8 +208,8 @@ class LeptonChoiceRA5:
 
         if choice:
             ret["nPairs"] = len(choice)
-            if ret["nPairs"]>20: raise RuntimeError,'Too many lepton pairs'
-            for npair in xrange(len(choice)):
+            if ret["nPairs"]>20: raise RuntimeError('Too many lepton pairs')
+            for npair in range(len(choice)):
                 i1 = leps.index(choice[npair][0])
                 i2 = leps.index(choice[npair][1])
                 ret["i1"][npair], ret["i2"][npair] = (i1,i2) if leps[i1].conePt>=leps[i2].conePt else (i2,i1) # warning: they are not necessarily ordered by pt!
@@ -263,7 +263,7 @@ class LeptonChoiceRA5:
 
         ### attach labels and return
         fullret = {}
-        for k,v in ret.iteritems(): 
+        for k,v in ret.items(): 
             fullret[k+self.label] = v
         return fullret
 
@@ -369,9 +369,9 @@ class LeptonChoiceRA5:
 
     def read_FastSim_lepSF(self,pdgId,pt,eta,pu):
         if not hasattr(self,"FastSim_lepSF_histos"):
-            print '-'*15
-            print 'WARNING: will apply additional lepton scale factors for FastSim'
-            print '-'*15
+            print('-'*15)
+            print('WARNING: will apply additional lepton scale factors for FastSim')
+            print('-'*15)
             self.FastSim_lepSF_histos=[]
             self._file_lepSF_FS=[]
             if not len(self.lepSFFileNameFastSim)==2: raise RuntimeError
@@ -383,7 +383,7 @@ class LeptonChoiceRA5:
         sferr = 0
         # this would be just stat error, ignored in favor of syst that is applied at datacard level
         #sferr = h.GetBinError(h.GetXaxis().FindBin(pt),h.GetYaxis().FindBin(eta),h.GetZaxis().FindBin(pu))
-        if sf==0: raise RuntimeError, "Returning null lepton SF for FastSim (%d, %f, %f, %d)"%(pdgId,pt,eta,pu)
+        if sf==0: raise RuntimeError("Returning null lepton SF for FastSim (%d, %f, %f, %d)"%(pdgId,pt,eta,pu))
         return sf,(sferr/sf)
 
     def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True):
@@ -616,12 +616,12 @@ if __name__ == '__main__':
                 lambda lep : lep.miniRelIso < 0.05 and lep.sip3d < 4 and _susy2lss_lepId_CB(lep),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4 and not (lep.jetDR > 0.5*10/min(50,max(lep.pt,200)) and lep.pt*(1/lep.jetPtRatio-1) > 25)))
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf1(ev)
-            print self.sf2(ev)
-            print self.sf3(ev)
-            print self.sf4(ev)
-            print self.sf5(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf1(ev))
+            print(self.sf2(ev))
+            print(self.sf3(ev))
+            print(self.sf4(ev))
+            print(self.sf5(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

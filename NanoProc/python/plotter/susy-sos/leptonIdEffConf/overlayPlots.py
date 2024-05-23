@@ -56,12 +56,12 @@ outFile = ROOT.TFile(args.pdir+"overlayPlots/"+sys.argv[1]+"/"+sys.argv[1]+"Over
 for ID,kinRes,var in [(ID,kinRes,var) for ID in IDArr for kinRes in kinResArr for var in variableArr]:
     if var == "Eta" and kinRes in ["_Barrel","_Endcap"]: continue
     if ID == "FO_noBtag" and kinRes != "" and var != "_Pt": continue
-    print ID, kinRes, var
+    print(ID, kinRes, var)
     name = "{particle}{variable}Eff_{ID}{kinRes}".format(particle=sys.argv[1],variable=var,ID=ID,kinRes=kinRes)
     canvas = ROOT.TCanvas(name,name)
     for year in yearArr:
         fileKey = "{kinRes}_{year}".format(kinRes=kinRes,year=year)
-        if not inFiles.has_key(fileKey):
+        if fileKey not in inFiles:
             inFiles[fileKey] = ROOT.TFile( args.pdir+"{year}/{particle}/{particle}Eff{kinRes}.root".format(year=year,particle=sys.argv[1],kinRes=kinRes),"read" )
 
         histo = inFiles[fileKey].Get(name+"_%s_prompt_dy"%year[-2:])

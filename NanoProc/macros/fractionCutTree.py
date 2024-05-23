@@ -19,4 +19,4 @@ for dset in dsets:
     n_tot = t_t.GetEntries()
     f_t.Close()
     f_f.Close()
-    if n_pass!=0:    print '%s: %d out of %d : %.2f%%'%(dset,n_pass,n_tot,float(n_pass)/n_tot*100 if n_tot!=0 else 0)
+    if n_pass!=0:    print('%s: %d out of %d : %.2f%%'%(dset,n_pass,n_tot,float(n_pass)/n_tot*100 if n_tot!=0 else 0))

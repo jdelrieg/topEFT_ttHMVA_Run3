@@ -29,7 +29,7 @@ class MVATool:
         #print "Would like to load %s from %s! " % (name,xml)
         self.reader.BookMVA(name,xml)
         self.rarity = rarity
-        if self.rarity and self.nClasses!=1: raise RuntimeError, 'not implemented'
+        if self.rarity and self.nClasses!=1: raise RuntimeError('not implemented')
     def __call__(self,ev): 
         for s in self.vars:  s.set(ev)
         for s in self.specs: s.set(ev)

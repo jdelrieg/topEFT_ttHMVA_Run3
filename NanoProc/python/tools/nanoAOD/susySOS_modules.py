@@ -113,7 +113,7 @@ def VLooseFOEleID(lep,year):# from https://twiki.cern.ch/twiki/pub/CMS/SUSLepton
                     EE  = [-0.956, -1.461, 0.042, -1.461],
                     IdVersion = "mvaFall17V2noIso") 
     else:
-        print "Year not in [2016,2017,2018], returning False"
+        print("Year not in [2016,2017,2018], returning False")
         return False
     mvaValue = getattr(lep, cuts["IdVersion"]) if year==2017 else  calculateRawMVA(getattr(lep, cuts["IdVersion"])) ##raw for 2016 and 2018, normalized for 2017
     if abs(lep.eta)<0.8:
@@ -153,7 +153,7 @@ def new_FOEleID(lep,year):# from https://indico.cern.ch/event/878236/contributio
                     EE  = [0.98, 0.90, 0.00],
                     IdVersion = "mvaFall17V2noIso") 
     else:
-        print "Year not in [2016,2017,2018], returning False"
+        print("Year not in [2016,2017,2018], returning False")
         return False
     mvaValue = getattr(lep, cuts["IdVersion"]) ##using only normalised mva values, no raw ones for this ID
     if  abs(lep.eta)<1.479:
@@ -193,7 +193,7 @@ def tightEleID(lep,year):# from https://twiki.cern.ch/twiki/pub/CMS/SUSLeptonSF/
                     IdVersion = "mvaFall17V2noIso",
                     wpLowPt = "WP80") 
     else:
-        print "Year not in [2016,2017,2018], returning False"
+        print("Year not in [2016,2017,2018], returning False")
         return False
     mvaValue = getattr(lep, cuts["IdVersion"]) if year==2017 else  calculateRawMVA(getattr(lep, cuts["IdVersion"])) ##raw for 2016 and 2018, normalized for 2017
     if lep.pt<10:

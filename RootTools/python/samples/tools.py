@@ -21,7 +21,7 @@ def runMain(samples,args=None,localobjs=None):
    if args == None: args = sys.argv
    selsamples = _filterSamples(samples,args)
    if "help" in args or "--help" in args or "-h" in args:
-       print """
+       print("""
 
 python samplefile.py test [--AAA] [samples] :
         tries accessing the first file of each sample
@@ -45,7 +45,7 @@ python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ] [ --AAA ]:
 python samplefile.py checkdecl:  
         check that all samples are declared in the samples list
 
-"""
+""")
    if "test" in args:
        from CMGTools.RootTools.samples.ComponentCreator import testSamples
        testSamples(selsamples, allowAAA=("--AAA" in args))
@@ -56,7 +56,7 @@ python samplefile.py checkdecl:
        tier2CheckerNano = LocalityChecker("T2_CH_CERN", datasets="/*/*/NANOAOD*")
        for comp in selsamples:
            if len(comp.files) == 0: 
-               print '\033[34mE: Empty component: '+comp.name+'\033[0m'
+               print('\033[34mE: Empty component: '+comp.name+'\033[0m')
                continue
            if not hasattr(comp,'dataset'): continue
            if "/store/" not in comp.files[0]: continue
@@ -68,8 +68,8 @@ python samplefile.py checkdecl:
            else:
                 continue
            if not tier2Checker.available(comp.dataset):
-               print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
-           else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)
+               print("\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset))
+           else: print("Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset))
    if "refresh" in args:
         from CMGTools.Production.cacheChecker import CacheChecker
         checker = CacheChecker()
@@ -81,7 +81,7 @@ python samplefile.py checkdecl:
                             continue
                     else:
                         continue
-            print "Checking ",d.name," aka ",d.dataset
+            print("Checking ",d.name," aka ",d.dataset)
             if "--pretend" in args: continue
             checker.checkComp(d, verbose=True)
    if "check_versions" in args:
@@ -89,9 +89,9 @@ python samplefile.py checkdecl:
         checker = DatasetVersionChecker()
         for d in selsamples:
             if "--pretend" in args: 
-                print "Would check ",d.name," aka ",d.dataset
+                print("Would check ",d.name," aka ",d.dataset)
             else:
-                print "Checking",d.name," ",
+                print("Checking",d.name," ", end=' ')
                 checker.checkComp(d, verbose=True)
    if "list" in args or "summary" in args:
         from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions
@@ -101,38 +101,38 @@ python samplefile.py checkdecl:
    if "genXSecAna" in args:
         import subprocess, re;
         if "--fetch" in args or not os.path.exists("%s/src/genXSecAna.py" % os.environ['CMSSW_BASE']):
-            print "Retrieving genXSecAna.py"
+            print("Retrieving genXSecAna.py")
             os.system("wget -O "+os.environ['CMSSW_BASE']+"/src/genXSecAna.py  https://raw.githubusercontent.com/syuvivida/generator/master/cross_section/runJob/ana.py")
         for d in selsamples:
             if not hasattr(d, 'xSection'): 
-                print "Skipping %s which has no cross section" % d.name
+                print("Skipping %s which has no cross section" % d.name)
                 continue
             if "--pretend" in args: 
-                print "Would check ",d.name," aka ",d.dataset
+                print("Would check ",d.name," aka ",d.dataset)
                 continue
             if "--AAA" in args:
                 from CMGTools.Production.changeComponentAccessMode import convertComponent
                 convertComponent(d, "root://cms-xrd-global.cern.ch/%s")
             else: # use LFNs
                 d.files = [ re.sub(".*(/store/.*)(?:\\?.*)?","\\1",f) for f in d.files[:] ]
-            print "Sample %s: XS(sample file) = %g pb, ... " % (d.name,d.xSection),
+            print("Sample %s: XS(sample file) = %g pb, ... " % (d.name,d.xSection), end=' ')
             if len(d.files) == 0: 
-                print "\n\033[01;31m ERROR: no files in sample, so cannot run the analyzer \033[00m"
+                print("\n\033[01;31m ERROR: no files in sample, so cannot run the analyzer \033[00m")
                 continue
             if "--verbose" in args: 
-                print "\n ".join(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"])
+                print("\n ".join(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"]))
             xsecAnaOut = subprocess.check_output(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"], stderr=subprocess.STDOUT)
             if "--verbose" in args: 
-                for l in xsecAnaOut.split("\n"): print "\t>> "+l
+                for l in xsecAnaOut.split("\n"): print("\t>> "+l)
             m = re.search(r"After filter: final cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
             if m and float(m.group(1)) == 0:
                 m  = re.search(r"Before matching: total cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
                 m1 = re.search(r"After matching: total cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
                 if m1 and m and float(m1.group(1)) < 0 and float(m.group(1)) > 0 and abs(float(m1.group(1))/float(m.group(1))+1)<1e-2:
-                    print "\033[01;33m [after filter Xsec is zero, using before filter one] \033[00m"
+                    print("\033[01;33m [after filter Xsec is zero, using before filter one] \033[00m")
                 else: m = None
             if not m or float(m.group(1)) <= 0:
-                print "\n\033[01;31m ERROR: could not find After filter cross section in the output, or it's zero. \033[00m"
+                print("\n\033[01;31m ERROR: could not find After filter cross section in the output, or it's zero. \033[00m")
                 continue
             xs, xserr = float(m.group(1)), float(m.group(2))
             kfactor = d.xSection/xs
@@ -150,7 +150,7 @@ python samplefile.py checkdecl:
                     else:
                         fneg += "(%.3f in sample file, \033[01;33mWARNING\033[00m)" % d.fracNegWeights
             else: fneg = ""
-            print "XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m%s" % (xs, xserr, col, kfactor, stat, fneg)
+            print("XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m%s" % (xs, xserr, col, kfactor, stat, fneg))
    if "hasfnegw" in args:
         for d in selsamples:
             dataset = getattr(d, 'dataset', None)
@@ -158,30 +158,30 @@ python samplefile.py checkdecl:
                 continue
             if "amcatnlo" in dataset or "FXFX" in dataset:
                 if not hasattr(d, 'xSection'): 
-                    print "Skipping %s which has no cross section" % d.name
+                    print("Skipping %s which has no cross section" % d.name)
                     continue
                 if getattr(d, 'fracNegWeights', None) == None:
-                    print "WARNING: no fracNegWeights for component %s dataset %s" % (d.name, dataset)
+                    print("WARNING: no fracNegWeights for component %s dataset %s" % (d.name, dataset))
    if "checkdecl" in args:
         if localobjs == None: raise RuntimeError("you have to runMain(samples,localobjs=locals())")
         import CMGTools.RootTools.fwlite.Config as cfg
         ok = 0
-        for name,obj in localobjs.iteritems():
+        for name,obj in localobjs.items():
             if name == "comp": continue # local variable used in loops
             if isinstance(obj, cfg.Component):  
                 if obj not in samples:
-                    print "\tERROR: component %s is not added to the samples list " % name
+                    print("\tERROR: component %s is not added to the samples list " % name)
                 elif obj.name != name:
-                    print "\tERROR: component %s has inconsistent name %s " % (name, obj.name)
+                    print("\tERROR: component %s has inconsistent name %s " % (name, obj.name))
                 else:
                     ok += 1
-        print "\tINFO: %d correctly declared components" % ok
+        print("\tINFO: %d correctly declared components" % ok)
         found_datasets = {}
         for comp in samples:
             dataset = getattr(comp, 'dataset', None)
             if not dataset or len(dataset.split("/")) != 4: 
                 continue
             if dataset in found_datasets: 
-                print "WARNING: components %s and %s share the same dataset %s" % (comp.name, found_datasets[dataset], dataset)
+                print("WARNING: components %s and %s share the same dataset %s" % (comp.name, found_datasets[dataset], dataset))
             else:
                 found_datasets[dataset] = comp.name

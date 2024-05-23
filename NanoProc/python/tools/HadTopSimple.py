@@ -19,7 +19,7 @@ class HadTopSimple:
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iF"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
 
         for var in self.systsJEC:
             _var = var
@@ -54,14 +54,14 @@ class HadTopSimple:
                 ret["HadTop_Mass"] = best_top_mass
                 ret["HadTop_Pt"] = best_top_p4.Pt()
                 ret["W_fromHadTop_Mass"] = (j2.p4()+j3.p4()).M()
-                other_btags = [j.btagCSV for j in itertools.ifilterfalse(lambda x : x in best_top, jets)]
+                other_btags = [j.btagCSV for j in itertools.filterfalse(lambda x : x in best_top, jets)]
                 if len(other_btags)>0: ret["bJet_notFromHadTop_CSV"] = max(other_btags)
 
 
             for br in self.namebranches:
                 allret[br+self.label+self.systsJEC[var]] = ret[br]
-	 	
-	return allret
+                 
+        return allret
 
 
 if __name__ == '__main__':
@@ -75,8 +75,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = HadTopSimple('','Recl')
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

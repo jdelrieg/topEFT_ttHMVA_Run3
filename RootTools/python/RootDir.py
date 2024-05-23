@@ -31,9 +31,9 @@ class RootDir:
     def SetStyle( self, style ):
         """Set style for all histograms, in this directory and its sub-directories. See Style module for more information"""
         self.style = style
-        for key in self.histograms.iterkeys():
+        for key in self.histograms.keys():
             self.histograms[key] = style.formatHisto( self.histograms[key] )
-        for key in self.subDirs.iterkeys():
+        for key in self.subDirs.keys():
             self.subDirs[key].SetStyle( style )
             
     def _Walk( self ):        
@@ -66,11 +66,11 @@ class RootDir:
             # nx = int(math.ceil( nPlots / float(ny) ))
 
             nx, ny = self._Pave( nPlots )
-            print nPlots, ny, nx
+            print(nPlots, ny, nx)
         
             self.canvas.Divide(nx, ny)
             i = 1
-            for key in sorted(self.histograms.iterkeys()):
+            for key in sorted(self.histograms.keys()):
                 self.canvas.cd(i)
                 self.histograms[key].Draw(opt)
                 i = i+1
@@ -78,7 +78,7 @@ class RootDir:
             self.canvas.Modified()
             self.canvas.Update()
         
-        for key in sorted(self.subDirs.iterkeys()):
+        for key in sorted(self.subDirs.keys()):
             self.subDirs[key].DrawAll(xsize, ysize, opt)
 
 
@@ -112,7 +112,7 @@ class RootDir:
                 return None
         else:
             subDirKey = pathList.pop(0)
-            print subDirKey
+            print(subDirKey)
             subDir = self.subDirs[subDirKey]
             if subDir!=None:
                 return subDir.h( string.join(pathList, '/') )
@@ -133,12 +133,12 @@ class RootDir:
         """Print the contents of this RootDir, including its sub-directories."""
         if printout == None:
             printout = [] # list of lines
-        for key in sorted(self.histograms.iterkeys()):
+        for key in sorted(self.histograms.keys()):
             if path!=None:
                 printout.append( path+'/'+key )
             else:
                 printout.append(key)
-        for key in sorted(self.subDirs.iterkeys()):
+        for key in sorted(self.subDirs.keys()):
             # printout.append( key )
             subPath = key
             if path!=None:
@@ -183,8 +183,8 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args) != 1:
-        print 'ERROR: please provide an input root file'
-        print args
+        print('ERROR: please provide an input root file')
+        print(args)
         sys.exit(1)
 
     fileName = args[0]
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     rootDir = RootDir( file, sRed )
     if options.dirname is not None:
         rootDir = rootDir.SubDir( options.dirname )
-    print rootDir
+    print(rootDir)
     if not options.list:
         rootDir.DrawAll()
   

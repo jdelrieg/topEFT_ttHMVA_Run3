@@ -1,14 +1,14 @@
-import cPickle, math, optparse, os, os.path, shutil, copy
+import pickle, math, optparse, os, os.path, shutil, copy
 
 def reSplitChunk(compname,splitFactor):
     from CMGTools.RootTools.samples.configTools import split
     try:
-        comp = cPickle.load(open("%s/config.pck" % compname))
+        comp = pickle.load(open("%s/config.pck" % compname))
     except:
-        raise RuntimeError, "Pickle file %s/config.pck does not exist or can't be read" % compname
+        raise RuntimeError("Pickle file %s/config.pck does not exist or can't be read" % compname)
     workDir = compname+".dir"
     if os.path.exists(workDir):
-        raise RuntimeError, "directory %s exists" % workDir
+        raise RuntimeError("directory %s exists" % workDir)
     os.mkdir(workDir)
     shutil.move(compname, "%s/source" % workDir)
     if splitFactor == -1:
@@ -23,14 +23,14 @@ def reSplitChunk(compname,splitFactor):
     comps = split([comp])
     ret = []
     for i, ci in enumerate(comps):
-        print "Comp %s: file %s, fineSplit %s" % (ci.name, ci.files, getattr(ci, 'fineSplit', None))
+        print("Comp %s: file %s, fineSplit %s" % (ci.name, ci.files, getattr(ci, 'fineSplit', None)))
         newcomp = "%s/%s" % (workDir,ci.name)
         os.mkdir(newcomp)
         for f in [ "options.json", "batchScript.sh", "pycfg.py" ]:
             if os.path.exists("%s/source/%s" % (workDir, f)):
                 shutil.copy("%s/source/%s" % (workDir, f), "%s/%s" % (newcomp, f))
             fout = open("%s/config.pck" % newcomp, 'w')
-            cPickle.dump(ci,fout)
+            pickle.dump(ci,fout)
             fout.close()
         ret.append(newcomp)
     return ret

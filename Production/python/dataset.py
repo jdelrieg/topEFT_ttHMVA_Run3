@@ -19,11 +19,11 @@ class IntegrityCheckError(Exception):
 
 def _dasPopen(dbs, verbose=True):
     if 'LSB_JOBID' in os.environ:
-        raise RuntimeError, "Trying to do a DAS query while in a LXBatch job (env variable LSB_JOBID defined)\nquery was: %s" % dbs
+        raise RuntimeError("Trying to do a DAS query while in a LXBatch job (env variable LSB_JOBID defined)\nquery was: %s" % dbs)
     #--- this below fails also locally, so it's off for the moment; to be improved ---
     #if 'GLOBUS_GRAM_JOB_CONTACT':
     #    raise RuntimeError, "Trying to do a DAS query while in a Grid job (env variable GLOBUS_GRAM_JOB_CONTACT defined)\nquery was: %s" % dbs
-    if verbose: print 'dbs\t: %s' % dbs
+    if verbose: print('dbs\t: %s' % dbs)
     return os.popen(dbs)
 
 class BaseDataset( object ):
@@ -58,8 +58,8 @@ class BaseDataset( object ):
         self.bad_files = {}
 
     def printInfo(self):
-        print 'sample      :  ' + self.name
-        print 'user        :  ' + self.user
+        print('sample      :  ' + self.name)
+        print('user        :  ' + self.user)
 
     def getPrimaryDatasetEntries(self):
         return self.primaryDatasetEntries
@@ -70,7 +70,7 @@ class BaseDataset( object ):
             self.buildListOfFiles(self.pattern)
         for file in self.files:
             status = 'OK'
-            if self.bad_files.has_key(file):
+            if file in self.bad_files:
                 status = self.bad_files[file]
             elif file not in self.good_files:
                 status = 'UNKNOWN'
@@ -81,11 +81,11 @@ class BaseDataset( object ):
                 size=self.filesAndSizes.get(file,'UNKNOWN').rjust(10)
                 # if size is not None:
                 #     size = size.rjust(10)
-                print status.ljust(10), size, \
-                      '\t', fileNameToPrint
+                print(status.ljust(10), size, \
+                      '\t', fileNameToPrint)
             else:
-                print fileNameToPrint
-        print 'PrimaryDatasetEntries: %d' % self.primaryDatasetEntries
+                print(fileNameToPrint)
+        print('PrimaryDatasetEntries: %d' % self.primaryDatasetEntries)
                 
     def listOfFiles(self):
         '''Returns all files, even the bad ones.'''
@@ -97,7 +97,7 @@ class BaseDataset( object ):
         considered as good.'''
         self.good_files = []
         for file in self.files:            
-            if not self.bad_files.has_key(file):
+            if file not in self.bad_files:
                 self.good_files.append( file )
         return self.good_files
 
@@ -150,7 +150,7 @@ class CMSDataset( BaseDataset ):
             if run_range[0] == run_range[1]:
                 query += "   run=%s" % run_range[0]
             else:
-                print "WARNING: queries with run ranges are slow in DAS"
+                print("WARNING: queries with run ranges are slow in DAS")
                 query += "   run between [%s,%s]" % ( run_range[0],run_range[1] )
         else:
             query += "  status=VALID" # status doesn't interact well with run range
@@ -187,22 +187,22 @@ class CMSDataset( BaseDataset ):
                                                   runs[0],runs[1])
         num_files = self.summaries['files']
         if num_files == -1:
-            raise RuntimeError, "Error querying DAS for dataset %r" % self.name.rstrip('/')
+            raise RuntimeError("Error querying DAS for dataset %r" % self.name.rstrip('/'))
         
         limit = 10000
         if num_files > limit:
             if self.json is not None:
-                print "WARNING: the json file will be ignored for this data set. (to be implemented)"
+                print("WARNING: the json file will be ignored for this data set. (to be implemented)")
 
             num_steps = int(num_files/limit)+1
             self.files = []
-            for i in xrange(num_steps):
+            for i in range(num_steps):
                 DBSFiles=self.buildListOfFilesDBS(pattern,
                                                   i*limit,
                                                   ((i+1)*limit)-1)
                 self.files.extend(DBSFiles)
             if len(self.files) != num_files:
-                raise RuntimeError, "ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files))
+                raise RuntimeError("ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files)))
             return
 
         if self.json is not None:
@@ -235,7 +235,7 @@ class CMSDataset( BaseDataset ):
 
         self.files = self.buildListOfFilesDBS(pattern)
         if len(self.files) != num_files and not self.unsafe:
-            raise RuntimeError, "ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files))
+            raise RuntimeError("ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files)))
             
     @staticmethod
     def findPrimaryDatasetSummaries(dataset, runmin, runmax, dbsInstance=None):
@@ -246,7 +246,7 @@ class CMSDataset( BaseDataset ):
             if runmin == runmax:
                 query = "%s run=%d" % (query,runmin)
             else:
-                print "WARNING: queries with run ranges are slow in DAS"
+                print("WARNING: queries with run ranges are slow in DAS")
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
         if dbsInstance != None:
             query += "  instance=prod/%s" % dbsInstance
@@ -352,11 +352,11 @@ class Dataset( BaseDataset ):
                 self.maskExists = True
                 self.report = report
                 dup = report.get('ValidDuplicates',{})
-                for name, status in report['Files'].iteritems():
+                for name, status in report['Files'].items():
                     # print name, status
                     if not status[0]:
                         self.bad_files[name] = 'MarkedBad'
-                    elif dup.has_key(name):
+                    elif name in dup:
                         self.bad_files[name] = 'ValidDup'
                     else:
                         self.good_files.append( name )
@@ -390,9 +390,9 @@ class Dataset( BaseDataset ):
             self.filesAndSizes[file] = size 
          
     def printInfo(self):
-        print 'sample      :  ' + self.name
-        print 'LFN         :  ' + self.lfnDir
-        print 'Castor path :  ' + self.castorDir
+        print('sample      :  ' + self.name)
+        print('LFN         :  ' + self.lfnDir)
+        print('Castor path :  ' + self.castorDir)
 
     def getPrimaryDatasetEntries(self):
         if self.report is not None and self.report:
@@ -437,7 +437,7 @@ class PrivateDataset ( BaseDataset ):
             if runmin == runmax:
                 query = "%s run=%d" % (query,runmin)
             else:
-                print "WARNING: queries with run ranges are slow in DAS"
+                print("WARNING: queries with run ranges are slow in DAS")
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
         dbs='dasgoclient --json --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
         dbsOut = json.load(_dasPopen(dbs))
@@ -461,7 +461,7 @@ class PrivateDataset ( BaseDataset ):
             if runmin == runmax:
                 query = "%s run=%d" % (query,runmin)
             else:
-                print "WARNING: queries with run ranges are slow in DAS"
+                print("WARNING: queries with run ranges are slow in DAS")
                 query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
         dbs='dasgoclient --json --query="summary %s=%s instance=prod/%s"'%(qwhat, query, dbsInstance)
         dbsOut = json.load(_dasPopen(dbs))[0]['summary']
@@ -484,7 +484,7 @@ class PrivateDataset ( BaseDataset ):
 
 def getDatasetFromCache( cachename ) :
     cachedir =  '/'.join( [os.environ['HOME'],'.cmgdataset'])
-    pckfile = open( cachedir + "/" + cachename )
+    pckfile = open( cachedir + "/" + cachename, 'rb' )
     dataset = pickle.load(pckfile)      
     return dataset
 
@@ -492,13 +492,13 @@ def writeDatasetToCache( cachename, dataset ):
     cachedir =  '/'.join( [os.environ['HOME'],'.cmgdataset'])
     if not os.path.exists(cachedir):
         os.mkdir(cachedir)
-    pckfile = open( cachedir + "/" + cachename, 'w')
+    pckfile = open( cachedir + "/" + cachename, 'wb')
     pickle.dump(dataset, pckfile)
 
 def createDataset( user, dataset, pattern, readcache=False, 
                    basedir = None, run_range = None, json = None, unsafe = False, dbsInstance = None):
     if user == 'CMS' and pattern != ".*root":
-        raise RuntimeError, "For 'CMS' datasets, the pattern must be '.*root', while you configured '%s' for %s, %s" % (pattern, dataset.name, dataset)
+        raise RuntimeError("For 'CMS' datasets, the pattern must be '.*root', while you configured '%s' for %s, %s" % (pattern, dataset.name, dataset))
 
     def cacheFileName(data, user, pattern, run_range, json):
         rr = "_run%s_%s" % (run_range[0], run_range[1]) if run_range else ""

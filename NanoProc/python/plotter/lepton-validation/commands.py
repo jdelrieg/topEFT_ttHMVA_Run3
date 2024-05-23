@@ -14,14 +14,14 @@ COMMOPT+=' --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --mcc ttH-multilepto
 SELECTIONS=["ttbar_semiLeptonic","Wl","ttbar","Zl","ZtoMuMu","ZtoEE"]
 
 for SEL in SELECTIONS:
-    print '#'+SEL
+    print('#'+SEL)
     MCA = 'mca_13tev_%s.txt'%SEL if SEL in ["ttbar",'Wl','Zl','ttbar_semiLeptonic'] else 'mca_13tev.txt'
     MYMCC = '--mcc %s/mcc_%s.txt'%(WDIR,SEL)
     COARSE = '_coarse' if SEL in ['Wl','Zl','ttbar_semiLeptonic'] else ''
     #print '%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s %s --scaleSigToData --pdir %s/%s/ScaleToData'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL)
-    print '%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s  %s --pdir %s/%s'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL)
+    print('%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s  %s --pdir %s/%s'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL))
     #print '%s %s/%s %s/cuts_%s.txt %s/plots_eventquantities.txt %s -P %s  %s --scaleSigToData --pdir %s/%s/ScaleToData'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL)
-    print '%s %s/%s %s/cuts_%s.txt %s/plots_eventquantities.txt %s -P %s  %s --pdir %s/%s'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL)
+    print('%s %s/%s %s/cuts_%s.txt %s/plots_eventquantities.txt %s -P %s  %s --pdir %s/%s'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COMMOPT,MYTREEDIR,MYMCC,ODIR,SEL))
 
 
 #SELECTIONS=["ttbar_application"]

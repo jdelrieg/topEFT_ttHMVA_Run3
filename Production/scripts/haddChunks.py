@@ -32,7 +32,7 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args)!=1:
-        print 'provide exactly one directory in argument.'
+        print('provide exactly one directory in argument.')
         sys.exit(1)
 
     dir = args[0]

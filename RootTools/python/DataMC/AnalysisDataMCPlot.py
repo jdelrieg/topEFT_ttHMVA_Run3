@@ -67,13 +67,13 @@ class AnalysisDataMC( DataMCPlot ):
     def _GetHistPref(self, name):
         '''Return the preference dictionary for a given component'''
         thePref = None
-        for prefpat, pref in self.histPref.iteritems():
+        for prefpat, pref in self.histPref.items():
             if fnmatch.fnmatch( name, prefpat):
                 if thePref is not None:
-                    print 'several matching preferences for', name 
+                    print('several matching preferences for', name) 
                 thePref = pref
         if thePref is None:
-            print 'cannot find preference for hist',name
+            print('cannot find preference for hist',name)
             thePref = {'style':sBlack, 'layer':999}
         return thePref
 
@@ -139,7 +139,7 @@ class AnalysisDataMC( DataMCPlot ):
             try:
                 return self.weights[ componentName ]
             except KeyError:
-                print 'Weight not found for component', histName
+                print('Weight not found for component', histName)
                 return None
         else:
             return None
@@ -154,7 +154,7 @@ class AnalysisDataMC( DataMCPlot ):
                 hist.SetWeight( weight.GetWeight() )
             else:
                 if hist.name.lower().find('data')==-1:
-                    print '\tWARNING: no weight file found, setting weight to 1'
+                    print('\tWARNING: no weight file found, setting weight to 1')
 
     def _ApplyPrefs(self):
         for hist in self.histos:
@@ -179,19 +179,19 @@ if __name__ == '__main__':
 
     if len(args)!=2:
         parser.print_help()
-        print
-        print 'Please specify the correct arguments.'
+        print()
+        print('Please specify the correct arguments.')
         sys.exit(1)
     histName = args[0]
     dir = args[1]
 
     plot = AnalysisDataMC( histName, dir )
 
-    print
-    print 
-    print plot
-    print 
-    print '''
+    print()
+    print() 
+    print(plot)
+    print() 
+    print('''
 now you can try the following:
 plot.Draw("")
 
@@ -200,4 +200,4 @@ plot.DrawNormalized("")
 plot.DrawStack("HIST")
 plot.DrawNormalizedStack("HIST")
 plot.DrawNormalizedRatioStack("HIST")
-'''
+''')

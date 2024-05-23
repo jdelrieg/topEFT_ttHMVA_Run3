@@ -26,7 +26,7 @@ class Output( object ):
             try:
                 if os.path.isdir( self.name ) and options.lower()=='w':
                     return
-                print 'mkdir', self.name
+                print('mkdir', self.name)
                 os.mkdir( name )
                 break
             except OSError:
@@ -37,7 +37,7 @@ class Output( object ):
 
     def Write(self):
         '''Write all histogram lists to the output directory.'''
-        for histoList in self.histoLists.values():
+        for histoList in list(self.histoLists.values()):
             histoList.Write()
 
 

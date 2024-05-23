@@ -11,13 +11,13 @@ BASENAME1 = os.path.splitext(os.path.basename(args[0]))[0]
 BASENAME2 = os.path.splitext(os.path.basename(args[1]))[0]
 
 try:
-    print "Processing %s, %s" % (args[0], args[1])
+    print("Processing %s, %s" % (args[0], args[1]))
     assert os.path.isfile(args[0])
     assert os.path.isfile(args[1])
     assert os.path.splitext(args[0])[1] == '.root'
     assert os.path.splitext(args[1])[1] == '.root'
 except (IndexError, AssertionError):
-    print "ERROR: Please provide two root files as arguments"
+    print("ERROR: Please provide two root files as arguments")
     parser.print_help()
     sys.exit(1)
 
@@ -101,32 +101,32 @@ def make1DPlots(hist_data, hist_mc, basename=''):
     return 0
 
 def printTable(hist,title=''):
-    print 70*'-'
+    print(70*'-')
 
     if title:
-        print title
+        print(title)
 
     xbins = list(hist.GetXaxis().GetXbins())
     ybins = list(hist.GetYaxis().GetXbins())
 
-    print '{:^10}'.format('eta\pt'),
-    for binx in xbins[:-1]: print '{:^17}'.format('{:3.0f} GeV'.format(binx)),
-    print ''
+    print('{:^10}'.format('eta\pt'), end=' ')
+    for binx in xbins[:-1]: print('{:^17}'.format('{:3.0f} GeV'.format(binx)), end=' ')
+    print('')
 
     for ny,biny in enumerate(ybins[:-1]):
-        print '{:10.3f}'.format(biny),
+        print('{:10.3f}'.format(biny), end=' ')
         for nx in range(hist.GetNbinsX()):
-            print ' {:5.4f}'.format(100*hist.GetBinContent(nx+1,ny+1)),
-            print '+- {:6.4f}'.format(100*hist.GetBinError(nx+1,ny+1)),
-        print ''
+            print(' {:5.4f}'.format(100*hist.GetBinContent(nx+1,ny+1)), end=' ')
+            print('+- {:6.4f}'.format(100*hist.GetBinError(nx+1,ny+1)), end=' ')
+        print('')
 
 def main():
     ROOT.gROOT.SetBatch(1)
 
-    print 70*'-'
-    print "Reading data histo from %s" % args[0]
-    print "Reading MC histo from %s" % args[1]
-    print 70*'-'
+    print(70*'-')
+    print("Reading data histo from %s" % args[0])
+    print("Reading MC histo from %s" % args[1])
+    print(70*'-')
 
     ofile = ROOT.TFile.Open(args[0], "READ")
     histo_da = ofile.Get("chargeMisId")
@@ -135,7 +135,7 @@ def main():
 
     try: histo_da.GetName()
     except AttributeError:
-        print "ERROR: Could not read data histo from %s" % args[0]
+        print("ERROR: Could not read data histo from %s" % args[0])
         return -1
 
     ofile = ROOT.TFile.Open(args[1], "READ")
@@ -145,7 +145,7 @@ def main():
 
     try: histo_mc.GetName()
     except AttributeError:
-        print "ERROR: Could not read MC histo from %s" % args[1]
+        print("ERROR: Could not read MC histo from %s" % args[1])
         return -1
 
 
@@ -155,7 +155,7 @@ def main():
     printTable(histo_da,title='Data')
     printTable(histo_mc,title='MC')
 
-    print 70*'-'
+    print(70*'-')
 
     return 0
 

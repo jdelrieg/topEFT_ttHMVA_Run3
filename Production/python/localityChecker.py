@@ -1,4 +1,4 @@
-import os, os.path, json, sys, urllib2, time
+import os, os.path, json, sys, urllib.request, urllib.error, urllib.parse, time
 
 class LocalityChecker:
     def __init__(self, node="T2_CH_CERN", datasets=None, cacheTime=4*3600, cacheDir="~/.cmgdataset", verbose=True):#, datasets="/*/*/*AOD*"):
@@ -35,14 +35,14 @@ class LocalityChecker:
                 else:
                     if self.verbose: sys.stderr.write("Phedex query cache is %.1f hours old, will re-make the query\n" % (age/3600))
         if isBatch:
-            raise RuntimeError, "Trying to do a DAS query while in a LXBatch job (env variable LSB_JOBID defined)"
+            raise RuntimeError("Trying to do a DAS query while in a LXBatch job (env variable LSB_JOBID defined)")
         sys.stderr.write("Querying Phedex for node %s, datasets %s; this may take some time...\n" % (self.node, self.datasets))
         start = time.time()
         urlquery = 'https://cmsweb.cern.ch/phedex/datasvc/json/prod/subscriptions?node='+self.node+'&create_since=0'
         if self.datasets: urlquery += "&dataset=%s" % self.datasets.replace("/","%2F")
-        text = urllib2.urlopen(urlquery).read()
+        text = urllib.request.urlopen(urlquery).read()
         if not text: 
-            raise RuntimeError, "Error executing phedex query: "+urlquery
+            raise RuntimeError("Error executing phedex query: "+urlquery)
         if self.verbose: sys.stderr.write(" ... query took %.1f seconds\n" % (time.time()-start))
         jsondata = json.loads(text)
         datasets = jsondata['phedex']['dataset']
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     for S in [
         '/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v3/MINIAODSIM',
         '/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15DR74-Asympt25ns_MCRUN2_74_V9-v1/MINIAODSIM', ]:
-        print S, checker.available(S)
+        print(S, checker.available(S))
         

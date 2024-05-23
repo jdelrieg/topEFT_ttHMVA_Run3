@@ -44,7 +44,7 @@ for itoy in range(Ntoys):
     for category in categories:
         catDirName = "sos_"+category
         if not rootDir.FindKey(catDirName): catDir = rootDir.mkdir(catDirName)
-        if catDirs.has_key(catDirName): pass
+        if catDirName in catDirs: pass
         else: catDirs[catDirName] = catDir
         histTotal = None
         for proc in procs:
@@ -62,15 +62,15 @@ for itoy in range(Ntoys):
                     newHisto = False
                 else: hist.Add(tempHist)
             if hist:
-                if toyHists.has_key(tempKeyName): toyHists.get(tempKeyName).Add(hist)
+                if tempKeyName in toyHists: toyHists.get(tempKeyName).Add(hist)
                 else: toyHists[tempKeyName] = hist.Clone("proc")
                 if "signal" not in tempKeyName:
-                    if toyHists.has_key(catDirName+"_total_background"): toyHists.get(catDirName+"_total_background").Add(hist)
+                    if catDirName+"_total_background" in toyHists: toyHists.get(catDirName+"_total_background").Add(hist)
                     else: toyHists[catDirName+"_total_background"] = hist.Clone("total_background")
-                if toyHists.has_key(catDirName+"_total"): toyHists.get(catDirName+"_total").Add(hist)
+                if catDirName+"_total" in toyHists: toyHists.get(catDirName+"_total").Add(hist)
                 else: toyHists[catDirName+"_total"] = hist.Clone("total")
             if itoy == Ntoys-1:
-                if toyHists.has_key(tempKeyName): finalHist = toyHists[tempKeyName].Clone()
+                if tempKeyName in toyHists: finalHist = toyHists[tempKeyName].Clone()
                 else: continue
                 finalHist.Scale(1/float(Ntoys))
                 for i in range(1,finalHist.GetNbinsX()+1): finalHist.SetBinError(i,finalHist.GetBinError(i)*math.sqrt(Ntoys))

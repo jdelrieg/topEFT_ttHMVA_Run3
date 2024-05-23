@@ -8,7 +8,7 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 argv.remove( '-b-' )
 
-if len(argv) == 0: raise RuntimeError, "Usage: mlfitNormsToText.py [ -u ] mlfit.root";
+if len(argv) == 0: raise RuntimeError("Usage: mlfitNormsToText.py [ -u ] mlfit.root");
 
 errors = False
 if len(argv) > 2 and argv[1] == "-u": 
@@ -19,8 +19,8 @@ prefit = file.Get("norm_prefit")
 fit_s = file.Get("norm_fit_s")
 fit_b = file.Get("norm_fit_b")
 #if prefit == None: raise RuntimeError, "Missing fit_s in %s. Did you run MaxLikelihoodFit with --saveNorm?" % file;
-if fit_s  == None: raise RuntimeError, "Missing fit_s in %s. Did you run MaxLikelihoodFit with --saveNorm?" % file;
-if fit_b  == None: raise RuntimeError, "Missing fit_b in %s. Did you run MaxLikelihoodFit with --saveNorm?" % file;
+if fit_s  == None: raise RuntimeError("Missing fit_s in %s. Did you run MaxLikelihoodFit with --saveNorm?" % file);
+if fit_b  == None: raise RuntimeError("Missing fit_b in %s. Did you run MaxLikelihoodFit with --saveNorm?" % file);
 
 iter = fit_s.createIterator()
 norms={}
@@ -31,8 +31,8 @@ while True:
     norm_p = prefit.find(norm_s.GetName()) if prefit else None
     m = re.match(r"(\w+)/(\w+)", norm_s.GetName());
     if m == None: m = re.match(r"n_exp_(?:final_)?(?:bin)+(\w+)_proc_(\w+)", norm_s.GetName());
-    if m == None: raise RuntimeError, "Non-conforming object name %s" % norm_s.GetName()
-    if norm_b == None: raise RuntimeError, "Missing normalization %s for background fit" % norm_s.GetName()
+    if m == None: raise RuntimeError("Non-conforming object name %s" % norm_s.GetName())
+    if norm_b == None: raise RuntimeError("Missing normalization %s for background fit" % norm_s.GetName())
     bin = m.group(1)
     for X in "bin", "BCat_MVA": bin = bin.replace(X,"")
     if bin not in norms: norms[bin] = {}
@@ -59,9 +59,9 @@ def pp(bin,samples,index=4):
 
 def doLine(x,p,hline=False): 
     bins = [ "ttH_2lss_mumu", "ttH_2lss_ee", "ttH_2lss_em", "tl", "ql" ]
-    print "%-30s " % x,
-    print " ".join(["& %-18s " % pp(b,p) for b in bins]),
-    print r" \\ \hline" if hline else r" \\"
+    print("%-30s " % x, end=' ')
+    print(" ".join(["& %-18s " % pp(b,p) for b in bins]), end=' ')
+    print(r" \\ \hline" if hline else r" \\")
 
 signals     = "ttH_hww ttH_hzz ttH_htt".split()
 backgrounds = [ "TTW", "TTZ TTGStar", "TTWW", "TTG", "WZ", "ZZ", "VVV TBZ WWqq WWDPI", "FR_data TT", "QF_data"]

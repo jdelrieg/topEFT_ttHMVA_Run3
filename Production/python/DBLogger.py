@@ -18,19 +18,19 @@ class DBLogger:
         local = dirLocalOrTgzDirOnCastor.rstrip('/')
         castorTgz = castortools.castorToLFN(castorTgz)
 
-        print castorTgz
+        print(castorTgz)
         # Check if local first (obviously)
         if self.isDirLocal(local  ):
-            print "File is on local machine: " + local
+            print("File is on local machine: " + local)
             self.dirLocal = local #if found set class attribute
         # Check if on castor next
         elif self.isTgzDirOnCastor(castorTgz):
-            print "File is directory on Castor"
+            print("File is directory on Castor")
             self.tgzDirOnCastor = castorTgz # if found set class attribute
-            for i in castortools.matchingFiles(castorTgz.rstrip("/Logger.tgz"), ".*tgz"): print i
+            for i in castortools.matchingFiles(castorTgz.rstrip("/Logger.tgz"), ".*tgz"): print(i)
         # If logger is not present but directory exists
         elif self.isDirOnCastor(castorTgz.rstrip("/Logger.tgz")):
-            print "Directory is valid on Castor, but no logger file is present."
+            print("Directory is valid on Castor, but no logger file is present.")
             self.dirOnCastor = castorTgz.rstrip("/Logger.tgz")
         # If neither then raise an exception
         else:
@@ -68,7 +68,7 @@ class DBLogger:
         # If the file is a tgz directory on castor stage it in
         if self.tgzDirOnCastor != None:
             cmsStage = 'cmsStage -f ' + self.tgzDirOnCastor + ' ./tempLogs'
-            print cmsStage 
+            print(cmsStage) 
             os.system( cmsStage ) 
 
             # Go to tempLogs folder and unzip Logger.tgz 
@@ -95,7 +95,7 @@ class DBLogger:
     def stageOut(self):
           
             os.system('rm -r tempLogs')
-            print 'Successfully staged out'
+            print('Successfully staged out')
 
 
     # Add the dataset details
@@ -227,7 +227,7 @@ class DBLogger:
             
             if self._checkIfNamed(group[0]):
                 validity.append(group[0])
-                print group[0]
+                print(group[0])
             else:
                 # Exract the filenumber from each file in the group and add it to the numbers array
                 if self.checkRootType(group[0]):
@@ -259,11 +259,11 @@ class DBLogger:
                     arr[-1] = "XXX.root"
                     arr[-3] = "["+str(numbers[0])+"-" + str(numbers[-1])+"]"
                     groupName = "_".join(arr)
-                    print groupName
+                    print(groupName)
                 else:
                     # Create name for normal type in format name_[a-n].root
                     groupName = group[0].rstrip(str(numbers[0])+".root") +"["+str(numbers[0])+"-"+ str(numbers[-1])+"].root"
-                    print groupName
+                    print(groupName)
 
 
                 # Append group name with contiguity to return array
@@ -278,11 +278,11 @@ class DBLogger:
         # Otherwise return true
 
         if setFlag==False:
-            print "There are non-contigious root files"
+            print("There are non-contigious root files")
             validity.append("INVALID")
             
         else:
-            print "Root files are all contiguous"
+            print("Root files are all contiguous")
             validity.append("VALID")
         return validity
             

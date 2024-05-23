@@ -58,7 +58,7 @@ def matchingFiles( dir, regexp, addProtocol=False, LFN=True):
     try:
         pattern = re.compile( regexp )
     except:
-        print 'please enter a valid regular expression '
+        print('please enter a valid regular expression ')
         sys.exit(1)
 
     # allFiles = None
@@ -106,9 +106,9 @@ def emptyFiles( dir, regexp, castor=True):
     allFiles = matchingFiles( dir, regexp)
     emptyFiles = []
     for file in allFiles:
-        print 'file ',file
+        print('file ',file)
         num = numberOfEvents(file, castor)
-        print 'nEvents = ', num
+        print('nEvents = ', num)
         if num==0:
             emptyFiles.append( file )
     return emptyFiles 
@@ -119,7 +119,7 @@ def cleanFiles( castorDir, regexp, tolerance = 999999.):
     try:
         pattern = re.compile( regexp )
     except:
-        print 'please enter a valid regular expression '
+        print('please enter a valid regular expression ')
         sys.exit(1)
 
     allFiles = os.popen("rfdir %s | awk '{print $9}'" % (castorDir))
@@ -129,25 +129,25 @@ def cleanFiles( castorDir, regexp, tolerance = 999999.):
     count = 0.
 
     matchingFiles = []
-    print 'Matching files: '
+    print('Matching files: ')
     for file,size in zip( allFiles.readlines(), sizes.readlines()):
         file = file.rstrip()
         fsize = float(size.rstrip())
 
         m = pattern.match( file )
         if m:
-            print file, fsize
+            print(file, fsize)
             fullCastorFile = '%s/%s' % (castorDir, file)
             matchingFiles.append( (fullCastorFile, fsize) )
             averageSize += fsize
             count += 1
 
     if count==0:
-        print "none. check your regexps!"
+        print("none. check your regexps!")
         sys.exit(2)
     
     averageSize /= count
-    print 'average file size = ',averageSize
+    print('average file size = ',averageSize)
 
     cleanFiles = []
     dirtyFiles = []
@@ -156,10 +156,10 @@ def cleanFiles( castorDir, regexp, tolerance = 999999.):
         relDiff = (averageSize - fsize) / averageSize
         if relDiff<float(tolerance):
             # ok
-            print file, fsize, relDiff
+            print(file, fsize, relDiff)
             cleanFiles.append( file )
         else:
-            print 'skipping', file, ': size too small: ', fsize, relDiff
+            print('skipping', file, ': size too small: ', fsize, relDiff)
             dirtyFiles.append( file )
 
     return (cleanFiles, dirtyFiles)
@@ -172,7 +172,7 @@ def fileIndex( regexp, file ):
     try:
         numPattern = re.compile( regexp )
     except:
-        print 'fileIndex: please enter a valid regular expression '
+        print('fileIndex: please enter a valid regular expression ')
         sys.exit(1)
 
     m = numPattern.search( file )
@@ -180,11 +180,11 @@ def fileIndex( regexp, file ):
         try:
             return int( m.group(1) )
         except:
-            print 'fileIndex: please modify your regular expression to find the file index. The expression should contain the string (\d+).'
+            print('fileIndex: please modify your regular expression to find the file index. The expression should contain the string (\d+).')
             sys.exit(2)
             
     else:
-        print file, "does not match your regexp ", regexp
+        print(file, "does not match your regexp ", regexp)
         return -1
 
 def filePrefixAndIndex( regexp, file ):
@@ -192,7 +192,7 @@ def filePrefixAndIndex( regexp, file ):
     try:
         pattern = re.compile( regexp )
     except:
-        print 'fileIndex: please enter a valid regular expression '
+        print('fileIndex: please enter a valid regular expression ')
         sys.exit(1)
         
     m = pattern.search( file )
@@ -200,11 +200,11 @@ def filePrefixAndIndex( regexp, file ):
         try:
             return (m.group(1), int( m.group(2) ) )
         except:
-            print 'fileIndex: please modify your regular expression to find the prefix and file index. The expression should contain 2 statements in parenthesis. the second one should be (\d+).'
+            print('fileIndex: please modify your regular expression to find the prefix and file index. The expression should contain 2 statements in parenthesis. the second one should be (\d+).')
             sys.exit(2)
             
     else:
-        print file, "does not match your regexp ", regexp
+        print(file, "does not match your regexp ", regexp)
         return -1
     
 
@@ -245,11 +245,11 @@ def sync( regexp1, files1, regexp2, files2):
         # print 'nums: ', n1, n2, 'index: ', i1, i2
         
         if n1<n2:
-            print 'single: ', f1
+            print('single: ', f1)
             single.append(f1)
             i1 += 1
         elif n2<n1:
-                print 'single: ', f2
+                print('single: ', f2)
                 single.append(f2)
                 i2 += 1
         else:
@@ -277,7 +277,7 @@ def move( absDestDir, files ):
     for file in files:
         baseName = os.path.basename(file)
         rfrename = 'rfrename %s %s/%s' % (file, absDestDir, baseName)
-        print rfrename
+        print(rfrename)
         os.system( rfrename )
 
 # remove a set of files
@@ -286,7 +286,7 @@ def remove( files ):
         if isLFN( file ):
             file = lfnToCastor( file )
         rfrm = 'rfrm %s' % file
-        print rfrm
+        print(rfrm)
         os.system( rfrm )
 
 def protectedRemove( *args ):
@@ -297,13 +297,13 @@ def protectedRemove( *args ):
     pprint.pprint( files )
     yesno = ''
     while yesno!='y' and yesno!='n':
-        yesno = raw_input('Are you sure you want to remove these files [y/n]? ')
+        yesno = input('Are you sure you want to remove these files [y/n]? ')
     if yesno == 'y':
         remove( files )
-        print 'files removed'
+        print('files removed')
         return True
     else:
-        print 'cancelled'
+        print('cancelled')
         return False
 
 def isLFN( file ):
@@ -337,7 +337,7 @@ def cmsStage( absDestDir, files, force):
         if force:
             forceOpt = '-f'
         cmsStage = 'cmsStage %s %s %s ' % (forceOpt, storefile, absDestDir) 
-        print cmsStage
+        print(cmsStage)
         os.system( cmsStage )
         
 
@@ -357,7 +357,7 @@ def xrdcp( absDestDir, files ):
                 cp = 'xrdcp'
                 cpfile = '%s "root://castorcms/%s?svcClass=cmst3&stageHost=castorcms" %s' % (cp, file,absDestDir)
 
-        print cpfile
+        print(cpfile)
         os.system(cpfile)
 
 def cat(lfn):

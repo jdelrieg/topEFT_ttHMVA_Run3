@@ -50,9 +50,9 @@ if __name__=='__main__':
     val1 = Value(1.,0.02)
     val2 = Value(2.,0.02)
     val3 = val1 / val2
-    print val1
-    print val2
-    print 
-    print val1+val2
-    print val1-val2
-    print val1/val2
+    print(val1)
+    print(val2)
+    print() 
+    print(val1+val2)
+    print(val1-val2)
+    print(val1/val2)

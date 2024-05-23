@@ -25,7 +25,7 @@ def castorBaseDir( user=os.environ['USER'], area = None):
         return d
     else:
         msg = "The directory '%s' does not exist. Please check the username and area (user/group). You may need to create the directory yourself." % d
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
         raise NameError(msg)
 
 def myCastorBaseDir():

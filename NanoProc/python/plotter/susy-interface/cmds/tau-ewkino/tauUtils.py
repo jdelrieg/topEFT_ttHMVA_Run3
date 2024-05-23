@@ -8,10 +8,10 @@ def command(cmd, pretend):
 
         newCmd = 'python {cmd}'.format(cmd=p.split('python')[1])
         if pretend:
-                print newCmd
+                print(newCmd)
         else:
                 os.system(newCmd)
                 
-        print "Done."
+        print("Done.")
 """
 """

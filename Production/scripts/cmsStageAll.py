@@ -35,13 +35,13 @@ regexp = args[2]
 files = castortools.matchingFiles( dir1, regexp )
 
 if options.negate:
-    print 'NOT copying ',  
+    print('NOT copying ', end=' ')  
     pprint.pprint(files)
 else:
-    print 'Copying ',  
+    print('Copying ', end=' ')  
     pprint.pprint(files)
 
     castortools.cmsStage( dir2, files, options.force) 
     
-print 'from:', dir1
-print 'to  :', dir2
+print('from:', dir1)
+print('to  :', dir2)

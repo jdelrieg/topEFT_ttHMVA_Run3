@@ -13,7 +13,7 @@ def rawEfficiency(tree,numcut,dencut,xvar,xbins):
     tree.Draw("(%s):(%s)>>htemp" % (numcut,xvar), dencut, "goff")
     cpcalc = ROOT.TEfficiency.ClopperPearson
     ret = ROOT.TGraphAsymmErrors(hist2d.GetNbinsX())
-    for b in xrange(1,ret.GetN()+1):
+    for b in range(1,ret.GetN()+1):
         x0 = hist2d.GetXaxis().GetBinCenter(b)
         xmin, xmax = hist2d.GetXaxis().GetBinLowEdge(b), hist2d.GetXaxis().GetBinUpEdge(b)
         passing = int(hist2d.GetBinContent(b,2))
@@ -23,19 +23,19 @@ def rawEfficiency(tree,numcut,dencut,xvar,xbins):
         ymin = cpcalc(total,passing,0.6827,False) if total else -99
         ret.SetPoint(b-1, x0, y0)
         ret.SetPointError(b-1, x0-xmin, xmax-x0, y0-ymin,ymax-y0)
-        print "at bin %3d: x = %8.2f, eff = %8d/%8d = %.3f  [%.3f, %.3f]" % (b, x0, passing,total, y0, ymin, ymax)
+        print("at bin %3d: x = %8.2f, eff = %8d/%8d = %.3f  [%.3f, %.3f]" % (b, x0, passing,total, y0, ymin, ymax))
     return ret
 
 def makeRatio(numeff,deneff):
-    if numeff.GetN() != deneff.GetN(): raise RuntimeError, "Mismatching graphs"
+    if numeff.GetN() != deneff.GetN(): raise RuntimeError("Mismatching graphs")
     xn = numeff.GetX()
     yn = numeff.GetY()
     xd = deneff.GetX()
     yd = deneff.GetY()
     ratio = ROOT.TGraphAsymmErrors(numeff.GetN())
     unity = ROOT.TGraphAsymmErrors(numeff.GetN())
-    for i in xrange(numeff.GetN()):
-        if abs(xn[i]-xd[i]) > 1e-4: raise RuntimeError, "Mismatching graphs"
+    for i in range(numeff.GetN()):
+        if abs(xn[i]-xd[i]) > 1e-4: raise RuntimeError("Mismatching graphs")
         if yd[i] <= 0:
             unity.SetPoint(i, xn[i], -99)
             ratio.SetPoint(i, xn[i], -99)
@@ -46,11 +46,11 @@ def makeRatio(numeff,deneff):
             unity.SetPoint(i, xn[i], 1.0)
             ratio.SetPointError(i, numeff.GetErrorXlow(i), numeff.GetErrorXhigh(i), numeff.GetErrorYlow(i)/yd[i], numeff.GetErrorYhigh(i)/yd[i])
             unity.SetPointError(i, deneff.GetErrorXlow(i), deneff.GetErrorXhigh(i), deneff.GetErrorYlow(i)/yd[i], deneff.GetErrorYhigh(i)/yd[i])
-            print "at bin %3d: x = %8.2f, ratio = %.3f/%.3f = %.3f -%.3f/+%.3f " % (i+1, xn[i], yn[i], yd[i], yn[i]/yd[i], numeff.GetErrorYlow(i)/yd[i], numeff.GetErrorYhigh(i)/yd[i])
+            print("at bin %3d: x = %8.2f, ratio = %.3f/%.3f = %.3f -%.3f/+%.3f " % (i+1, xn[i], yn[i], yd[i], yn[i]/yd[i], numeff.GetErrorYlow(i)/yd[i], numeff.GetErrorYhigh(i)/yd[i]))
     return [ ratio, unity ]
 
 def makeRatios(effs):
-    if len(effs) != 2: raise RuntimeError, "Not supported yet"
+    if len(effs) != 2: raise RuntimeError("Not supported yet")
     return makeRatio(effs[0],effs[1])
 
 def makeFrame(options):
@@ -170,10 +170,10 @@ if __name__ == "__main__":
     addTnPEfficiencyOptions(parser)
     (options, args) = parser.parse_args()
     if len(args) == 0:
-        print "You must specify at least one tree to fit"
+        print("You must specify at least one tree to fit")
     if len(args) > 2:
-        print "You must specify at most two trees to fit"
-    files = map( ROOT.TFile.Open, args )
+        print("You must specify at most two trees to fit")
+    files = list(map( ROOT.TFile.Open, args ))
     trees = [ f.Get(options.tree) for f in files ]
     effs =  [ rawEfficiency(t,options.num,options.den,options.xvar[0],options.xvar[1]) for t in trees ]
     ROOT.gROOT.SetBatch(True)

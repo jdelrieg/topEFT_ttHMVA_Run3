@@ -66,12 +66,12 @@ class TriggerList( object ):
                                               if trigger.name in self.unprescaledPaths ]
                 # print 'restricting list: ', run, [trigger.name for trigger in self.restrictedTriggerList]
             except ValueError:
-                print 'no menu with run', run, 'using full trigger list.'
+                print('no menu with run', run, 'using full trigger list.')
                 self.restrictedTriggerList = self.triggerList
             self.run = run
         if len(self.restrictedTriggerList) == 0:
             if len( self.triggerList ) != 0:
-                print 'run', run, ': no path from the user list found in the list of unprescaled paths from the trigger DB. The latter could be wrong, using the user trigger list.'
+                print('run', run, ': no path from the user list found in the list of unprescaled paths from the trigger DB. The latter could be wrong, using the user trigger list.')
             self.restrictedTriggerList = self.triggerList
         #import pdb ; pdb.set_trace()
         return self.restrictedTriggerList
@@ -139,7 +139,7 @@ class TriggerList( object ):
     def write(self, dirName ):
         self.triggerJSON.write( dirName )
         self.rltInfo.write( dirName )
-        map( lambda x: x.write(dirName), self.triggerList)
+        list(map( lambda x: x.write(dirName), self.triggerList))
 
 
     def computeLumi(self, json):
@@ -156,4 +156,4 @@ class TriggerList( object ):
 if __name__ == '__main__':
     list = ['HLT_IsoMu15_eta2p1_LooseIsoPFTau20_v[5,6]','HLT_IsoMu15_LooseIsoPFTau15_v9']
     trigList = TriggerList( list )
-    print trigList
+    print(trigList)

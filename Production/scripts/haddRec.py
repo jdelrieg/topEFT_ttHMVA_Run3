@@ -17,7 +17,7 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args)<3:
-        print 'provide at least 2 directories to be added.'
+        print('provide at least 2 directories to be added.')
         sys.exit(1)
 
     odir = args[0]

@@ -1,11 +1,11 @@
-import cPickle, re, optparse, os, os.path
+import pickle, re, optparse, os, os.path
 
 
 def convertFile(filename,pattern,verbose=0):
     if "/store" not in filename: 
-        raise RuntimeError, "%s doesn't look like a PFN" % filename
+        raise RuntimeError("%s doesn't look like a PFN" % filename)
     lfn = re.sub(".*(/store/.*)(?:\\?.*)?","\\1",filename)
-    if verbose: print "\t%s -> %s" % (filename, (pattern % lfn))
+    if verbose: print("\t%s -> %s" % (filename, (pattern % lfn)))
     return pattern % lfn
 
 def convertComponent(comp,pattern,verbose=0):
@@ -17,19 +17,19 @@ def convertPickled(filename,pattern,verbose=0):
         if os.path.exists(filename+"/config.pck"):
             filename += "/config.pck"
     if not os.path.exists(filename):
-        raise RuntimeError, "Filename '%s' does not exist" % filename
+        raise RuntimeError("Filename '%s' does not exist" % filename)
     if not os.path.exists(filename+".sav"):
-        if verbose: print "Making backup in %s.sav" % filename
+        if verbose: print("Making backup in %s.sav" % filename)
         os.system("cp %s %s.sav" % (filename, filename))
     fin = open(filename+".sav")
-    comp = cPickle.load(fin)
+    comp = pickle.load(fin)
     fin.close()
-    if verbose: print "Loaded %s (%s) - %d files." % (filename, comp.name, len(comp.files))
+    if verbose: print("Loaded %s (%s) - %d files." % (filename, comp.name, len(comp.files)))
     comp = convertComponent(comp,pattern,verbose)
     fout = open(filename, 'w')
-    cPickle.dump(comp,fout)
+    pickle.dump(comp,fout)
     fout.close()
-    print "Converted %s (%s) using %s - %d files." % (filename, comp.name, pattern, len(comp.files))
+    print("Converted %s (%s) using %s - %d files." % (filename, comp.name, pattern, len(comp.files)))
 
 if __name__ == '__main__':
     from optparse import OptionParser

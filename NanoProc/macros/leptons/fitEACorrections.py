@@ -6,7 +6,7 @@ if "/rhoCorrections_cc.so" not in ROOT.gSystem.GetLibraries():
 
 def _histToEff(hist2d,graph,fout=None):
     cpcalc = ROOT.TEfficiency.ClopperPearson
-    for b in xrange(1,hist2d.GetNbinsX()+1):
+    for b in range(1,hist2d.GetNbinsX()+1):
         x0 = hist2d.GetXaxis().GetBinCenter(b)
         xmin, xmax = hist2d.GetXaxis().GetBinLowEdge(b), hist2d.GetXaxis().GetBinUpEdge(b)
         passing = int(hist2d.GetBinContent(b,2))
@@ -33,8 +33,8 @@ class EAFitter:
         hist1d = ROOT.TH1D("h1d","h1d;%s;<Iso%s>" % (rhovar,radius),len(rhobins)-1,array('d',rhobins))
         self.tree.Draw("(LepGood_absRawNeutralIso%s):(%s):abs(LepGood_eta)>>htemp" % (radius,rhovar), selection, "prof goff")
         ret = []
-        for i in xrange(1,len(etabins)):
-            for b in xrange(1,len(rhobins)):
+        for i in range(1,len(etabins)):
+            for b in range(1,len(rhobins)):
                 hist1d.SetBinContent(b, hist2d.GetBinContent(i,b))
                 hist1d.SetBinError(b, hist2d.GetBinError(i,b))
             hist1d.Fit(func,"Q");
@@ -47,11 +47,11 @@ class EAFitter:
         histEA = ROOT.TH1D(name,name+";|#eta|;EA",len(etabins)-1,array('d',etabins))
         fout = open("%s/%s.txt"%(self.options.printDir,name),"w")
         fout.write(" e_min  e_max    EA  +- err\n");    
-        print      " e_min  e_max    EA  +- err";    
+        print(" e_min  e_max    EA  +- err");    
         for i,(etamin, etamax, ea,eaerr) in enumerate(ret):
             histEA.SetBinContent(i+1,ea)
             histEA.SetBinError(i+1,eaerr)
-            print      " %.3f  %.3f   %6.4f  %.4f"   % (etamin,etamax,ea,eaerr)
+            print(" %.3f  %.3f   %6.4f  %.4f"   % (etamin,etamax,ea,eaerr))
             fout.write(" %.3f  %.3f   %6.4f  %.4f\n" % (etamin,etamax,ea,eaerr))
         histEA.GetYaxis().SetRangeUser(0,1.5*histEA.GetMaximum())
         histEA.GetYaxis().SetDecimals(True)
@@ -70,11 +70,11 @@ class EAFitter:
         histR  = ROOT.TH1D(name+"R", name+";|#eta|;Residual",len(etabins)-1,array('d',etabins))
         histRR = ROOT.TH1D(name+"RR",name+";|#eta|;Residual/EA",len(etabins)-1,array('d',etabins))
         ret = []
-        for i in xrange(1,len(etabins)):
+        for i in range(1,len(etabins)):
             mysel = "(%s) && %f <= abs(LepGood_eta) && abs(LepGood_eta)<%f " % (selection,etabins[i-1],etabins[i])
             ea = histEA.GetBinContent(i)
             self.tree.Draw("max(LepGood_absRawNeutralIso{R}-{rho}*{ea},0):nVert:abs(LepGood_eta)>>+htemp".format(R=radius,rho=rhovar,ea=ea), mysel, "prof goff")
-            for b in xrange(1,len(vtxbins)):
+            for b in range(1,len(vtxbins)):
                 hist1d.SetBinContent(b, hist2d.GetBinContent(i,b))
                 hist1d.SetBinError(b, hist2d.GetBinError(i,b))
             hist1d.Fit(func,"Q");
@@ -120,7 +120,7 @@ class EATester:
         gr1dc  = ROOT.TGraphAsymmErrors(len(vtxbins)-1);
         gr1du  = ROOT.TGraphAsymmErrors(len(vtxbins)-1);
         gr1dd  = ROOT.TGraphAsymmErrors(len(vtxbins)-1);
-        for i in xrange(1,len(etabins)):
+        for i in range(1,len(etabins)):
             etamin, etamax = etabins[i-1], etabins[i]
             myname = "%s_eta_%.3f_%.3f" % (name, etamin, etamax) 
             mysel  = "(%s) && %f <= abs(LepGood_eta) &&  abs(LepGood_eta) < %f" % (selection,etamin,etamax)
@@ -143,7 +143,7 @@ class EATester:
             gr1dc.SetLineColor(ROOT.kBlue+1);
             gr1dc.SetMarkerColor(ROOT.kBlue+1);
             for j,X in enumerate([gr1dd,gr1du,gr1dc]):
-                print "Fitting %s [%d]" % (myname,j)
+                print("Fitting %s [%d]" % (myname,j))
                 X.Fit("pol1","F EX0","")
                 X.GetFunction("pol1").SetLineColor(X.GetLineColor())
                 X.GetFunction("pol1").SetLineStyle(2)
@@ -161,7 +161,7 @@ class EATester:
         hbkg1d = ROOT.TH1D("hbkg","hbkg",2000,0,10)
         hist1d = ROOT.TH1D("frame","frame;Eff(background);Eff(signal)",100,0.,0.319)
         hist1d.GetYaxis().SetRangeUser(0.4,1.019)
-        for i in xrange(1,len(etabins)):
+        for i in range(1,len(etabins)):
             etamin, etamax = etabins[i-1], etabins[i]
             myname = "%s_eta_%.3f_%.3f" % (name, etamin, etamax) 
             mysig  = "(%s) && %f <= abs(LepGood_eta) &&  abs(LepGood_eta) < %f" % (selsig,etamin,etamax)
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     addEAFitterOptions(parser)
     (options, args) = parser.parse_args()
     if len(args) != 1:
-        print "You must specify one tree to fit"
+        print("You must specify one tree to fit")
         exit()
     file = ROOT.TFile.Open(args[0])
     tree = file.Get(options.tree) 
@@ -227,8 +227,8 @@ if __name__ == "__main__":
             #fitter.doEAResiduals("testCN_"+lname, "03",sel, [0,0.8,1.3,2.0,2.2,2.5], "rhoCentralNeutral", [0]+vtxbins, verbose=True)
             fitter.fitEAEtaBins("EAv1R04_"+lname,   "04", sel, [0,0.8,1.3,2.0,2.2,2.5], "rho",rhobins,verbose=True)
             fitter.fitEAEtaBins("EAv1R04CN_"+lname, "04", sel, [0,0.8,1.3,2.0,2.2,2.5], "rhoCentralNeutral", rhoCNbins, verbose=True)
-            fitter.fitEAEtaBins("fineR04_"+lname,   "04", sel, [0.2*i for i in xrange(0,13)], "rho",rhobins, verbose=False)
-            fitter.fitEAEtaBins("fineR04CN_"+lname, "04", sel, [0.2*i for i in xrange(0,13)], "rhoCentralNeutral", rhoCNbins, verbose=False)
+            fitter.fitEAEtaBins("fineR04_"+lname,   "04", sel, [0.2*i for i in range(0,13)], "rho",rhobins, verbose=False)
+            fitter.fitEAEtaBins("fineR04CN_"+lname, "04", sel, [0.2*i for i in range(0,13)], "rhoCentralNeutral", rhoCNbins, verbose=False)
         fitter.done()
     if False:
         tester = EATester(tree,options)

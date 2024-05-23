@@ -35,5 +35,5 @@ more Logger/*
         log.stageOut('/store/cmst3/user/cbern/Test')
         # log.dump()
     except ValueError as err:
-        print err, '. Exit!'
+        print(err, '. Exit!')
         sys.exit(1)

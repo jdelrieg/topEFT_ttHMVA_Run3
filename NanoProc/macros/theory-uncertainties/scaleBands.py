@@ -10,16 +10,16 @@ from CMGTools.NanoProc.tools.plotDecorations import *
 def scaleBand(file, base, center=False, norm=False, scales=["scaleUp","scaleDown"], ymin=0.05, basePostfix="", outPostfix="", relative=True, rebase=True):
     href = file.Get(base+basePostfix)
     if not bool(href): return None
-    print "doing ",base," with ",scales
+    print("doing ",base," with ",scales)
     bins = href.GetNbinsX()
     fullscale = href.Integral()
     hs = [ file.Get("%s_%s" % (base,s)) for s in scales ]
     for (h,s) in zip(hs,scales):
-        if not h: raise RuntimeError, "Missing histogram %s_%s" % (base,s)
+        if not h: raise RuntimeError("Missing histogram %s_%s" % (base,s))
     if norm:
         for h in hs: h.Scale(fullscale/h.Integral())
     ret = ROOT.TGraphAsymmErrors(bins)
-    for b in xrange(bins):
+    for b in range(bins):
         y0 = href.GetBinContent(b+1)
         if y0/fullscale < ymin: continue
         ys = [ h.GetBinContent(b+1) for h in hs ]
@@ -44,7 +44,7 @@ def scaleBand(file, base, center=False, norm=False, scales=["scaleUp","scaleDown
 
 def qsumBands(*bands):
     ret = bands[0].Clone()
-    for i in xrange(ret.GetN()):
+    for i in range(ret.GetN()):
         dydn = sqrt(sum([ b.GetErrorYlow(i)**2  for b in bands])) 
         dyup = sqrt(sum([ b.GetErrorYhigh(i)**2 for b in bands])) 
         ret.SetPointError(i,ret.GetErrorXlow(i),ret.GetErrorXhigh(i),dydn,dyup)
@@ -90,7 +90,7 @@ if __name__ == "__main__":
             bandN.Sort()
             xmin = bandN.GetX()[0]-bandN.GetErrorXlow(0)
             xmax = bandN.GetX()[bandN.GetN()-1]+bandN.GetErrorXhigh(bandN.GetN()-1)
-            ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in xrange(bandN.GetN())])
+            ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in range(bandN.GetN())])
             if var == "nJet25": xmin = 1.5 if "3l" in argv[1] else 3.5
             ## Prepare split screen
             c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()

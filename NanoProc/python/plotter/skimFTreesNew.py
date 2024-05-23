@@ -11,11 +11,11 @@ parser.add_option("--rename", dest="renamePatterns", type="string", default=[], 
 (options, args) = parser.parse_args()
 
 if len(args) < 2:
-    print "usage: python skimFTrees.py BIGTREE_DIR FTREE_DIR [ outdir [ DATASET_NAME ... ] ]"
+    print("usage: python skimFTrees.py BIGTREE_DIR FTREE_DIR [ outdir [ DATASET_NAME ... ] ]")
     sys.exit(1)
 elif len(args) == 2:
     args.append( args[0] + "/" + os.path.basename(args[1].rstrip("/")) )
-    if options.verbose: print "Will write output to %s " % args[2]
+    if options.verbose: print("Will write output to %s " % args[2])
 
 if len(args) == 3:
     dsets = [d.replace('_Friend.root','') for d in os.listdir(args[1]) if '_Friend' in d ]
@@ -32,10 +32,10 @@ for from_name in dsets:
 
 for d in dsets[:]:
     if not os.path.isfile(args[0]+"/"+d+".root"):
-        print "WARNING: dataset %s missing in %s" % (d, args[0])
+        print("WARNING: dataset %s missing in %s" % (d, args[0]))
         dsets.remove(d)
     elif options.skipExisting and os.path.isfile(args[2]+"/"+toDataset[d]+"_Friend.root"):
-        if options.verbose: print "INFO: Skipping sample %s for which friend already exists" % d
+        if options.verbose: print("INFO: Skipping sample %s for which friend already exists" % d)
         dsets.remove(d)
 
 out = args[2]
@@ -44,11 +44,11 @@ if not os.path.isdir(args[2]):
     os.system("mkdir -p "+args[2])
 
 for dset in dsets:
-    print dset,
+    print(dset, end=' ')
     if toDataset[dset] != dset:
-        print " -> ",toDataset[dset],
+        print(" -> ",toDataset[dset], end=' ')
     if options.pretend: 
-        print ""; continue
+        print(""); continue
     fsel = ROOT.TFile.Open(args[0]+'/'+toDataset[dset]+'.root')
     if not fsel: raise RuntimeError("Error opening %s"  % args[0]+'/'+toDataset[dset]+'.root')
     elist = fsel.Get(options.elist)
@@ -64,7 +64,7 @@ for dset in dsets:
     f2.cd()
     t2 = t_f.CopyTree('1')
     f2.Write()
-    print ': skimmed friend trees put in %s'%f2.GetName()
+    print(': skimmed friend trees put in %s'%f2.GetName())
     f2.Close()
     f_f.Close()
     fsel.Close()

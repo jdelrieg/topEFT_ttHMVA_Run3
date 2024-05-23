@@ -286,7 +286,7 @@ class GenerateMask(Task):
             options = copy.deepcopy(self.options)
             options.user = self.user
 
-            if input.has_key('BaseDataset'):
+            if 'BaseDataset' in input:
                 options.name = input['BaseDataset']['Name']
             else:
                 options.name = None
@@ -552,7 +552,7 @@ class RunCMSBatch(Task):
             if self.options.group is not None:
                 user_group = '-G %s' % self.options.group
             cmd.extend(['-b',"'bsub -q %s -J %s -u cmgtoolslsf@gmail.com %s < ./batchScript.sh | tee job_id.txt'" % (self.options.queue,jname,user_group)])
-        print " ".join(cmd)
+        print(" ".join(cmd))
         
         pwd = os.getcwd()
         
@@ -587,15 +587,15 @@ class MonitorJobs(Task):
                 if c and re.match('^Job <\\d*> is submitted to queue <.*>',c) is not None:
                     try:
                         result = c.split('<')[1].split('>')[0]
-                    except Exception, e:
-                        print >> sys.stderr, 'Job ID parsing error',str(e),c
+                    except Exception as e:
+                        print('Job ID parsing error',str(e),c, file=sys.stderr)
         return result
     
     def monitor(self, jobs, previous):
 
         #executes bjobs with a list of job IDs
         cmd = ['bjobs','-u',self.options.batch_user]
-        cmd.extend([v for v in jobs.values() if v is not None])#filter out unknown IDs
+        cmd.extend([v for v in list(jobs.values()) if v is not None])#filter out unknown IDs
         child = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         stdout, stderr = child.communicate()
 
@@ -603,7 +603,7 @@ class MonitorJobs(Task):
             """Parse the header from bjobs"""
             tokens = [t for t in header.split(' ') if t]
             result = {}
-            for i in xrange(len(tokens)):
+            for i in range(len(tokens)):
                 result[tokens[i]] = i          
 
             return result
@@ -614,7 +614,7 @@ class MonitorJobs(Task):
             if lines:
                 header = parseHeader(lines[0])                                 
                 if not 'STAT' in header or not 'JOBID' in header:
-                    print >> sys.stderr, 'Problem parsing bjobs header\n',lines
+                    print('Problem parsing bjobs header\n',lines, file=sys.stderr)
                     return result
                 for line in lines[1:]:
                     #TODO: Unreliable for some fields, e.g. dates
@@ -633,15 +633,15 @@ class MonitorJobs(Task):
                     if line and re.match('^Job <\\d*> is not found',line) is not None:
                         try:
                             id = line.split('<')[1].split('>')[0]
-                            if not result.has_key(id) and not previous.has_key(id):
+                            if id not in result and id not in previous:
                                 result[id] = 'FORGOTTEN'
-                        except Exception, e:
-                            print >> sys.stderr, 'Job ID parsing error in STDERR',str(e),line
+                        except Exception as e:
+                            print('Job ID parsing error in STDERR',str(e),line, file=sys.stderr)
         
         #after one hour the status is no longer available     
         if result:
-            for id in jobs.values():
-                if not result.has_key(id) and previous.has_key(id):
+            for id in list(jobs.values()):
+                if id not in result and id in previous:
                     result[id] = previous[id]
         return result
     
@@ -664,11 +664,11 @@ class MonitorJobs(Task):
             actions = {'FilesToCompress':{'Files':[]}}
             
             result = {}
-            for j, id in jobs.iteritems():
+            for j, id in jobs.items():
                 if id is None:
                     result[j] = 'UNKNOWN'
                 else:
-                    if stat.has_key(id):
+                    if id in stat:
                         result[j] = stat[id]
                         if result[j] in ['DONE','EXIT','FORGOTTEN']:
                             stdout = os.path.join(j,'LSFJOB_%s' % id,'STDOUT')
@@ -694,8 +694,8 @@ class MonitorJobs(Task):
         def countJobs(stat):
             """Count jobs that are monitorable - i.e. not in a final state"""
             result = []
-            for j, id in jobs.iteritems():
-                if id is not None and stat.has_key(id):
+            for j, id in jobs.items():
+                if id is not None and id in stat:
                     st = stat[id]
                     if st in ['PEND','PSUSP','RUN','USUSP','SSUSP','WAIT']:
                         result.append(id)
@@ -725,7 +725,7 @@ bkill -u %s %s
             status = self.monitor(jobs,status)
             monitorable = writeKillScript(countJobs(status))
             if not (count % 3):
-                print '%s: Monitoring %i jobs (%s)' % (self.name,len(monitorable),self.dataset)
+                print('%s: Monitoring %i jobs (%s)' % (self.name,len(monitorable),self.dataset))
             count += 1
             
         return {'LSFJobStatus':checkStatus(status),'LSFJobIDs':jobs}  
@@ -741,7 +741,7 @@ class CheckJobStatus(Task):
         job_status = input['MonitorJobs']['LSFJobStatus']
 
         result = {}
-        for j, status in job_status.iteritems():
+        for j, status in job_status.items():
             valid = True
             if os.path.exists(status):
 
@@ -807,8 +807,8 @@ class WriteJobReport(Task):
         
         #collect a list of jobs by status
         states = {}
-        for j, status in report['LSFJobStatusCheck'].iteritems():
-            if not states.has_key(status):
+        for j, status in report['LSFJobStatusCheck'].items():
+            if status not in states:
                 states[status] = []
             states[status].append(j)
         jobdir = input['CreateJobDirectory']['PWD']
@@ -829,7 +829,7 @@ class WriteJobReport(Task):
         if self.options.group is not None:
             user_group = '-G %s' % self.options.group
 
-        for status, jobs in states.iteritems():
+        for status, jobs in states.items():
             output.write('# %d jobs found in state %s\n' % (len(jobs),status) )
             if status == 'VALID':
                 continue
@@ -853,7 +853,7 @@ class CleanJobFiles(Task):
         actions = {'FilesToCompress':{'Files':[]},'FilesToClean':{'Files':[]}}
         
         actions['FilesToClean']['Files'].append(input['ExpandConfig']['ExpandedFullCFG'])
-        if input.has_key('RunTestEvents'):
+        if 'RunTestEvents' in input:
             actions['FilesToClean']['Files'].append(input['RunTestEvents']['TestCFG'])
 
         import glob

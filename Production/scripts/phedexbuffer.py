@@ -3,7 +3,7 @@
 import json
 import pprint
 import operator
-import urllib2 
+import urllib.request, urllib.error, urllib.parse 
 
 def teraByte( byte ):
     return float(byte) / 1024. / 1024. / 1024. / 1024.
@@ -19,12 +19,12 @@ class DataSet(object):
         return tmp
 
 def fetchData():
-    print 'accessing phedex on cmsweb.cern.ch'
+    print('accessing phedex on cmsweb.cern.ch')
     url = 'https://cmsweb.cern.ch/phedex/datasvc/json/prod/subscriptions?node=T2_CH_CERN&group=local&create_since=0'
-    h1 = urllib2.urlopen( url ) 
+    h1 = urllib.request.urlopen( url ) 
     content = h1.read()
     # jsondata = res.read()
-    print 'saving json data'
+    print('saving json data')
     save = open('save.json','w')
     save.write( content )
 
@@ -72,12 +72,12 @@ if __name__ == '__main__':
         # print myds
 
     # pprint.pprint(datasets[0])
-    print 'by name:'
+    print('by name:')
     for ds in sorted(myDatasets, key=operator.attrgetter('name') ):
-        print ds
-    print 
-    print 'by size'
+        print(ds)
+    print() 
+    print('by size')
     for ds in sorted(myDatasets, key=operator.attrgetter('size') ):
-        print ds
-    print
-    print 'TOTAL:', totSize, ' TB'
+        print(ds)
+    print()
+    print('TOTAL:', totSize, ' TB')

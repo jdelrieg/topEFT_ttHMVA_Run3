@@ -18,7 +18,7 @@ def getFiles(datasets, user, pattern):
 # getting the first 10 files 
 files = getFiles(['/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/Fall11-PU_Chamonix12_START44_V10-v2/AODSIM/PAT_CMG_V3_0_0'], 'cmgtools','tree.*root')[:10]
 
-print files
+print(files)
 
 DYJets = cfg.MCComponent(
     name = 'DYJets',

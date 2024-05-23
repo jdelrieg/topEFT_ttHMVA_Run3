@@ -37,7 +37,7 @@ def prepareJob(mm, name, mp, baseSig, binning, bkgpath, outpath, xslist, options
 		line = line.replace("THEWVJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSJec"  ,"").split(";")])+"]")
 		line = line.replace("THEFRMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSMet","").split(";")])+"]")
 		line = line.replace("THEWVMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSMet"  ,"").split(";")])+"]")
-		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS",{}).iteritems()])+"}")
+		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS",{}).items()])+"}")
 		line = line.replace("THEMCADIR"    , mm.tmppath                                        )
 		line = line.replace("THEBKGDIR"    , bkgpath                                           )
 		line = line.replace("THEOUTDIR"    , outpath                                           )

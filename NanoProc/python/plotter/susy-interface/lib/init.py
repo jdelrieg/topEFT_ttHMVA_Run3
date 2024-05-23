@@ -11,7 +11,7 @@ class Init():
 		if getattr(self, "module", None) != module: return False
 		for i in range(len(args)):
 			if getattr(self, "arg"+str(i), None) != args[i]: return False
-		for key, val in options.__dict__.iteritems():
+		for key, val in options.__dict__.items():
 			if key=="pretend": continue
 			if type(val) is list or type(val) is tuple:
 				opt = getattr(self, "opt_"+key, [])
@@ -35,12 +35,12 @@ class Init():
 		self.module = module
 		for i in range(len(args)):
 			setattr(self, "arg"+str(i), args[i])
-		for key, val in options.__dict__.iteritems():
+		for key, val in options.__dict__.items():
 			setattr(self, "opt_"+key, val)
 	def write(self):
 		if os.path.exists(self.path): cmd("rm "+self.path)
 		f = open(self.path, "w")
-		for key, val in self.__dict__.iteritems():
+		for key, val in self.__dict__.items():
 			if key=="pretend": continue
 			if type(val) is list or type(val) is tuple:
 				val = splitList(val)

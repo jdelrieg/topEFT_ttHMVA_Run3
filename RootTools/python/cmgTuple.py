@@ -19,7 +19,7 @@ class cmgTuple(rt.TObject):
         self.currentEntry = 0
 
         s = set()
-        for i in xrange(self.tree.GetListOfBranches().GetEntries()):
+        for i in range(self.tree.GetListOfBranches().GetEntries()):
             b = self.tree.GetListOfBranches().At(i)
             name = b.GetName()
             s.add(name)
@@ -54,7 +54,7 @@ class cmgTuple(rt.TObject):
         if self.tree is not None and self.tree:
             self.tree.Delete()
 
-    def next(self):
+    def __next__(self):
         if(self.currentEntry < len(self)):
             self.tree.GetEntry(self.currentEntry)
             self.currentEntry += 1
@@ -63,13 +63,13 @@ class cmgTuple(rt.TObject):
         return self
 
     def printAliases( self ):
-        keys = self.aliases.keys()
+        keys = list(self.aliases.keys())
         lengths = [len(i) for i in keys]
         max_len = max(lengths)
         keys.sort()
         for key in keys:
             alias = self.aliases[key]
-            print "  %-*s -> %s" % (max_len, key, alias)
+            print("  %-*s -> %s" % (max_len, key, alias))
 
     def get(self, name):
         result = None
@@ -96,5 +96,5 @@ if __name__ == '__main__':
     events = input.Get('Events')
 
     cmg = cmgTuple(events)
-    print cmg.branches
-    print cmg.aliases
+    print(cmg.branches)
+    print(cmg.aliases)

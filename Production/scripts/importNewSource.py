@@ -64,7 +64,7 @@ cdir += sampleName
 
 pattern = fnmatch.translate( options.wildcard )
 if not castortools.fileExists(cdir):
-    print 'importNewSource: castor directory does not exist. Exit!'
+    print('importNewSource: castor directory does not exist. Exit!')
     sys.exit(1)
 
 

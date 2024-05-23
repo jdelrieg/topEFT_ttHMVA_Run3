@@ -61,7 +61,7 @@ def load(locals, dir, types):
     for key in dir.GetListOfKeys():
         obj = dir.Get(key.GetName())
         if type(obj) in types:
-            print type(obj), key.GetName()
+            print(type(obj), key.GetName())
             if type(obj) in dirTypes:
                 obj = Directory(obj)
             objs.append(obj)
@@ -90,8 +90,8 @@ if __name__ == '__main__':
     file = None
     if len(args)>1:
         parser.print_help()
-        print
-        print 'Maximum one argument (a root file)'
+        print()
+        print('Maximum one argument (a root file)')
         sys.exit(1)
     elif len(args)==1:
         file = TFile( args[0] )

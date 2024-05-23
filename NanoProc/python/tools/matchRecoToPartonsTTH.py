@@ -30,13 +30,13 @@ class MatchRecoToPartonsTTH:
         nleps = getattr(event,"nLepGood")
         nFO = getattr(event,"nLepFO"+self.label)
         chosen = getattr(event,"iLepFO"+self.label)
-        leps = [MatchRecoToPartonsTTH_MyObjectProxy(event,"LepGood",i) for i in xrange(nleps)]
-        lepsFO = [leps[chosen[i]] for i in xrange(nFO)]
-        reco = [MatchRecoToPartonsTTH_MyObjectProxy(event,"JetSel"+self.label,i) for i in xrange(getattr(event,"nJetSel"+self.label))]
-        gen = [MatchRecoToPartonsTTH_MyObjectProxy(event,"GenPart",i) for i in xrange(getattr(event,'nGenPart'))]
+        leps = [MatchRecoToPartonsTTH_MyObjectProxy(event,"LepGood",i) for i in range(nleps)]
+        lepsFO = [leps[chosen[i]] for i in range(nFO)]
+        reco = [MatchRecoToPartonsTTH_MyObjectProxy(event,"JetSel"+self.label,i) for i in range(getattr(event,"nJetSel"+self.label))]
+        gen = [MatchRecoToPartonsTTH_MyObjectProxy(event,"GenPart",i) for i in range(getattr(event,'nGenPart'))]
         ngenfinal = getattr(event,"nallFinalParton")
         igenfinal = getattr(event,"iallFinalParton")
-        genfinal = [gen[igenfinal[i]] for i in xrange(ngenfinal)]
+        genfinal = [gen[igenfinal[i]] for i in range(ngenfinal)]
 
         pairs = matchObjectCollectionUnique(lepsFO+reco,genfinal,dRmax=0.3)
 

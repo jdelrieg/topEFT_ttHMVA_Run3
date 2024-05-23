@@ -40,10 +40,10 @@ if __name__ == '__main__':
     castorBaseDir = castorBaseDir.myCastorBaseDir()
     
     if not os.path.isfile( cfgFileName ):
-        print 'cfg file does not exist: ', cfgFileName
+        print('cfg file does not exist: ', cfgFileName)
         sys.exit(1)
     if not os.path.isfile( relvalListFileName ):
-        print 'relval list file does not exist: ', relvalListFileName
+        print('relval list file does not exist: ', relvalListFileName)
         sys.exit(1)
     
     handle = open(relvalListFileName, 'r')
@@ -70,18 +70,18 @@ if __name__ == '__main__':
         remotes.append( remote ) 
         myRelvals.append( relval )
 
-    print 
-    print 'SUMMARY'
-    print '-------'
+    print() 
+    print('SUMMARY')
+    print('-------')
     i = 0
     for relval in myRelvals:
-        print ''
-        print 'output of relval: ', relval, ' will appear in:'
-        print '----------------------------------------------'
-        print 'local  : '
-        print locals[i]+'/*'
-        print 'remote : '
-        print remotes[i]
+        print('')
+        print('output of relval: ', relval, ' will appear in:')
+        print('----------------------------------------------')
+        print('local  : ')
+        print(locals[i]+'/*')
+        print('remote : ')
+        print(remotes[i])
         i = i+1
 
 

@@ -59,7 +59,7 @@ class Comparator(object):
         if os.path.isdir(maindir):
             os.system( 'rm -r ' + maindir)
         os.mkdir(maindir)
-        for h1name, h1 in sorted(self.info1.hists.iteritems()):
+        for h1name, h1 in sorted(self.info1.hists.items()):
             h2 = self.info2.hists.get(h1name, None)
             if h2 is None:
                 pass
@@ -73,10 +73,10 @@ class Comparator(object):
                 h1.SetTitle(h1name)
                 h2.SetTitle(h1name)
                 if not self.filter.search( h1name ):
-                    print 'Skipping', h1name
+                    print('Skipping', h1name)
                     continue
                 self._drawHists(h1, h2, h1name)
-                if wait : res = raw_input('')
+                if wait : res = input('')
                 
     def _drawHists(self, h1, h2, h1name):
         '''Compare 2 histograms'''
@@ -105,9 +105,9 @@ class Comparator(object):
         else:
             self.hcomp.set(h1name, h1, h2, title1, title2)
         self.hcomp.draw()
-        print 'Draw', h1name, 'done'
+        print('Draw', h1name, 'done')
         pngname = '/'.join([self.outdir,h1name+'.png'])
-        print pngname
+        print(pngname)
         self.hcomp.can.SaveAs(pngname)
         return True
 
@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
     if len(args)!=2:
         parser.print_usage()
-        print 'provide 2 sets of histograms'
+        print('provide 2 sets of histograms')
 
     if options.batch:
         gROOT.SetBatch()

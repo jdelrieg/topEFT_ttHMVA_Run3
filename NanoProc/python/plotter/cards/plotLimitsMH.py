@@ -65,7 +65,7 @@ obs = lines[-1];
 exp = ROOT.TGraphAsymmErrors(obs.GetN())
 b68 = ROOT.TGraphAsymmErrors(obs.GetN())
 b95 = ROOT.TGraphAsymmErrors(obs.GetN())
-for i in xrange(obs.GetN()):
+for i in range(obs.GetN()):
     exp.SetPoint(i, lines[0.5].GetX()[i], lines[0.5].GetY()[i])
     b68.SetPoint(i, lines[0.5].GetX()[i], lines[0.5].GetY()[i])
     b95.SetPoint(i, lines[0.5].GetX()[i], lines[0.5].GetY()[i])

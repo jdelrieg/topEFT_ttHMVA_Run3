@@ -13,13 +13,13 @@ def collectMakes(region, make):
 	return []
 
 def collectPlots(region, plotsname):
-	available = [k for k,v in region.plots.iteritems()]
+	available = [k for k,v in region.plots.items()]
 	if len(available)==0 or (plotsname!="all" and not plotsname in available): return []
 	if plotsname=="all": return available
 	return [plotsname]
 
 def collectPPlots(region, plotsname):
-	if not plotsname in region.plots.keys(): return ""
+	if not plotsname in list(region.plots.keys()): return ""
 	return " ".join("--sP "+v for v in region.plots[plotsname])
 
 def collectProcesses(mm, make):

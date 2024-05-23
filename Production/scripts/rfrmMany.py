@@ -34,7 +34,7 @@ regexp = args[1]
 files = castortools.matchingFiles( castorDir, regexp )
 
 if options.negate:
-    print 'NOT removing ',  
+    print('NOT removing ', end=' ')  
     pprint.pprint(files)
 else:
     if options.kill == False:

@@ -112,7 +112,7 @@ class CanvasPrinter(Module):
         for t in self._fileTemplate:
             fname = string.Formatter().vformat(t,[],event)
             self._canvasMaker.canvas().Print(fname)
-            print fname
+            print(fname)
 
 class LeptonMatchDrawer(AbsCollectionDrawer):
     def __init__(self,name,label,markerStyle=20,markerColors={0:99,1:1,2:4},markerSize=2,cut=None,maxItems=99):
@@ -176,9 +176,9 @@ if __name__ == "__main__":
         cut = options.cut
     if options.doS2V:
         cut = scalarToVector(cut)
-    print "Reading %s (%d entries)" % (args[0], t.GetEntries())
+    print("Reading %s (%d entries)" % (args[0], t.GetEntries()))
     if not os.path.exists((options.pdir)):
-        print "mkdir?"
+        print("mkdir?")
         os.system("mkdir -p "+(options.pdir))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+(options.pdir))
     ### CONFIG

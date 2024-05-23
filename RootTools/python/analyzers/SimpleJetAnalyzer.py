@@ -33,7 +33,7 @@ class ResolutionJetHistograms (Histograms) :
             index = int (nVtx) / int (self.vtxBinning)
             self.histosEta[index].Fill (jet.gen.eta (), jet.pt () / jet.gen.pt ())
             self.histosPt[index].Fill (jet.gen.pt (), jet.pt () / jet.gen.pt ())
-        else : print 'the vertex number: ' + str (nVtx) + ' is too high'
+        else : print('the vertex number: ' + str (nVtx) + ' is too high')
 
 # .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... ....
 
@@ -333,10 +333,10 @@ class SimpleJetAnalyzer (Analyzer) :
         self.matchedCleanJetHistosResolution_endNOtk = ResolutionJetHistograms ('MatchedCleanJetsResolution_endNOtk', 50, 1)
         self.matchedCleanJetHistosResolution_fwd = ResolutionJetHistograms ('MatchedCleanJetsResolution_fwd', 50, 1)
 
-        print 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+        print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
         self.doJetIdHisto = False
         if self.cfg_ana.doJetIdHisto:
-            print 'doing jet ID'
+            print('doing jet ID')
             # histograms for pileup jet identification variables
             self.vtxBins   = (0,5,10,15,20,30) ## (0,2,4,6,10,15,20,30,35)
             self.ptBins    = (20,30,50) ## (20,30,40,50,100)
@@ -392,7 +392,7 @@ class SimpleJetAnalyzer (Analyzer) :
 #        event.selGenLeptons = [GenParticle (lep) for lep in event.genLeptons if (lep.pt ()>self.cfg_ana.ptCut and abs (lep.eta ()) < jetEtaCut)]
         
         # get genJets
-        event.genJets = map (GenJet, self.mchandles['genJets'].product ())
+        event.genJets = list(map (GenJet, self.mchandles['genJets'].product ()))
         # filter genjets as for reco jets
         event.myGenJets = [GenJet (jet) for jet in event.genJets if (jet.pt ()>self.cfg_ana.genPtCut)]
         event.selGenJets = cleanObjectCollection (event.myGenJets, event.genLeptons, 0.2)

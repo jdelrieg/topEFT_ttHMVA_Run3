@@ -83,14 +83,14 @@ class Object:
             val = getattr(self._event,self._prefix+name)
             if self._index != None:
                 val = val[self._index]
-        except AttributeError, e:
+        except AttributeError as e:
             import math
             if hasattr(math, name): val = getattr(math,name)
             elif hasattr(__builtins__,name): val = getattr(__builtins__,name)
             else:
                 try:
                     val = getattr(ROOT,name)
-                except AttributeError, e2:
+                except AttributeError as e2:
                     raise e
         self.__dict__[name] = val ## cache
         return val
@@ -125,11 +125,11 @@ class Collection:
             self._len = getattr(event,"n"+prefix)
             if maxlen and self._len > maxlen: self._len = maxlen
         else:
-            raise RuntimeError, "must provide len, or run on a vector tree"
+            raise RuntimeError("must provide len, or run on a vector tree")
         self._cache = {}
     def __getitem__(self,index):
         if type(index) == int and index in self._cache: return self._cache[index]
-        if index >= self._len: raise IndexError, "Invalid index %r (len is %r) at %s" % (index,self._len,self._prefix)
+        if index >= self._len: raise IndexError("Invalid index %r (len is %r) at %s" % (index,self._len,self._prefix))
         if self._vector:
             ret = Object(self._event,self._prefix,index=index)
         else: 
@@ -172,7 +172,7 @@ class EventLoop:
         for tree in trees:
             tree.entry = -1
             for m in modules: m.init(tree)
-            for i in xrange(tree.GetEntries()) if eventRange == None else eventRange:
+            for i in range(tree.GetEntries()) if eventRange == None else eventRange:
                 if maxEvents > 0 and i >= maxEvents-1: break
                 e = Event(tree,i)
                 if cut != None and not e.eval(cut): 
@@ -184,7 +184,7 @@ class EventLoop:
                 self._doneEvents += 1
                 if i > 0 and i % 10000 == 0:
                     t1 = time.clock()
-                    print "Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(max(t1-tlast,1e-9)),i/1000./(max(t1-t0,1e-9)))
+                    print("Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(max(t1-tlast,1e-9)),i/1000./(max(t1-t0,1e-9))))
                     tlast = t1
         for m in modules: m.endJob()
     def beginComponent(self,component):
@@ -239,7 +239,7 @@ class BookDir:
         return obj
     def done(self):
         for s in self._subs: s.done()
-        for k,v in self._objects.iteritems():
+        for k,v in self._objects.items():
             self.tdir.WriteTObject(v)
     def printObj(self,on,o,dir):
         c1 = ROOT.TCanvas("c1","c1",800,600)
@@ -248,7 +248,7 @@ class BookDir:
             c1.Print("%s/%s.%s" % (dir, on, e))
     def printAll(self,dir):
         ROOT.gSystem.Exec("mkdir -p %s" % dir)
-        for on,o in self._objects.iteritems():
+        for on,o in self._objects.items():
             self.printObj(on,o,dir)
         for s in self._subs:
             s.printAll(dir+"/"+s.name)
@@ -293,16 +293,16 @@ if __name__ == '__main__':
     class DummyModule(Module):
         def beginJob(self):
             self.maxEta = self.book("TH1F","maxEta","maxEta",20,0.,5.0)
-            print "Booked histogram 'maxEta'"
+            print("Booked histogram 'maxEta'")
         def analyze(self,event):
             genB = Collection(event,"LepGood")  
-            print "Number of leptons: %d" % len(genB)
+            print("Number of leptons: %d" % len(genB))
             jetB = Collection(event,"Jet")  
-            print "Number of jets: %d" % len(jetB)
+            print("Number of jets: %d" % len(jetB))
             #if not event.eval("nJet == 5"): return False
-            for i in xrange(len(genB)):
-                print "eta of leptons #%d: %+5.3f" % (i+1, genB[i].eta)
-            print ""
+            for i in range(len(genB)):
+                print("eta of leptons #%d: %+5.3f" % (i+1, genB[i].eta))
+            print("")
             maxEta = max([abs(gb.eta) for gb in genB])
             self.maxEta.Fill(maxEta)
     from sys import argv
@@ -313,5 +313,5 @@ if __name__ == '__main__':
     el = EventLoop([DummyModule("dummy",booker)])
     el.loop(t,1000)
     booker.done()
-    print "Wrote to test.root"
+    print("Wrote to test.root")
 

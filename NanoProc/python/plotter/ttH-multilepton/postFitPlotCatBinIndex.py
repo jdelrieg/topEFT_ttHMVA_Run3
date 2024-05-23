@@ -24,7 +24,7 @@ if __name__ == "__main__":
     for O,MLD in ("prefit","prefit"), ("postfit_b","fit_b"), ("postfit_s","fit_s"):
         normset = mlfile.Get("norm_"+MLD)
         mldir  = mlfile.GetDirectory("shapes_"+MLD);
-        if not mldir: raise RuntimeError, mlfile
+        if not mldir: raise RuntimeError(mlfile)
         outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
         pspec.name = O+"_"+var
         processes = [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         for p in processes:
             h = infile.Get(var+"_"+p)
             if not h: 
-                print "Missing %s_%s for %s" % (var,p, p)
+                print("Missing %s_%s for %s" % (var,p, p))
                 continue
             h = h.Clone(var+"_"+p)
             h.Reset()
@@ -51,9 +51,9 @@ if __name__ == "__main__":
             for isub,subch in enumerate(allchannels):
                 hpf = mldir.Get("ttH_%s_%s/%s" % (channel,subch,p))
                 if not hpf: 
-                    print "Could not find post-fit shape for %s in %s_%s" % (p,channel,subch)
+                    print("Could not find post-fit shape for %s in %s_%s" % (p,channel,subch))
                     continue
-                for b in xrange(1, subbins+1):
+                for b in range(1, subbins+1):
                     h.SetBinContent(b+isub*subbins, hpf.GetBinContent(b))
                     h.SetBinError(b+isub*subbins, hpf.GetBinError(b))
                 #print 'for',subch,'adding',p,'with norm',hpf.Integral()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
         htot.Reset()
         for isub,subch in enumerate(allchannels):
             htotpf = mldir.Get("ttH_%s_%s/total"% (channel,subch) )
-            for b in xrange(1, subbins+1):
+            for b in range(1, subbins+1):
                  htot.SetBinContent(b+isub*subbins, htotpf.GetBinContent(b))
                  htot.SetBinError(b+isub*subbins, htotpf.GetBinError(b))
         htot = HistoWithNuisances(htot)

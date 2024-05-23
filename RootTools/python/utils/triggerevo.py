@@ -25,7 +25,7 @@ class Menus( list ):
             # print line
             line = line.rstrip('\n')
             if runList:
-                currentMenu.runs = map(int, line.split(','))
+                currentMenu.runs = list(map(int, line.split(',')))
                 # print currentMenu.runs
                 # import pdb
                 # pdb.set_trace()
@@ -71,7 +71,7 @@ class Menus( list ):
         for menu in self:
             dataset = menu.datasets[ datasetName ]
             paths = dataset.paths
-            for pathName, path in dataset.paths.iteritems():
+            for pathName, path in dataset.paths.items():
                 if not usePrescaled and path.isPrescaled():
                     continue
                 if reg.match(pathName) is not None:
@@ -84,7 +84,7 @@ class Menus( list ):
         menus = Menus()
         for menu in self:
             dataset = menu.datasets[ datasetName ]
-            if path in dataset.paths.keys():
+            if path in list(dataset.paths.keys()):
                 menus.append( menu )
         return menus
             
@@ -104,7 +104,7 @@ class Menus( list ):
         '''For a given run, and a given dataset, returns all unprescaled paths.'''
         menu = self.findMenuWithRun(run)
         dataset = menu.datasets[ datasetName ]
-        unprescaledPaths = [path for path in dataset.paths.values() if not path.isPrescaled() ]
+        unprescaledPaths = [path for path in list(dataset.paths.values()) if not path.isPrescaled() ]
         return unprescaledPaths
 
         
@@ -119,7 +119,7 @@ class Menu(object):
     def __str__(self):
         tmp = [ str(self.header) ]
         tmp.append( ','.join( map(str, self.runs) ) )
-        data = ['\t{data}'.format(data=data) for data in self.datasets.values() ]
+        data = ['\t{data}'.format(data=data) for data in list(self.datasets.values()) ]
         tmp.extend( data )
         return '\n'.join( tmp )
 

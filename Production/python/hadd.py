@@ -16,7 +16,7 @@ def haddPck(file, odir, idirs):
         try:
             obj = pickle.load(pckfile)
         except:
-            print "Error loading pckfile "+fileName
+            print("Error loading pckfile "+fileName)
             raise
         if sum is None:
             sum = obj
@@ -53,9 +53,9 @@ def hadd(file, odir, idirs, appx=''):
         haddCmd.append( file.replace( idirs[0], dir ) )
     # import pdb; pdb.set_trace()
     cmd = ' '.join(haddCmd)
-    print cmd
+    print(cmd)
     if len(cmd) > MAX_ARG_STRLEN:
-        print 'Command longer than maximum unix string length; dividing into 2'
+        print('Command longer than maximum unix string length; dividing into 2')
         hadd(file, odir, idirs[:len(idirs)/2], '1')
         hadd(file.replace(idirs[0], idirs[len(idirs)/2]), odir, idirs[len(idirs)/2:], '2')
         haddCmd = ['hadd']
@@ -63,24 +63,24 @@ def hadd(file, odir, idirs, appx=''):
         haddCmd.append(file.replace(idirs[0], odir).replace('.root', '1.root'))
         haddCmd.append(file.replace(idirs[0], odir).replace('.root', '2.root'))
         cmd = ' '.join(haddCmd)
-        print 'Running merge cmd:', cmd
+        print('Running merge cmd:', cmd)
         os.system(cmd)
     else:
         os.system(cmd)
 
 
 def haddRec(odir, idirs):
-    print 'adding', idirs
-    print 'to', odir
+    print('adding', idirs)
+    print('to', odir)
 
     # import pdb; pdb.set_trace()
     # os.system( cmd )
     try:
         os.mkdir( odir )
     except OSError:
-        print 
-        print 'ERROR: directory in the way. Maybe you ran hadd already in this directory? Remove it and try again'
-        print 
+        print() 
+        print('ERROR: directory in the way. Maybe you ran hadd already in this directory? Remove it and try again')
+        print() 
         raise
     for root,dirs,files in os.walk( idirs[0] ):
         # print root, dirs, files
@@ -95,8 +95,8 @@ def haddRec(odir, idirs):
             hadd('/'.join([root, file]), odir, idirs)
 
 def haddNano(odir, idirs, firstTime=True):
-    print 'adding', idirs
-    print 'to', odir
+    print('adding', idirs)
+    print('to', odir)
 
     if os.path.exists(odir):
         raise RuntimeError("Error, %s exists already." % odir)
@@ -143,9 +143,9 @@ def haddNano(odir, idirs, firstTime=True):
         else:
             subprocess.call(["haddnano.py", odir+".root" ] + files)
     except OSError:
-        print 
-        print 'ERROR: directory in the way. Maybe you ran hadd already in this directory? Remove it and try again'
-        print 
+        print() 
+        print('ERROR: directory in the way. Maybe you ran hadd already in this directory? Remove it and try again')
+        print() 
         raise
 
 def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None, nanoAOD=False):
@@ -172,14 +172,14 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
                 continue
             chunks.setdefault( prefix, list() ).append(filepath)
     if len(chunks)==0:
-        print 'warning: no chunk found.'
+        print('warning: no chunk found.')
         return
     if cleanUp:
         chunkDir = 'Chunks'
         if os.path.isdir('Chunks'):
             shutil.rmtree(chunkDir)
         os.mkdir(chunkDir)
-    for comp, cchunks in chunks.iteritems():
+    for comp, cchunks in chunks.items():
         odir = '/'.join( [idir, comp] )
         tasks = [ (odir,cchunks) ]
         if maxSize:
@@ -199,9 +199,9 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
                 tasks = []
                 for i,task in enumerate(running):
                     tasks.append( ("%s_part%d" % (odir,i+1), task['files'][:]) )
-                    print "Part %s: %d files, %.3f Gb" % (tasks[-1][0], len(task['files']), task['size']/(1024.**3))
+                    print("Part %s: %d files, %.3f Gb" % (tasks[-1][0], len(task['files']), task['size']/(1024.**3)))
             else:
-                print "Entire chunk %.3f Gb, below threshold" % (running[-1]['size']/(1024.**3))
+                print("Entire chunk %.3f Gb, below threshold" % (running[-1]['size']/(1024.**3)))
         for odir, cchunks in tasks:
             #print odir, cchunks
             if removeDestDir:

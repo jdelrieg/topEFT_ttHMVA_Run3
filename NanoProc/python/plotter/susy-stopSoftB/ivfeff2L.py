@@ -12,10 +12,10 @@ def _plotsToReport(mca,pf,outfile):
         for proc in mca.listProcesses(allProcs=True):
             hist = outfile.Get(pspec.name + "_" + proc)
             if hist: yields[proc].append((hist.Integral(0, hist.GetNbinsX()+1),
-                                          sqrt(sum([hist.GetBinError(b)**2 for b in xrange(1,hist.GetNbinsX()+1)]))))
+                                          sqrt(sum([hist.GetBinError(b)**2 for b in range(1,hist.GetNbinsX()+1)]))))
             else:    yields[proc].append((0,0))
     ret = {}
-    for p,ys in yields.iteritems():
+    for p,ys in yields.items():
         if sum(y[0] for y in ys) == 0: continue
         ret[p] = [ ('all', [ sum(y[0] for y in ys)/len(ys), sum(y[1] for y in ys)/len(ys), 0 ]) ]
     return ret
@@ -39,18 +39,18 @@ def fitAndExtractScaleFactors(options,mca,cf,pfname,plot,singlePlot=True):
         scales2 = dict((p,mca.getScales(p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)) 
 
         ret = []
-        for p in scales0.iterkeys():
+        for p in scales0.keys():
             scale0 = scales0[p][0]
             scale2 = scales2[p][0]
             if scale2 == scale0: continue
-            if scale0 not in scale2: raise RuntimeError, "Unparsable scale for %s: %r -> %r" % (p, scale0, scale2) 
+            if scale0 not in scale2: raise RuntimeError("Unparsable scale for %s: %r -> %r" % (p, scale0, scale2)) 
             m = re.match(r"\(\(unity\) \* \(([0-9\.e+\-]+)\)\)$", scale2.replace(scale0, "unity"))
-            if not m: raise RuntimeError, "Unparsable scale for %s: %r -> %r" % (p, scale0, scale2)
+            if not m: raise RuntimeError("Unparsable scale for %s: %r -> %r" % (p, scale0, scale2))
             sf = float(m.group(1))
             ret.append((p,sf,mca.getProcessOption(p,'NormSystematic',0.0)))
 
         ## Reset old scales
-        for p,sc0 in scales0.iteritems(): mca.setScales(p,sc0)
+        for p,sc0 in scales0.items(): mca.setScales(p,sc0)
         ## Reset old plots
         options.plotselect = oldSelPlots
         options.preFitData = None
@@ -77,7 +77,7 @@ if "--pdir" not in sys.argv:
 reports = {}
 inSituSFs = {}
 if options.inf:
-    print "Reading from", options.inf
+    print("Reading from", options.inf)
     import pickle
     reports = pickle.load(open(options.inf))
 else:
@@ -101,14 +101,14 @@ else:
                 if not os.path.exists(mainPrintDir+sub): os.system("mkdir -p "+mainPrintDir+sub)
                 if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+mainPrintDir+sub+"/")
         else:
-            print "Will not print plots."
+            print("Will not print plots.")
 
         if options.preFitData:
             options.processesToExclude = userExcludes + [ "T[TW]_ivf.*", "T[TW]_softMu.*" ]
             options.plotselect  += [ options.preFitData ]
             options.plotexclude += [ "^SV_.*", "^LepOtherGood_.*" ]
             if not options.processesToFloat:
-                print "Will do the default fit, floating TT+TW vs DY"
+                print("Will do the default fit, floating TT+TW vs DY")
                 options.processesToFloat = [ "T[TW]","DY","VV","WJets" ]
                 options.processesToPeg  = [ ("TW","TT"), ("VV","DY"), ("WJets","DY") ]
             mca_all = MCAnalysis(args[0], options)
@@ -117,7 +117,7 @@ else:
             for (p,sf,err) in fitAndExtractScaleFactors(options,mca_all,cf_all,options.plots,options.preFitData,singlePlot=False):
                 if p in ("TT","TW"): inclusiveScales.append((p+"_.*",str(sf)))
                 else:                inclusiveScales.append((p,      str(sf)))
-            print "Fit results in the following scale factors: %s" % inclusiveScales
+            print("Fit results in the following scale factors: %s" % inclusiveScales)
             options.processesToScale += inclusiveScales[:]
             options.preFitData = None
 
@@ -127,7 +127,7 @@ else:
     inSitu = dict(ivf = options.svInSitu, softMu=options.muInSitu )
 
     for task in 'ivf', 'softMu':
-        print "\n === Running %s Selection (cuts: %r) === " % (task.upper(), cutsToEnable[task])
+        print("\n === Running %s Selection (cuts: %r) === " % (task.upper(), cutsToEnable[task]))
         options.processesToExclude = userExcludes +  processesToExclude[task]
         options.cutsToEnable = userEnables + [ cutsToEnable[task] ]
         mca_task = MCAnalysis(args[0],options)
@@ -137,7 +137,7 @@ else:
             options.plotselect  = userPlotsSel if userPlotsSel else plotsPattern[task]
             options.plotexclude = userPlotsExcl + plotsPattern["softMu" if task == "ivf" else "ivf"]
         if inSitu[task]:
-            if not options.plots: raise RuntimeError, "In-situ possible only with plotting enabled"
+            if not options.plots: raise RuntimeError("In-situ possible only with plotting enabled")
             ## configure the proper floating and pegging
             userPegs, userFloats = options.processesToPeg[:], options.processesToFloat[:]
             signal = userSignal[0] if userSignal else "^T[TW]_.*B$"
@@ -150,7 +150,7 @@ else:
             ## Now, for each plot in inSitu, we plot that and derive a set of scale factors
             his, los, centers = defaultdict(list),defaultdict(list),defaultdict(list)
             for pIS in inSitu[task]:
-                print "Fitting "+pIS
+                print("Fitting "+pIS)
                 fitresult = fitAndExtractScaleFactors(options,mca_task_fit,cf_task,options.plots,pIS)
                 for (p,sf,err) in fitresult:
                     key = p
@@ -164,7 +164,7 @@ else:
             for (patt,what) in options.processesToPeg:
                 sf = sum(centers[what])/len(centers[what])
                 err = max(max(his[what])-sf,sf-min(los[what]))
-                print "Extracted SF for %s: %.3f +- %.3f" % (what,sf,err)
+                print("Extracted SF for %s: %.3f +- %.3f" % (what,sf,err))
                 svInSituSF.append((what,patt,sf,err))
             options.processesToPeg = userPegs; options.processesToFloat = userFloats
         if options.plots and options.printPlots:
@@ -207,16 +207,16 @@ else:
         if "{PD}" in options.out and options.printPlots: 
             options.out = options.out.replace("{PD}", mainPrintDir)
         pickle.dump(reports, open(options.out, 'w'))
-        print "Saved to", options.out
+        print("Saved to", options.out)
 
 def hypot3(a,b,c): return sqrt(a**2+b**2+c**2)
 
 signal = userSignal[0] if userSignal else "^T[TW]_.*B$"
 sfs = {}
-for (what,rep) in reports.iteritems():
+for (what,rep) in reports.items():
     nsig, nbkg, ndata = 0,0,0
     nsige2, nbkge2 = 0,0
-    for k,l in rep.iteritems():
+    for k,l in rep.items():
         nsel = l[0][1][0]
         if k == "data": ndata += nsel
         elif re.match(signal, k):  
@@ -232,21 +232,21 @@ for (what,rep) in reports.iteritems():
         if sf_fit > sf_stat:
             sf_bkg  = sqrt(sf_fit**2 - sf_stat**2)
         else:
-            print "Puzzling: SF fit uncertainty for %s larger than pure stat. uncertainty" % what
+            print("Puzzling: SF fit uncertainty for %s larger than pure stat. uncertainty" % what)
             sf_bkg = 0
         sf_mcst = sqrt(nsige2+nbkge2)/nsig
-        print "SF for %-6s = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (what, sf, sf_stat, sf_bkg, sf_mcst, sf, hypot3(sf_stat, sf_bkg, sf_mcst))
+        print("SF for %-6s = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (what, sf, sf_stat, sf_bkg, sf_mcst, sf, hypot3(sf_stat, sf_bkg, sf_mcst)))
     else:
         sf      = (ndata - nbkg)/nsig
         sf_stat = sqrt(ndata)/nsig
         sf_bkg  = options.bgsyst * nbkg/nsig 
         sf_mcst = sqrt(nsige2+nbkge2)/nsig
-        print "SF for %-6s = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (what, sf, sf_stat, sf_bkg, sf_mcst, sf, hypot3(sf_stat, sf_bkg, sf_mcst))
+        print("SF for %-6s = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (what, sf, sf_stat, sf_bkg, sf_mcst, sf, hypot3(sf_stat, sf_bkg, sf_mcst)))
     sfs[what] = (sf, sf_stat, sf_bkg, sf_mcst)
 
 sf_rel  = sfs["ivf"][0]/sfs["softMu"][0]
 sf_stat = sf_rel * hypot( sfs["ivf"][1]/sfs["ivf"][0], sfs["softMu"][1]/sfs["softMu"][0] )
 sf_bkg  = sf_rel * hypot( sfs["ivf"][2]/sfs["ivf"][0], sfs["softMu"][2]/sfs["softMu"][0] )
 sf_mcst = sf_rel * hypot( sfs["ivf"][3]/sfs["ivf"][0], sfs["softMu"][3]/sfs["softMu"][0] )
-print "SF ivf norm   = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (sf_rel, sf_stat, sf_bkg, sf_mcst, sf_rel, hypot3(sf_stat, sf_bkg, sf_mcst))
+print("SF ivf norm   = %.3f +- %.3f (stat) +- %.3f (bg) +- %.3f (mc stat) = %.3f +- %.3f" % (sf_rel, sf_stat, sf_bkg, sf_mcst, sf_rel, hypot3(sf_stat, sf_bkg, sf_mcst)))
 

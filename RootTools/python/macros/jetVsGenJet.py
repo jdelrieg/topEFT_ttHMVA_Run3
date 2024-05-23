@@ -54,7 +54,7 @@ def plotPtResponse( response ):
     prefix = buildPrefix()
     setAliases()
 
-    print 'plotPtResponse : ', prefix, '...'
+    print('plotPtResponse : ', prefix, '...')
 
     canvas = response.canvas
     canvas.cd(1)
@@ -68,8 +68,8 @@ def plotPtResponse( response ):
     if dRCut:
         cut +=  '&& dR<0.2'
 
-    print var
-    print cut
+    print(var)
+    print(cut)
      
     events.Draw(var,cut,"col")
     
@@ -84,7 +84,7 @@ def plotEtaResponse( response ):
     prefix = buildPrefix()
     setAliases()
 
-    print 'plotEtaResponse : ', prefix, '...'
+    print('plotEtaResponse : ', prefix, '...')
     
     canvas = response.canvas
     canvas.cd(1)

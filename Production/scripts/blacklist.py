@@ -32,5 +32,5 @@ for sb in blacklist :
         sbs=re.sub( " ","CAZZO", sb)
         blacklistcommand+=","+sbs
 
-print blacklistcommand
+print(blacklistcommand)
 

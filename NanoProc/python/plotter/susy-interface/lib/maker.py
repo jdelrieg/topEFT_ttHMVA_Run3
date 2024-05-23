@@ -67,7 +67,7 @@ class Maker():
 		self.treedir = self.args[2].rstrip("/")
 		self.outdir  = self.args[3].rstrip("/")
 	def addToTalk(self, message):
-		print message # placeholder for now
+		print(message) # placeholder for now
 	def clearJobs(self):
 		self.talk("Checking job status")
 		if hasattr(self, "jobs") and len(self.jobs)>0:
@@ -93,7 +93,7 @@ class Maker():
 		theflags.extend(self.getOption(additionals, []))
 		weight   = self.getWeight(isFastSim)
 		if useWeight and weight: theflags.append("-W '"+weight+"'")
-		theflags = filter(lambda x: x, theflags)
+		theflags = [x for x in theflags if x]
 		return " ".join(theflags)
 		#self.flags = theFlags
 		#if not hasattr(self, "flags") or forceRedo: 
@@ -182,12 +182,12 @@ class Maker():
 	def getFriendModules(self):
 		if len(self.options.modules)>0: return self.options.modules
 		friendConn = self.getVariable("friendConn", {})
-		return [k for k,v in friendConn.iteritems()]
+		return [k for k,v in friendConn.items()]
 	def getNEvtSample(self, sample):	
 		samples = [l[0] for l in self.nevts]
 		if sample in samples:
 			return self.nevts[samples.index(sample)][1]
-		filtered = filter(lambda x: x[0].find(sample)>-1, self.nevts)
+		filtered = [x for x in self.nevts if x[0].find(sample)>-1]
 		if len(filtered)>0:
 			return str(max([int(l[1]) for l in filtered]))
 		return "50000"
@@ -240,7 +240,7 @@ class Maker():
 			return open(thedir+"/"+self.options.treename+"/tree.root.url","r").readlines()[0].rstrip("\n")
 		return None
 	def getVariable(self, var, default = None):
-		if var in self.use.keys(): return self.use[var]
+		if var in list(self.use.keys()): return self.use[var]
 		if                             hasattr(self.options, var) and self.getOption(var, default): return self.getOption(var, default)
 		if hasattr(self, "model" ) and hasattr(self.model  , var) and getattr(self.model  , var): return getattr(self.model  , var)
 		if hasattr(self, "region") and hasattr(self.region , var) and getattr(self.region , var): return getattr(self.region , var)
@@ -263,7 +263,7 @@ class Maker():
 		self.region = self.regions[self.regionIdx]
 	def loadNEvtSample(self):
 		nevts      = [l.rstrip("\n").strip() for l in open(self.dir+"/env/nevtsamples", "r").readlines()]		
-		nevts      = filter(lambda x: x, nevts)
+		nevts      = [x for x in nevts if x]
 		self.nevts = [[ll.strip() for ll in l.split(":")] for l in nevts]
 	def loadModels(self):
 		allmodels = Collection(self.dir+"/env/models")
@@ -274,7 +274,7 @@ class Maker():
 		self.regions = [allregions.get(a) for a in self.args[1].split(";")]
 	def makeCmd(self, args):
 		if len(args) != len(self.keys): 
-			print "error, not all arguments given"
+			print("error, not all arguments given")
 			return -1
 		dict = {}
 		for i,k in enumerate(self.keys):
@@ -282,7 +282,7 @@ class Maker():
 		multi = " -j %d"%(self.options.jobs) if self.options.jobs>0 else ""
 		return self.base.format(**dict) + multi
 	def parseBase(self):
-		self.keys = filter(lambda x: x, [i[1] for i in Formatter().parse(self.base)])
+		self.keys = [x for x in [i[1] for i in Formatter().parse(self.base)] if x]
 	def prepareSplit(self, samplename):
 		nevt = int(self.getNEvtSample(samplename))
 		path = self.getTFilePath(samplename)
@@ -296,7 +296,7 @@ class Maker():
 		self.bunches = [nevt for i in range(chunks)]
 	def registerCmd(self, cmd, name = "maker", forceLocal = False, collect = 0):
 		if self.options.pretend:
-			print cmd
+			print(cmd)
 			return
 		self.registerJob(name, [cmd], forceLocal, collect)
 	def registerJob(self, name, commands, forceLocal = False, collect = 0):
@@ -316,7 +316,7 @@ class Maker():
 		self.regionIdx = -1
 	def runCmd(self, cmd, name = "maker", forceLocal = False):
 		if self.options.pretend: 
-			print cmd
+			print(cmd)
 			return -1
 		return self.runJob(name, [cmd], forceLocal)
 	def runJob(self, name, commands, forceLocal = False):
@@ -351,9 +351,9 @@ class Maker():
 			else  : self.registerCmd(theCmd, name+"_"+str(b), forceLocal)
 	def talk(self, message, isError=False):
 	    if isError:
-	        print "ERROR: "+message
-	        print "Aborting..."
+	        print("ERROR: "+message)
+	        print("Aborting...")
 	        sys.exit()
-	    print timestamp()+": "+message
+	    print(timestamp()+": "+message)
 	def useVar(self, key, value):
 		self.use[key] = value

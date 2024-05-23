@@ -41,13 +41,13 @@ class PublishToFileSystem(object):
                 #castortools.move(old_name, new_name)
                 #castortools.chmod(new_name, '644')
 
-                print "File published: '%s'" % castortools.castorToLFN(new_name)
+                print("File published: '%s'" % castortools.castorToLFN(new_name))
                 os.remove(nname)
             else:
                 pathhash = path.replace('/','.')
                 hashed_name = 'PublishToFileSystem-%s-%s' % (pathhash, fname)
                 shutil.move(nname, hashed_name)
-                print >> sys.stderr, "Cannot write to directory '%s' - written to local file '%s' instead." % (castor_path, hashed_name)
+                print("Cannot write to directory '%s' - written to local file '%s' instead." % (castor_path, hashed_name), file=sys.stderr)
                 
     def read(self, lfn, local = False):
         """Reads a report from storage"""
@@ -92,7 +92,7 @@ class IntegrityCheck(object):
 
         data = None
         output = base.run({})
-        if output.has_key('Das'):
+        if 'Das' in output:
             self.options.name = output['Name']
             data = output['Das']
             
@@ -106,8 +106,8 @@ class IntegrityCheck(object):
         import re
         
         filemask = {}
-        for dirname, files in self.test_result.iteritems():
-            for name, status in files.iteritems():
+        for dirname, files in self.test_result.items():
+            for name, status in files.items():
                 fname = os.path.join(dirname, name)
                 filemask[fname] = status
         
@@ -134,7 +134,7 @@ class IntegrityCheck(object):
                     
                     mmin = min(mmin, jobid)
                     mmax = max(mmax, jobid)
-                    if files.has_key(jobid) and filemask[f][0]:
+                    if jobid in files and filemask[f][0]:
                         files[jobid].append((retry, f))
                     elif filemask[f][0]:
                         files[jobid] = [(retry, f)]
@@ -142,8 +142,8 @@ class IntegrityCheck(object):
         good_duplicates = {}
         bad_jobs = set()
         sum_dup = 0
-        for i in xrange(mmin, mmax+1):
-            if files.has_key(i):
+        for i in range(mmin, mmax+1):
+            if i in files:
                 duplicates = files[i]
                 duplicates.sort()
 
@@ -167,18 +167,18 @@ class IntegrityCheck(object):
         #support updating to speed things up
         prev_results = {}
         if previous is not None:
-            for name, status in previous['Files'].iteritems():
+            for name, status in previous['Files'].items():
                 prev_results[name] = status
         
         filesToTest = self.sortByBaseDir(self.listRootFiles(self.directory))
-        for dir, filelist in filesToTest.iteritems():
+        for dir, filelist in filesToTest.items():
             filemask = {}
             #apply a UNIX wildcard if specified
             filtered = filelist
             if self.options.wildcard is not None:
                 filtered = fnmatch.filter(filelist, self.options.wildcard)
                 if not filtered:
-                    print >> sys.stderr, "Warning: The wildcard '%s' does not match any files in '%s'. Please check you are using quotes." % (self.options.wildcard,self.directory)
+                    print("Warning: The wildcard '%s' does not match any files in '%s'. Please check you are using quotes." % (self.options.wildcard,self.directory), file=sys.stderr)
 
             count = 0
             for ff in filtered:
@@ -188,16 +188,16 @@ class IntegrityCheck(object):
                 #try to update from the previous result if available 
                 if lfn in prev_results and prev_results[lfn][0]:
                     if self.options.printout:
-                        print '[%i/%i]\t Skipping %s...' % (count, len(filtered),fname),
+                        print('[%i/%i]\t Skipping %s...' % (count, len(filtered),fname), end=' ')
                     OK, num = prev_results[lfn]
                 else:
                     if self.options.printout:
-                        print '[%i/%i]\t Checking %s...' % (count, len(filtered),fname),
+                        print('[%i/%i]\t Checking %s...' % (count, len(filtered),fname), end=' ')
                     OK, num = self.testFileTimeOut(lfn, timeout)
 
                 filemask[ff] = (OK,num)
                 if self.options.printout:
-                    print (OK, num)
+                    print((OK, num))
                 if OK:
                     self.eventsSeen += num
                 count += 1
@@ -213,25 +213,25 @@ class IntegrityCheck(object):
         if self.test_result is None:
             self.test()
             
-        print 'DBS Dataset name: %s' % self.options.name
-        print 'Storage path: %s' % self.topdir
+        print('DBS Dataset name: %s' % self.options.name)
+        print('Storage path: %s' % self.topdir)
         
-        for dirname, files in self.test_result.iteritems():
-            print 'Directory: %s' % dirname
-            for name, status in files.iteritems():
+        for dirname, files in self.test_result.items():
+            print('Directory: %s' % dirname)
+            for name, status in files.items():
                 fname = os.path.join(dirname, name)
                 if not fname in self.duplicates:
-                    print '\t\t %s: %s' % (name, str(status))
+                    print('\t\t %s: %s' % (name, str(status)))
                 else:
-                    print '\t\t %s: %s (Valid duplicate)' % (name, str(status))
-        print 'Total entries in DBS: %i' % self.eventsTotal
-        print 'Total entries in processed files: %i' % self.eventsSeen
+                    print('\t\t %s: %s (Valid duplicate)' % (name, str(status)))
+        print('Total entries in DBS: %i' % self.eventsTotal)
+        print('Total entries in processed files: %i' % self.eventsSeen)
         if self.eventsTotal>0:
-            print 'Fraction of dataset processed: %f' % (self.eventsSeen/(1.*self.eventsTotal))
+            print('Fraction of dataset processed: %f' % (self.eventsSeen/(1.*self.eventsTotal)))
         else:
-            print 'Total entries in DBS not determined' 
+            print('Total entries in DBS not determined') 
         if self.bad_jobs:
-            print "Bad Crab Jobs: '%s'" % ','.join([str(j) for j in self.bad_jobs])
+            print("Bad Crab Jobs: '%s'" % ','.join([str(j) for j in self.bad_jobs]))
         
     def structured(self):
         
@@ -257,9 +257,9 @@ class IntegrityCheck(object):
                   'DateCreated':datetime.datetime.now().strftime("%s"),
                   'Files':{}}
         
-        for dirname, files in self.test_result.iteritems():
+        for dirname, files in self.test_result.items():
             report['PathList'].append(dirname)
-            for name, status in files.iteritems():
+            for name, status in files.items():
                 fname = os.path.join(dirname, name)
                 report['Files'][fname] = status
                 if status[0]:
@@ -304,7 +304,7 @@ class IntegrityCheck(object):
         for f in files:
             dirname = os.path.dirname(f)
             filename = os.path.basename(f)
-            if not result.has_key(dirname): result[dirname] = []
+            if dirname not in result: result[dirname] = []
             result[dirname].append(filename)
         return result
 
@@ -330,8 +330,8 @@ class IntegrityCheck(object):
         def tf(lfn):
             try:
                 return self.testFile(lfn)
-            except TimedOutExc, e:
-                print >> sys.stderr, "ERROR:\tedmFileUtil timed out for lfn '%s' (%d)" % (lfn,timeout)
+            except TimedOutExc as e:
+                print("ERROR:\tedmFileUtil timed out for lfn '%s' (%d)" % (lfn,timeout), file=sys.stderr)
                 return (False,-1)
         if timeout > 0:
             return tf(lfn)
@@ -345,4 +345,4 @@ if __name__ == '__main__':
     pub = PublishToFileSystem('Test')
     report = {'DateCreated':'123456','PathList':['/store/cmst3/user/wreece']}
     pub.publish(report)
-    print pub.get('/store/cmst3/user/wreece')
+    print(pub.get('/store/cmst3/user/wreece'))

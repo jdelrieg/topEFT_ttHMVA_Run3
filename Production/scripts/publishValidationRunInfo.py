@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 ## Author: Anastasios Antoniadis
 
-import sys, os, getpass, pprint, ast, re, tarfile, shutil, shelve, anydbm, optparse
+import sys, os, getpass, pprint, ast, re, tarfile, shutil, shelve, dbm, optparse
 import CMGTools.Production.eostools as eostools
 from CMGTools.Production.cmgdbToolsApi import CmgdbToolsApi
 from CMGTools.Production.findDSOnSav import validLogin
@@ -95,7 +95,7 @@ def getValidationRunInfoFromDisk( validationRunPath ):
             check_analyzers == "no"
             
         root_files[component_dir] = dict()
-        for key in analyzers.keys():
+        for key in list(analyzers.keys()):
             analyzer_dir_path = os.path.join( component_dir, key )
             root_files[component_dir][key] = [name for name in os.listdir( analyzer_dir_path ) \
                                                 if os.path.isfile( os.path.join( analyzer_dir_path, name ) ) and re.compile( ".*\.root" ).match( name ) ]
@@ -107,14 +107,14 @@ def getValidationRunInfoFromDisk( validationRunPath ):
     	tar.extract( "Logger/logger_showtags.txt" )
     	tar.close()
     except:
-	print "ERROR - Logger.tgz file not found, please add it to the directory you want to publish"
+	print("ERROR - Logger.tgz file not found, please add it to the directory you want to publish")
 	exit( -1 )    
     try:
         showtagsFile = open( "Logger/logger_showtags.txt", 'r' )
         lines = showtagsFile.readlines()
         showtagsFile.close()
     except:
-        print "ERROR: No showtags file found in logger"
+        print("ERROR: No showtags file found in logger")
         exit( -1 )
 
     release_info['Release'] = lines[0].split(":")[1].lstrip().rstrip()      # Get the release from the first line of showtags
@@ -171,9 +171,9 @@ def addInformationToCMGDB( dir_name, valRunInfo, development=False ):
 			    	
     if tagSetID is not None: 
         validationRunID = cmgdbAPI.addValidationRun( tagSetID,
-                                                     components_info[components_info.keys()[0]]['number of events processed'] )
-    for component in components_info.keys():
-        for analyzer in analyzers_info.keys():
+                                                     components_info[list(components_info.keys())[0]]['number of events processed'] )
+    for component in list(components_info.keys()):
+        for analyzer in list(analyzers_info.keys()):
             analyzerID = cmgdbAPI.addAnalyzer( analyzer )
             for root_file in root_files_info[component][analyzer]:
                 
@@ -228,14 +228,14 @@ if __name__ == '__main__':
         try:
             password = getpass.getpass("Enter NICE Password: ")
         except KeyboardInterrupt:
-            print "Authentication Failed, exiting\n\n"
+            print("Authentication Failed, exiting\n\n")
             sys.exit(1)
         options.password = password
     else:
 	password = options.password
 
     if not validLogin(options.username, password):
-        print "Authentication Failed, exiting\n\n"
+        print("Authentication Failed, exiting\n\n")
         sys.exit(-1)
 
     dir_name = args[0]
@@ -245,7 +245,7 @@ if __name__ == '__main__':
     valRunInfo.printReleaseInfo()
     valRunInfo.printRootFilesInfo()
     addInformationToCMGDB( dir_name, valRunInfo, options.development )
-    persistentObject = anydbm.open( "self.db", 'n')
+    persistentObject = dbm.open( "self.db", 'n')
     persistentObject.close()
     persistentObject = shelve.open( "self.db" )
     persistentObject["valRunInfo"] = valRunInfo

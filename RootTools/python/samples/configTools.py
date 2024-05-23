@@ -17,14 +17,18 @@ def fineSplitComponent(c):
 def coarseSplitComponent(c):
     splitted = []
     n_files = len(c.files)
-    chunk_size = n_files / c.splitFactor
+    chunk_size = int(n_files / c.splitFactor)
     if n_files % c.splitFactor:
         chunk_size += 1
+    count_files=0
     for i in range(0, n_files, chunk_size):
         nc = copy.deepcopy(c)
         nc.name = c.name + '_Chunk%d'%len(splitted)
         nc.files = c.files[i:i+chunk_size]
+        count_files+=len(nc.files)
         splitted.append(nc)
+    if count_files != n_files:
+        raise RuntimeError("Error in the component splitting") 
     return splitted
 
 def split(components):
@@ -53,8 +57,8 @@ def redefineRunRange(selectedComponents,run_range):
             comp.dataset_entries = int(comp.dataset_entries * len(comp.files)/float(pre))
 
 def printSummary(selectedComponents):
-    print "%-55s | %8s %12s | %7s | %8s %11s | %11s" % ("Component", "N(files)", "N(k ev)", "N(jobs)", "file/job", "k ev/job", "lumi eq [1/fb]")
-    print "%-55s | %8s %12s | %7s | %8s %11s | %11s" % (55*"-", 8*"-", 12*"-", 7*"-", 8*"-", 11*"-", 11*"-")
+    print("%-55s | %8s %12s | %7s | %8s %11s | %11s" % ("Component", "N(files)", "N(k ev)", "N(jobs)", "file/job", "k ev/job", "lumi eq [1/fb]"))
+    print("%-55s | %8s %12s | %7s | %8s %11s | %11s" % (55*"-", 8*"-", 12*"-", 7*"-", 8*"-", 11*"-", 11*"-"))
     totj, totf, tote = (0,0,0);
     for comp in sorted(selectedComponents, key = lambda c:c.name):
         njobs = min(comp.splitFactor,len(comp.files)) if getattr(comp,'fineSplitFactor',1) == 1 else comp.fineSplitFactor*len(comp.files) 
@@ -63,9 +67,9 @@ def printSummary(selectedComponents):
         if comp.isMC and (getattr(comp, 'fracNegWeights', None) != None):
             lumi *= (1 - 2*comp.fracNegWeights)**2
         totj += njobs; totf += len(comp.files); tote += nev     
-        print "%-55s | %8d %12.3f | %7d | %8.2f %11.3f | %11.3f " % (comp.name, len(comp.files), nev/1000., njobs, len(comp.files)/float(njobs) if njobs else 0, (nev/njobs if njobs else 0)/1000, lumi)
-    print "%-55s | %8s %12s | %7s | %8s %11s | %11s" % (55*"-", 8*"-", 12*"-", 7*"-", 8*"-", 11*"-", 11*"-")
-    print "%-55s | %8d %12.3f | %7d | %8.2f %11.3f |" % ("TOTAL", totf, tote/1000., totj, totf/totj if totj else -1, tote/totj/1000. if totj else -1)
+        print("%-55s | %8d %12.3f | %7d | %8.2f %11.3f | %11.3f " % (comp.name, len(comp.files), nev/1000., njobs, len(comp.files)/float(njobs) if njobs else 0, (nev/njobs if njobs else 0)/1000, lumi))
+    print("%-55s | %8s %12s | %7s | %8s %11s | %11s" % (55*"-", 8*"-", 12*"-", 7*"-", 8*"-", 11*"-", 11*"-"))
+    print("%-55s | %8d %12.3f | %7d | %8.2f %11.3f |" % ("TOTAL", totf, tote/1000., totj, totf/totj if totj else -1, tote/totj/1000. if totj else -1))
 
 def configureSplittingFromTime(selectedComponents,msPerEvent,jobTimeInHours,minSplit=None,minSplitDoesFineSplit=False,maxFiles=None,penaltyByOrigin=[]):
     from math import ceil, floor
@@ -82,7 +86,7 @@ def configureSplittingFromTime(selectedComponents,msPerEvent,jobTimeInHours,minS
             filesPerJob = maxFiles
         if minSplit and njobs < minSplit:
             if minSplitDoesFineSplit: 
-                raise RuntimeError, "Not implemented"
+                raise RuntimeError("Not implemented")
             comp.splitFactor = minSplit
             continue
         if filesPerJob < 0.6:
@@ -110,6 +114,7 @@ def cropToLumi(selectedComponents, maxLumi, minFiles=4):
 def mergeExtensions(selectedComponents, verbose=False):
     compMap = {}
     for comp in sorted(selectedComponents, key = lambda c : c.name):
+        
         if "_ext" in comp.name:
             basename = comp.name.split("_ext",1)[0]
         else:
@@ -117,16 +122,18 @@ def mergeExtensions(selectedComponents, verbose=False):
         if basename in compMap:
             f1, f2 = comp.files[:], compMap[basename].files
             e1, e2 = comp.dataset_entries, compMap[basename].dataset_entries
-            if len(f1+f2) != len(set(f1+f2)): raise Exception("Attempting to merge overlapping datasets!")
-            if verbose: print "Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(f1+f2), 0.001*e1, 0.001*e2, 0.001*(e1+e2))
+            if len(f1+f2) != len(set(f1+f2)):
+                print("Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev) %d" % (comp.name, basename, len(f1), len(f2), len(set(f1+f2)), 0.001*e1, 0.001*e2, 0.001*(e1+e2), len(f1+f2) != len(set(f1+f2))))
+                raise Exception("Attempting to merge overlapping datasets!")
+            if verbose: print("Merge %s into %s (%d+%d=%d files, %.3f+%.3f=%.3f k ev)" % (comp.name, basename, len(f1), len(f2), len(f1+f2), 0.001*e1, 0.001*e2, 0.001*(e1+e2)))
             compMap[basename].files = f1+f2
             compMap[basename].dataset_entries = e1+e2
         else:
             if "_ext" in comp.name: 
-                if verbose: print "Rename %s to %s" % (comp.name, basename)
+                if verbose: print("Rename %s to %s" % (comp.name, basename))
                 comp.name = basename
             compMap[basename] = comp
-    return compMap.values(), compMap
+    return list(compMap.values()), compMap
 
 def prescaleComponents(selectedComponents, factor):
     from math import ceil
@@ -141,7 +148,7 @@ def autoConfig(selectedComponents,sequence,services=[],xrd_aggressive=2):
     event_class = EOSEventsWithDownload
     EOSEventsWithDownload.aggressive = xrd_aggressive 
     if getCMGOption("nofetch") or getCMGOption("isCrab") or xrd_aggressive <= -3:
-        raise RuntimeError, "Not implemented anymore"
+        raise RuntimeError("Not implemented anymore")
     return cfg.Config( components = selectedComponents,
                      sequence = sequence,
                      services = services,  

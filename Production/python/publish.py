@@ -31,15 +31,15 @@ def publish(sampleName,fileown,comment,test,username,force,
             fileown = getFileOwner(sampleName)
             sampleName = getSampleName(sampleName)
             if sampleName is None:
-                print "\nError, dataset name is not valid, please use valid name\n"
+                print("\nError, dataset name is not valid, please use valid name\n")
                 return None
 
         # Check the length of the dataset name
         if len(sampleName.lstrip(os.sep).rstrip(os.sep).split(os.sep)) < 3:
-            print "Error, " + sampleName + " is not valid, please use valid name."
+            print("Error, " + sampleName + " is not valid, please use valid name.")
             return None
         elif len(sampleName.lstrip(os.sep).rstrip(os.sep).split(os.sep)) < 4:
-            print "Dataset "+sampleName+"is a CMS base dataset and cannot be published, please use DAS."
+            print("Dataset "+sampleName+"is a CMS base dataset and cannot be published, please use DAS.")
             return None
         return sampleName, fileown
 
@@ -48,8 +48,8 @@ def publish(sampleName,fileown,comment,test,username,force,
         if not primary:
             sampleName, fileown = checkName(sampleName, fileown)
         if sampleName is None: return None
-        print "\n\t-------Publishing New Dataset-------"
-        print sampleName+"\n"
+        print("\n\t-------Publishing New Dataset-------")
+        print(sampleName+"\n")
 
         # Initialise PublishController
         publishController = PublishController(username,development)
@@ -70,25 +70,25 @@ def publish(sampleName,fileown,comment,test,username,force,
         if datasetDetails.dataset_details is None:
             return None
         # Print dataset names
-        print "\n------DataSet Information------"
-        print datasetDetails.createDirectoryDetailString()
+        print("\n------DataSet Information------")
+        print(datasetDetails.createDirectoryDetailString())
         for group_name in datasetDetails.dataset_details['FileGroups']:
-            print datasetDetails.createFileGroupDetailString(group_name)
+            print(datasetDetails.createFileGroupDetailString(group_name))
 
         if datasetDetails.dataset_details['TaskID'] is not None:
             status = 'Success'
 
         # Sent data (with updated task ID) to CMGDB
         if publishController.cmgdbOnline():
-            print "\n-------CMGDB-------\n"
+            print("\n-------CMGDB-------\n")
             cmgdbid = publishController.cmgdbPublish(datasetDetails.dataset_details)
 
         return datasetDetails.dataset_details
     except KeyboardInterrupt:
         raise
     except ValueError as err:
-        print err.args, '.\nDataset not published'
+        print(err.args, '.\nDataset not published')
         return None
     except NameError as err:
-        print err.args[0]
+        print(err.args[0])
         return datasetDetails

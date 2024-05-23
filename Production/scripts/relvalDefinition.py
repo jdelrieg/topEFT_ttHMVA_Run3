@@ -6,4 +6,4 @@ if __name__ == '__main__':
     import sys
     dataset = sys.argv[1]
     rd = relvalDefinition( dataset )
-    print rd
+    print(rd)

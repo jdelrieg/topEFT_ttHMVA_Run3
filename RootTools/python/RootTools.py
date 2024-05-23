@@ -6,7 +6,7 @@ Load the libraries needed to use RootTools
 from ROOT import gROOT, TFile, TCanvas, TPad, gPad, TBrowser, TH2F, TH1F, TH1D , TProfile, TLegend, gDirectory
 
 def loadLibs():
-    print 'loading FWLite.'
+    print('loading FWLite.')
     #load the libaries needed
     from ROOT import gROOT,gSystem
     gSystem.Load("libFWCoreFWLite")
@@ -40,7 +40,7 @@ Defines a python iterator for stl types
     
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         if self.index < self.stl.size() - 1:
             self.index += 1
         else:

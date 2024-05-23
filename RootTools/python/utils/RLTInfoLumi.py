@@ -13,12 +13,12 @@ class RLTInfoLumi(object):
         for ie in self.tree:
             # print ie.run
             self.rawDict.setdefault( str(ie.run), [] ).append(ie.lumi)
-        map(list.sort, self.rawDict.values() )
+        list(map(list.sort, list(self.rawDict.values()) ))
         # pprint.pprint( self.rawDict )
         # now the list of lumi is sorted for each run.
         # converting this list to the std lumi range definition
         self.compactDict = {}
-        for key, lumis in self.rawDict.iteritems():
+        for key, lumis in self.rawDict.items():
             min = -1
             max = -1
             last = -1
@@ -59,7 +59,7 @@ class RLTInfoLumi(object):
                inputJsonFileName, '>',
                outputLumiFileName]
         cmds = ' '.join( cmd )
-        print cmds
+        print(cmds)
         os.system( cmds )
         lumiFile = open(outputLumiFileName)
         self.sumdlum = 0
@@ -100,7 +100,7 @@ class RLTInfoLumi(object):
             raise ValueError('Unrecognized unit! '+dunit)
         
         lumiFile.close()
-        print 'luminosity:',inputJsonFileName, self.sumdlum, '(delivered /pb)', self.sumrlum, '(recorded /pb)' 
+        print('luminosity:',inputJsonFileName, self.sumdlum, '(delivered /pb)', self.sumrlum, '(recorded /pb)') 
         
 if __name__ == '__main__':
 

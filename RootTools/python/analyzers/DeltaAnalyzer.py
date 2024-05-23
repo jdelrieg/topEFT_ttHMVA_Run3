@@ -38,8 +38,8 @@ class DeltaAnalyzer( Analyzer ):
                 continue
             event.gen.append( GenParticle(genp) )
 
-        event.col1 =  map(PhysicsObject, self.handles['col1'].product())
-        event.col2 =  map(PhysicsObject, self.handles['col2'].product())
+        event.col1 =  list(map(PhysicsObject, self.handles['col1'].product()))
+        event.col2 =  list(map(PhysicsObject, self.handles['col2'].product()))
 
         for p in event.col1:
             if hasattr( self.cfg_ana, 'sel1'):

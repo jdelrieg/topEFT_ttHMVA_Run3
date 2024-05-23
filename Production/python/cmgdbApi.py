@@ -66,8 +66,8 @@ class CmgdbApi(object):
                 self.selectCur.execute("ALTER SESSION SET CURRENT_SCHEMA=CMGBOOKKEEPINGTEST")
                 self.insertCur.execute("ALTER SESSION SET CURRENT_SCHEMA=CMGBOOKKEEPINGTEST")
         except Exception as dbError:
-            print "Unable to connect to CMGDB"
-            print dbError.args[0]
+            print("Unable to connect to CMGDB")
+            print(dbError.args[0])
             exit( -1 )
 
     # Return DB description as a string

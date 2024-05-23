@@ -38,7 +38,7 @@ class ResolutionJetHistograms (Histograms) :
             self.histosPt[index].Fill (jet.gen.pt (), jet.pt ()/ jet.gen.pt ())
             self.histosDEta[index].Fill (jet.gen.pt (), jet.eta () - jet.gen.eta ())
             self.histosDEta2[index].Fill (jet.gen.eta (), jet.eta () - jet.gen.eta ())
-        else : print 'the vertex number: ' + str (nVtx) + ' is too high'
+        else : print('the vertex number: ' + str (nVtx) + ' is too high')
 
 # .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... .... ....
 
@@ -427,7 +427,7 @@ class JetStudiesAnalyzer (Analyzer) :
 #        event.selGenLeptons = [GenParticle (lep) for lep in event.genLeptons if (lep.pt ()>self.cfg_ana.ptCut and abs (lep.eta ()) < jetEtaCut)]
         
         # get genJets
-        event.genJets = map (GenJet, self.mchandles['genJets'].product ())
+        event.genJets = list(map (GenJet, self.mchandles['genJets'].product ()))
         # filter genjets as for reco jets
         event.myGenJets = [GenJet (jet) for jet in event.genJets if (jet.pt ()>self.cfg_ana.genPtCut)]
         event.selGenJets = cleanObjectCollection (event.myGenJets, event.genLeptons, 0.2)

@@ -81,7 +81,7 @@ class JetAnalyzer( Analyzer ):
 
         genJets = None
         if self.cfg_comp.isMC:
-            genJets = map( GenJet, self.mchandles['genJets'].product() ) 
+            genJets = list(map( GenJet, self.mchandles['genJets'].product() )) 
             
         for cmgJet in cmgJets:
             jet = Jet( cmgJet )
@@ -145,7 +145,7 @@ class JetAnalyzer( Analyzer ):
 
         if self.cfg_comp.isMC and "BB" in self.cfg_comp.name:
             genParticles = self.mchandles['genParticles'].product()
-            event.genParticles = map( GenParticle, genParticles)
+            event.genParticles = list(map( GenParticle, genParticles))
             for gen in genParticles:
                 if abs(gen.pdgId())==5 and gen.mother() and abs(gen.mother().pdgId())==21:
                     for jet in event.cleanJets:

@@ -37,7 +37,7 @@ class HiggsRecoTTH(Module):
         nFO = getattr(event,"nLepFO"+self.label)
         ileps = getattr(event,"iLepFO"+self.label)
         leps = Collection(event,"LepGood","nLepGood")
-        lepsFO = [leps[ileps[i]] for i in xrange(nFO)]
+        lepsFO = [leps[ileps[i]] for i in range(nFO)]
         jets = [x for x in Collection(event,"JetSel"+self.label,"nJetSel"+self.label)]
         ret = {}        
 

@@ -31,7 +31,7 @@ class CutCorrelations:
         self.cuts.append( cut )
     def printCuts(self):
         for k, v in self.cuts:
-            print k, '-->', v
+            print(k, '-->', v)
     def bookCorrelationHisto( self ):
         nbins = len(self.cuts)
         hname = 'correlations_'+ self.name
@@ -59,7 +59,7 @@ class CutCorrelations:
                 i2 = i2+1
                 if i2<i1: continue # the matrix is symmetric
                 cut = v1 + ' && ' + v2
-                print i1, i2
+                print(i1, i2)
                 n = tree.Draw('1', cut , 'goff')
                 self.histo.SetBinContent(i1, i2, n)
                 self.histo.SetBinContent(i2, i1, n)

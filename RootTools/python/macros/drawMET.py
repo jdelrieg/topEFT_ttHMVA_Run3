@@ -88,7 +88,7 @@ elif sel == hbheNoise2011NonIso:
     histos.h2.SetFillColor(4)
     histos.setUpLegend('HBHENoise 2011 non iso failed')
 else:
-    print 'What are you doing?'
+    print('What are you doing?')
 
 histos.computeEff()
 histos.draw()

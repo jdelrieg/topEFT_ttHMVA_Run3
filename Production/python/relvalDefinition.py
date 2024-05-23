@@ -9,7 +9,7 @@ def datasetToRelval( dataset ):
         # print m.group(1), m.group(2), m.group(4)
         return (m.group(1), m.group(2), m.group(4) )
     else:
-        print 'does not match!'
+        print('does not match!')
 
 
 class relvalDefinition:

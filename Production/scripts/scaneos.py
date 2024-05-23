@@ -23,7 +23,7 @@ for row in rows:
     nFiles = None
     if row[2] is not None and row[3] is not None:
         nFiles = row[2]+row[3]
-    print path, nFiles
+    print(path, nFiles)
     dir = None
     if owner == 'cmgtools_group':
         dir = '/eos/cms/store/cmst3/group/cmgtools/CMG'+path
@@ -35,7 +35,7 @@ for row in rows:
     except AttributeError:
         continue
     if not dirpresent:
-        print 'Directory disappeared'
+        print('Directory disappeared')
         dead.append(path)
     else:
         good.append(path)
@@ -44,14 +44,14 @@ for row in rows:
     #    break
     
 for path in dead:
-    print 'DEAD', path
+    print('DEAD', path)
 for path in good:
-    print 'GOOD', path
+    print('GOOD', path)
 
-print 'num rows             = ', len(rows)
-print 'num datasets scanned = ', nscanned
-print 'num datasets dead    = ', len(dead)
-print 'num datasets ok(?)   = ', len(good) 
+print('num rows             = ', len(rows))
+print('num datasets scanned = ', nscanned)
+print('num datasets dead    = ', len(dead))
+print('num datasets ok(?)   = ', len(good)) 
 
 
     

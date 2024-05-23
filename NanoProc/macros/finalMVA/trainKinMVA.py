@@ -27,7 +27,7 @@ def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
 
     fileloc = get_file_or_copy_local(
                 os.path.join(path, name, 'treeProducerSusyMultilepton/tree.root'))
-    print 'Using %s' % fileloc
+    print('Using %s' % fileloc)
     infile = ROOT.TFile.Open(fileloc)
     _allfiles.append(infile) # Dirty trick to keep the files and trees in memory
 
@@ -40,15 +40,15 @@ def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
 
     for friend in friends:
         friendloc = get_file_or_copy_local(os.path.join(path, friend, 'evVarFriend_%s.root' % name))
-        print "Adding friend from", friendloc
+        print("Adding friend from", friendloc)
         tree.AddFriend('sf/t', friendloc)
 
     pckfile = os.path.join(path, name, "skimAnalyzerCount/SkimReport.pck")
     pckobj  = pickle.load(open(pckfile,'r'))
     counters = dict(pckobj)
     weight = 1.0*addw/(counters['Sum Weights'])
-    print ('Added %s dataset, category %s, with weight %f/%f' %
-             (name, trainclass, addw, counters['Sum Weights']))
+    print(('Added %s dataset, category %s, with weight %f/%f' %
+             (name, trainclass, addw, counters['Sum Weights'])))
 
     return tree, weight
 

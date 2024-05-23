@@ -39,7 +39,7 @@ if __name__ == '__main__':
             def analyze(self,ev):
                 uncorr = ev.met*0.00397 + ev.mhtJet25*0.00265
                 corrs  = self.sf(ev);
-                print "%7.3f   %7.3f   %7.3f" % (uncorr, corrs['metLD_corr'], corrs['metLD_2corr'])
+                print("%7.3f   %7.3f   %7.3f" % (uncorr, corrs['metLD_corr'], corrs['metLD_2corr']))
         el = EventLoop([ Tester("tester") ])
         el.loop([tree], maxEvents = 1000)
     else:
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         points = 200; 
         xmin , xmax = 0, 1.6
         gU = ROOT.TGraph(points+1)
-        for i in xrange(0,points+1):
+        for i in range(0,points+1):
             x = xmin + i*(xmax-xmin)/points
             y = metLDReshaper.mapper.Eval(x)
             y2 = metLDReshaper.mapper.Eval(y)

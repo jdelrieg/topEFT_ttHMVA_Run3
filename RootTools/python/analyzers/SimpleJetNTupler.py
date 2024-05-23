@@ -88,7 +88,7 @@ class SimpleJetNTupler (Analyzer) :
 #        event.selGenLeptons = [GenParticle (lep) for lep in event.genLeptons if (lep.pt ()>self.cfg_ana.ptCut and abs (lep.eta ()) < jetEtaCut)]
         
         # get genJets
-        event.genJets = map (GenJet, self.mchandles['genJets'].product ())
+        event.genJets = list(map (GenJet, self.mchandles['genJets'].product ()))
         # filter genjets as for reco jets
         event.selGenJets = [GenJet (jet) for jet in event.genJets if (jet.pt ()>self.cfg_ana.genPtCut)]
         

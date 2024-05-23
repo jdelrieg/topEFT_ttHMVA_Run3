@@ -12,7 +12,7 @@ def doImportNewSource( sampleName, sourceFileListCmd, fileName = 'source_cff.py'
     tmp = './python/sources' + sampleName
     ldir = re.sub( '-', '_', tmp)
     mkdir = 'mkdir -p ' + ldir
-    print mkdir
+    print(mkdir)
     os.system( mkdir )
     
     # creating source file ------------------
@@ -20,12 +20,12 @@ def doImportNewSource( sampleName, sourceFileListCmd, fileName = 'source_cff.py'
     sourceFile = ldir + '/' + fileName
     
     if os.path.isfile( sourceFile ):
-        print sourceFile
-        print 'already exists. define another output file name'
+        print(sourceFile)
+        print('already exists. define another output file name')
         sys.exit(1)
 
     sourceFileList = sourceFileListCmd + ' > ' + sourceFile
-    print sourceFileList
+    print(sourceFileList)
     os.system(sourceFileList)
 
     # compile new source file
@@ -46,7 +46,7 @@ def doImportNewSource( sampleName, sourceFileListCmd, fileName = 'source_cff.py'
 
     os.system( 'cat %s' % sourceFile )
 
-    print 'new source file ready to be used:'
-    print sourceFile
-    print 'process.load("%s")' % module
+    print('new source file ready to be used:')
+    print(sourceFile)
+    print('process.load("%s")' % module)
   

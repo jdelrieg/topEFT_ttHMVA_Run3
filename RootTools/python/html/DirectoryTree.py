@@ -9,7 +9,7 @@ def allowedType(fname, types):
     return ext in types
 
 def split(sequence, size):
-    for i in xrange(0, len(sequence), size):
+    for i in range(0, len(sequence), size):
         yield sequence[i:i+size] 
 
 
@@ -30,7 +30,7 @@ class Directory(object):
     '''Can contain other directories, images, and an index.html'''
 
     def __init__(self, path, title=None):
-        print 'creating directory', path
+        print('creating directory', path)
 
         # page parameters
         self.title = path
@@ -87,7 +87,7 @@ class Directory(object):
         if len(self.subdirs):
             links = []
             for s in sorted(self.subdirs, key=operator.attrgetter('path')):
-                print s.path
+                print(s.path)
                 base = os.path.basename(s.path)
                 link = e.a(base,
                            href='/'.join([base, 'index.html']))
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     opt, args = parser.parse_args()
     if len(args)!=1:
         parser.print_usage()
-        print 'provide the input directory'
+        print('provide the input directory')
 
     idir = args[0]
 

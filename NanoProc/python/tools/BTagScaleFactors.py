@@ -74,7 +74,7 @@ class BTagScaleFactors(object):
         self.algo = algo.lower()
 
         if not self.algo in ['csv', 'cmva', 'deepcsv']:
-            print "ERROR: Unknown algorithm. Choose either 'csv', 'cmva' or 'deepcsv'"
+            print("ERROR: Unknown algorithm. Choose either 'csv', 'cmva' or 'deepcsv'")
             return
 
         self.working_points = {
@@ -91,7 +91,7 @@ class BTagScaleFactors(object):
             }
 
         if self.algo == 'deepcsv':
-            if not year: print "No year provided, 2018 will be used as the default"
+            if not year: print("No year provided, 2018 will be used as the default")
             self.working_points = {
                 "L" : 0.2217 if year==2016 else 0.1522 if year==2017 else 0.1241,
                 "M" : 0.6321 if year==2016 else 0.4941 if year==2017 else 0.4184,
@@ -122,20 +122,20 @@ class BTagScaleFactors(object):
 
     def init(self):
         if self.verbose>0:
-            print "Initializing btag calibrator from %s" % self.csvfile
+            print("Initializing btag calibrator from %s" % self.csvfile)
         self.allowed = get_allowed_ranges(self.csvfile)
         self.calibrator = BTagCalibration(self.name, self.csvfile)
 
         if self.csvfastsim:
             if self.verbose>0:
-                print "Initializing fastsim btag calibrator from %s" % self.csvfastsim
+                print("Initializing fastsim btag calibrator from %s" % self.csvfastsim)
             self.calibrator_fastsim = BTagCalibration("%s_fastsim"%self.name,
                                                       self.csvfastsim)
             self.allowed.update(get_allowed_ranges(self.csvfastsim))
 
         if self.eff_rootfile:
             if self.verbose>0:
-                print "Reading tagging efficiencies from %s" % self.eff_rootfile
+                print("Reading tagging efficiencies from %s" % self.eff_rootfile)
             self.load_tagging_efficiencies(self.eff_rootfile)
 
     def load_tagging_efficiencies(self, filename):
@@ -148,7 +148,7 @@ class BTagScaleFactors(object):
                 hist = ifile.Get(key)
                 try: hist.GetEntries()
                 except AttributeError:
-                    print "histogram %s not found in %s" % (key, filename)
+                    print("histogram %s not found in %s" % (key, filename))
                 self.efficiency_hists[(wp, flavor)] = hist.Clone()
                 self.efficiency_hists[(wp, flavor)].SetDirectory(0)
 
@@ -177,15 +177,15 @@ class BTagScaleFactors(object):
             ])
 
         if not allowed and self.verbose>2:
-            print 'pt    %6.1f <? %6.1f <? %6.1f' % (allowed_range['ptMin'],    pt,    allowed_range['ptMax'])
-            print 'eta   %4.1f <? %4.1f <? %4.1f' % (allowed_range['etaMin'],   eta,   allowed_range['etaMax'])
-            print 'discr %4.1f <? %4.1f <? %4.1f' % (allowed_range['discrMin'], discr, allowed_range['discrMax'])
+            print('pt    %6.1f <? %6.1f <? %6.1f' % (allowed_range['ptMin'],    pt,    allowed_range['ptMax']))
+            print('eta   %4.1f <? %4.1f <? %4.1f' % (allowed_range['etaMin'],   eta,   allowed_range['etaMax']))
+            print('discr %4.1f <? %4.1f <? %4.1f' % (allowed_range['discrMin'], discr, allowed_range['discrMax']))
 
         return allowed
 
     def create_readers(self):
         if self.verbose>0:
-            print "Setting up btag calibration readers"
+            print("Setting up btag calibration readers")
         self.readers = {}
 
         # Create empty vector for systematics.
@@ -257,7 +257,7 @@ class BTagScaleFactors(object):
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:
             if self.verbose>0:
-                print "Unknown flavor %s, no btagging SF evaluated!" % repr(flavor)
+                print("Unknown flavor %s, no btagging SF evaluated!" % repr(flavor))
             return -1.0
         flavor = flavor_new
 
@@ -266,7 +266,7 @@ class BTagScaleFactors(object):
         wp_new = {"l":0, "m":1, "t":2}.get(wp_new, None)
         if wp_new == None:
             if self.verbose>0:
-                print "Unknown working point %s, no btagging SF evaluated!" % repr(wp)
+                print("Unknown working point %s, no btagging SF evaluated!" % repr(wp))
             return -1.0
         wp = wp_new
 
@@ -284,9 +284,9 @@ class BTagScaleFactors(object):
             if shape_corr and relevant_iterative_systs(flavor, syst):
                 self.not_found.add((wp, mtype, syst, flavor))
                 if self.verbose>1:
-                    print ("Warning: wp/mtype/syst/flavor combination not in csv file: (%s/%s/%s/%s)"
+                    print(("Warning: wp/mtype/syst/flavor combination not in csv file: (%s/%s/%s/%s)"
                            "\n scale factor not evaluated" %
-                                     (repr(wp), repr(mtype), repr(syst), repr(flavor)))
+                                     (repr(wp), repr(mtype), repr(syst), repr(flavor))))
                 return 1.0
 
 
@@ -333,24 +333,24 @@ def testing():
         # BTagScaleFactors("MVA", os.path.join(csvpath, "cMVAv2_4invfb.csv"), algo='cmva')
     ]
 
-    print "POG WP:"
+    print("POG WP:")
     for sfs in test_for:
-        print sfs.name,":"
+        print(sfs.name,":")
         for wp in [ "L", "M", "T" ]:
-            print wp+":"
+            print(wp+":")
             for syst in ["central", "up", "down"]:
-                print "\t"+syst+":"
+                print("\t"+syst+":")
                 for pt in [19.,25.,31.,330., 680.]:
-                    print ("\t\tB(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=5, val=0.0,
-                                                              syst=syst, wp=wp)))
-                    print ("\t\tC(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=4, val=0.0,
-                                                              syst=syst, wp=wp)))
-                    print ("\t\tL(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=0, val=0.0,
-                                                              syst=syst, wp=wp)))
+                    print(("\t\tB(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=5, val=0.0,
+                                                              syst=syst, wp=wp))))
+                    print(("\t\tC(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=4, val=0.0,
+                                                              syst=syst, wp=wp))))
+                    print(("\t\tL(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=0, val=0.0,
+                                                              syst=syst, wp=wp))))
 
-    print "Iterative:"
+    print("Iterative:")
     for sfs in test_for:
-        print sfs.name,":"
+        print(sfs.name,":")
         for syst in ["central",
                      "up_jes", "down_jes",
                      "up_lf", "down_lf",
@@ -361,18 +361,18 @@ def testing():
                      "up_lfstats2", "down_lfstats2",
                      "up_cferr1", "down_cferr1",
                      "up_cferr2", "down_cferr2"]:
-            print "\t"+syst+":"
+            print("\t"+syst+":")
             for pt in [50.]:
-                print ("\t\tB(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=5, val=0.89,
-                                                          syst=syst, shape_corr=True)))
-                print ("\t\tC(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=4, val=0.89,
-                                                          syst=syst, shape_corr=True)))
-                print ("\t\tL(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=0, val=0.89,
-                                                          syst=syst, shape_corr=True)))
+                print(("\t\tB(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=5, val=0.89,
+                                                          syst=syst, shape_corr=True))))
+                print(("\t\tC(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=4, val=0.89,
+                                                          syst=syst, shape_corr=True))))
+                print(("\t\tL(pt=%.0f, eta=0.0): %.3f" % (pt, sfs.get_SF(pt=pt, eta=0.0, flavor=0, val=0.89,
+                                                          syst=syst, shape_corr=True))))
 
     if len(sfs.not_found):
         from pprint import pprint
-        print "The following wp/mtype/syst/flavor combinations were requested but not found:"
+        print("The following wp/mtype/syst/flavor combinations were requested but not found:")
         pprint(sfs.not_found)
 
 debug = False

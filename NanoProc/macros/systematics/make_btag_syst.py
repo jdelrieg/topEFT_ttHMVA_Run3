@@ -11,7 +11,7 @@ for ana in [ "2lss_ee","2lss_mumu","2lss_em", "3l_tight", "4l" ]:
             file = open(filename,'r')
             lines = [ l.strip() for l in file ]
             if len(lines) != 3 or len(lines[0].split())-5 != len(lines[2].split())-3:
-                print "Malformed file %s" % filename
+                print("Malformed file %s" % filename)
                 continue
             procs  = lines[0].split()[1:-4]
             yields = lines[2].split()[1:-2]
@@ -27,15 +27,15 @@ for ana in [ "2lss_ee","2lss_mumu","2lss_em", "3l_tight", "4l" ]:
                 binmap = "%s.*%s.*%s" % (ana,j,bpost) if j != '' else "%s.*%s" % (ana,bpost)
                 binmap = binmap.replace("3l_tight","3l")
                 if abs(kbup-1) < 0.015 and abs(kbdn-1) < 0.015:
-                    print "CMS_ttHlep_eff_b  : %-20s : %-20s : - # negligible: %.2f/%.2f" % (p,binmap,kbdn,kbup)
+                    print("CMS_ttHlep_eff_b  : %-20s : %-20s : - # negligible: %.2f/%.2f" % (p,binmap,kbdn,kbup))
                 elif abs(kbup*kbdn-1) < 0.015:
-                    print "CMS_ttHlep_eff_b  : %-20s : %-20s : %.2f" % (p,binmap,sqrt(kbup/kbdn))
+                    print("CMS_ttHlep_eff_b  : %-20s : %-20s : %.2f" % (p,binmap,sqrt(kbup/kbdn)))
                 else:
-                    print "CMS_ttHlep_eff_b  : %-20s : %-20s : %.2f/%.2f  # asymm: %+.3f" % (p,binmap,kbdn,kbup,kbup*kbdn-1)
+                    print("CMS_ttHlep_eff_b  : %-20s : %-20s : %.2f/%.2f  # asymm: %+.3f" % (p,binmap,kbdn,kbup,kbup*kbdn-1))
                 if abs(klup-1) < 0.015 and abs(kldn-1) < 0.015:
-                    print "CMS_ttHlep_fake_b : %-20s : %-20s : - # negligible: %.2f/%.2f" % (p,binmap,kldn,klup)
+                    print("CMS_ttHlep_fake_b : %-20s : %-20s : - # negligible: %.2f/%.2f" % (p,binmap,kldn,klup))
                 elif abs(klup*kldn-1) < 0.015:
-                    print "CMS_ttHlep_fake_b : %-20s : %-20s : %.2f" % (p,binmap,sqrt(klup/kldn))
+                    print("CMS_ttHlep_fake_b : %-20s : %-20s : %.2f" % (p,binmap,sqrt(klup/kldn)))
                 else:
-                    print "CMS_ttHlep_fake_b : %-20s : %-20s : %.2f/%.2f  # asymm: %+.3f" % (p,binmap,kldn,klup,klup*kldn-1)
+                    print("CMS_ttHlep_fake_b : %-20s : %-20s : %.2f/%.2f  # asymm: %+.3f" % (p,binmap,kldn,klup,klup*kldn-1))
     

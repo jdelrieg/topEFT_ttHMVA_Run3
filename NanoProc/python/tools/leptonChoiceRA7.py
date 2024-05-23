@@ -29,9 +29,9 @@ class LeptonChoiceRA7:
         self.isFastSim = isFastSim
 
         if self.isFastSim:
-            print '-'*15
-            print 'WARNING: will apply trigger efficiency for FastSim'
-            print '-'*15
+            print('-'*15)
+            print('WARNING: will apply trigger efficiency for FastSim')
+            print('-'*15)
 
         self.collectSysts()
         self.setApplication(whichApplication, filePathFakeRate)
@@ -92,7 +92,7 @@ class LeptonChoiceRA7:
         ## attach labels and return branch variables
 
         fullret = {}
-        for k,v in self.ret.iteritems(): 
+        for k,v in self.ret.items(): 
             fullret[k + self.label] = v
         return fullret
 
@@ -129,7 +129,7 @@ class LeptonChoiceRA7:
         #if len(self.trueTriples) < 1: return
 
         #printed = False
-        for t in xrange(len(self.triples)):
+        for t in range(len(self.triples)):
 
             i1 = self.leps.index(self.triples[t][0])
             i2 = self.leps.index(self.triples[t][1])
@@ -178,7 +178,7 @@ class LeptonChoiceRA7:
     def checkEvent(self, event):
 
         if not hasattr(self, "checked_fastsim_data"):
-            if self.isFastSim and event.isData: raise RuntimeError,'Running with isFastSim on data!'
+            if self.isFastSim and event.isData: raise RuntimeError('Running with isFastSim on data!')
             self.checked_fastsim_data = True
 
 
@@ -195,8 +195,8 @@ class LeptonChoiceRA7:
 
         jetcollcleaned  = [j for j in Collection(event,"Jet","nJet")]
         jetcolldiscarded = [j for j in Collection(event,"DiscJet","nDiscJet")]
-        self.jets30     = filter(lambda x: x.pt > 30., [ (jetcollcleaned[idx] if idx>=0 else jetcolldiscarded[-1-idx]) for idx in getattr(event,"iJSel"+self.inputlabel) ])
-        self.bJets30    = filter(lambda j: j.btagCSV >  0.89, self.jets30)
+        self.jets30     = [x for x in [ (jetcollcleaned[idx] if idx>=0 else jetcolldiscarded[-1-idx]) for idx in getattr(event,"iJSel"+self.inputlabel) ] if x.pt > 30.]
+        self.bJets30    = [j for j in self.jets30 if j.btagCSV >  0.89]
         self.ht         = sum([j.pt for j in self.jets30])
 
         self.met        = {}
@@ -234,7 +234,7 @@ class LeptonChoiceRA7:
             self.collectTriplesWZ(byflav = True, bypassMV = False)
 
         self.ret["nTriples"] = len(self.triples)
-        if self.ret["nTriples"] > 20: raise RuntimeError,'Too many lepton pairs'
+        if self.ret["nTriples"] > 20: raise RuntimeError('Too many lepton pairs')
 
 
 
@@ -269,7 +269,7 @@ class LeptonChoiceRA7:
     ## _______________________________________________________________
     def collectTriplesFlips(self, byflav, bypassMV):
 
-        print "do stuff"
+        print("do stuff")
         #FIXME
         #    choice = self.findPairs(lepstv,lepstv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
         #    if choice:
@@ -286,7 +286,7 @@ class LeptonChoiceRA7:
     ## _______________________________________________________________
     def collectTriplesWZ(self, byflav, bypassMV):
 
-        print "do more stuff"
+        print("do more stuff")
         #FIXME
         #    choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True)
         #    if choice:
@@ -318,7 +318,7 @@ class LeptonChoiceRA7:
                 self.ret["appWeight" + self.systs["FR"][var]][t] = 0.0
         else:
             for var in self.systs["FR"]:
-                fk = filter(None, self.fakes[t])
+                fk = [_f for _f in self.fakes[t] if _f]
                 nF = len(fk)
 
                 if nF == 1:
@@ -336,7 +336,7 @@ class LeptonChoiceRA7:
     ## fillAppWeightsFlips
     ## _______________________________________________________________
     def fillAppWeightsFlips(self, t):
-        print "do stuff"
+        print("do stuff")
         #FIXME
         #ret["appWeight"][npair] = self.flipRate(leps[i1])+self.flipRate(leps[i2])
 
@@ -344,7 +344,7 @@ class LeptonChoiceRA7:
     ## fillAppWeightsWZ
     ## _______________________________________________________________
     def fillAppWeightsWZ(self, t):
-        print "do stuff"
+        print("do stuff")
         #FIXME
 
 
@@ -616,8 +616,8 @@ class LeptonChoiceRA7:
         if not filePath: return
         self.pileupHisto = self.accessHisto(filePath)
         self.puWeights = {}
-        for key, val in self.pileupHisto.iteritems():
-            self.puWeights[key] = [val.GetBinContent(i) for i in xrange(1, val.GetNbinsX()+1)]
+        for key, val in self.pileupHisto.items():
+            self.puWeights[key] = [val.GetBinContent(i) for i in range(1, val.GetNbinsX()+1)]
 
 
     ## mt  
@@ -648,7 +648,7 @@ class LeptonChoiceRA7:
     def readHistos(self, hists, var, valx, valy, valz = 0):
         value = 1.
         for hist in hists: 
-            if not var in hist.keys(): var = 0
+            if not var in list(hist.keys()): var = 0
             value *= self.readHisto(hist[var], valx, valy, valz)
         return value
 
@@ -693,7 +693,7 @@ class LeptonChoiceRA7:
         if   whichApplication == "Fakes": self.whichApplication = self.appl_Fakes
         elif whichApplication == "Flips": self.whichApplication = self.appl_Flips
         elif whichApplication == "WZ"   : self.whichApplication = self.appl_WZ
-        else                            : raise RuntimeError, 'Unknown whichApplication'
+        else                            : raise RuntimeError('Unknown whichApplication')
 
         if self.whichApplication == self.appl_Fakes:
             if filePathFakeRate and self.loadFakeRateHistos(filePathFakeRate):
@@ -702,7 +702,7 @@ class LeptonChoiceRA7:
             if filePathFakeRate and self.loadFlipRateHistos(filePathFakeRate):
                 self.apply = True
         if not self.apply:
-            print 'WARNING: running leptonChoiceRA7 in pure tagging mode (no weights applied)'
+            print('WARNING: running leptonChoiceRA7 in pure tagging mode (no weights applied)')
 
 
     ## for debugging only
@@ -803,12 +803,12 @@ if __name__ == '__main__':
                 lambda lep : lep.miniRelIso < 0.05 and lep.sip3d < 4 and _susy2lss_lepId_CB(lep),
                 cleanJet = lambda lep,jet,dr : (lep.pt > 10 and dr < 0.4 and not (lep.jetDR > 0.5*10/min(50,max(lep.pt,200)) and lep.pt*(1/lep.jetPtRatio-1) > 25)))
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf1(ev)
-            print self.sf2(ev)
-            print self.sf3(ev)
-            print self.sf4(ev)
-            print self.sf5(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf1(ev))
+            print(self.sf2(ev))
+            print(self.sf3(ev))
+            print(self.sf4(ev))
+            print(self.sf5(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

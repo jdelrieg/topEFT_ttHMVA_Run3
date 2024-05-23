@@ -21,11 +21,11 @@ def protocol( files ):
 def testRoot( files ):
     for file in files:
         if not os.path.isfile( file ):
-            print 'file', file, 'does not exist'
+            print('file', file, 'does not exist')
             return False
         (dummy, ext) = os.path.splitext( file )
         if not ext == '.root':
-            print 'file', file, 'is not a root file'
+            print('file', file, 'is not a root file')
             return False
     return True
 
@@ -85,8 +85,8 @@ outpyFile.write("import FWCore.ParameterSet.Config as cms\n")
 outpyFile.write(process.dumpPython())
 outpyFile.close()
 
-print process.source.fileNames
-print 'will be merged into ', outFile
+print(process.source.fileNames)
+print('will be merged into ', outFile)
 
 if not options.negate:
     os.system("cmsRun tmpConfig.py")

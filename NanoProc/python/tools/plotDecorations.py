@@ -35,7 +35,7 @@ def doCMSSpam(text="CMS Preliminary", x0 = 0.17, textSize=0.033):
 def histToGraph(hist):
     n = hist.GetNbinsX()
     ret = ROOT.TGraphErrors()
-    for b in xrange(1,n+1):
+    for b in range(1,n+1):
         if hist.GetBinContent(b) == 0 and hist.GetBinError(b) == 0: continue
         ret.Set(ret.GetN()+1)
         ret.SetPoint(ret.GetN()-1, hist.GetXaxis().GetBinCenter(b),    hist.GetBinContent(b))
@@ -64,7 +64,7 @@ def fitTGraph(graph, order=1, nToys=1000, nPoints=1000):
     cov = result.GetCovarianceMatrix()
     xvars, xlist, xset = [], ROOT.RooArgList(), ROOT.RooArgSet()
     parvec = ROOT.TVectorD(order+1)
-    for i in xrange(order+1):
+    for i in range(order+1):
         xv = ROOT.RooRealVar("p%d" % i, "", result.Parameter(i)-10*result.ParError(i),  result.Parameter(i)+10*result.ParError(i))
         xvars.append(xv)
         xlist.add(xv)
@@ -72,18 +72,18 @@ def fitTGraph(graph, order=1, nToys=1000, nPoints=1000):
         parvec[i] = result.Parameter(i)
     #print parvec
     #cov.Print()
-    points = [ (xmin + i*(xmax-xmin)/(nPoints-1), []) for i in xrange(nPoints) ]
+    points = [ (xmin + i*(xmax-xmin)/(nPoints-1), []) for i in range(nPoints) ]
     mvg = ROOT.RooMultiVarGaussian("mvg","", xlist, parvec, cov)
     #print "Defined multi-variate gaussian "; mvg.Print("")
     data = mvg.generate(xset, nToys)
     #print "Generated dataset, now making bands"
-    for i in xrange(data.numEntries()):
+    for i in range(data.numEntries()):
         e = data.get(i)
-        for k in xrange(order+1):
+        for k in range(order+1):
             poly.SetParameter(k, e.getRealValue("p%d" % k))
         for x,ys in points:
             ys.append(poly.Eval(x))
-    for k in xrange(order+1):
+    for k in range(order+1):
         poly.SetParameter(k, result.Parameter(k))
     band68 = ROOT.TGraphAsymmErrors(nPoints) 
     band95 = ROOT.TGraphAsymmErrors(nPoints) 

@@ -23,12 +23,12 @@ if __name__ == "__main__":
 	locdir = args[0]
 	chunks = eostools.ls(locdir)
 
-	print chunks
+	print(chunks)
 
 	if len(args)>1:
 		chunks = [c for c in chunks if any([c.endswith('/'+d) for d in args[1:]])]
 
-	print 'Will operate on the following chunks:',chunks
+	print('Will operate on the following chunks:',chunks)
 
 	tocopy = []
 	failedDict = {}
@@ -36,19 +36,19 @@ if __name__ == "__main__":
 		f = '%s/%s/%s'%(d,options.treeproducername,options.treename)
 		furl = '%s.url'%f
 		if os.path.exists(f):
-			print 'Chunk %s already contains tree root file %s, skipping'%(d,f)
+			print('Chunk %s already contains tree root file %s, skipping'%(d,f))
 			continue
 		if not os.path.exists(furl):
 			if (options.continueCopy):
-				print 'Chunk %s does not contain url file %s' % (d, furl)
+				print('Chunk %s does not contain url file %s' % (d, furl))
 				failedDict[d] = furl
 				continue
 			else:
-				raise RuntimeError,'Chunk %s does not contain url file %s'%(d,furl)
+				raise RuntimeError('Chunk %s does not contain url file %s'%(d,furl))
 		with open(furl,'r') as _furl:
 			rem = _furl.readline().replace('root://eoscms.cern.ch/','').replace('\n','')
 			if not os.path.isfile(rem):
-				raise RuntimeError,'Remote file %s not found'%rem
+				raise RuntimeError('Remote file %s not found'%rem)
 			if options.njobs>0:
 				tocopy.append((rem,f))
 			else:
@@ -57,12 +57,12 @@ if __name__ == "__main__":
 	if options.njobs>0:
 		def _runIt(args):
 			rem,f = args
-			print 'Downloading %s...'%rem
+			print('Downloading %s...'%rem)
 			eostools.xrdcp(rem,f)
 		Pool(options.njobs).map(_runIt,tocopy)
 
-	if (options.continueCopy and (len(failedDict.keys()) > 0)):
-		print "="*100
-		print "Summary of failed download attempts (%d in total):" % len(failedDict.keys())
-		for d, furl in failedDict.iteritems():
-			print 'Chunk %s does not contain url file %s' % (d, furl)
+	if (options.continueCopy and (len(list(failedDict.keys())) > 0)):
+		print("="*100)
+		print("Summary of failed download attempts (%d in total):" % len(list(failedDict.keys())))
+		for d, furl in failedDict.items():
+			print('Chunk %s does not contain url file %s' % (d, furl))

@@ -33,7 +33,7 @@ def combine(graphs,mode):
        g0 = g0s[0]
     for g in graphs:
         if g0 and g != g0: continue
-        for i in xrange(g.GetN()):
+        for i in range(g.GetN()):
             xi = g.GetX()[i]
             if len(xvals) == 0 or (min([abs(x[0]-xi) for x in xvals]) > 0.01):
                 xvals.append((xi,g.GetErrorXlow(i),g.GetErrorXhigh(i)))
@@ -41,15 +41,15 @@ def combine(graphs,mode):
     ret = ROOT.TGraphAsymmErrors(len(xvals))
     for j,(x,xl,xh) in enumerate(xvals):
         if mode in ("default","midpoint"): 
-            yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
+            yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in range(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
             yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli if h+l != 0)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli if h+l != 0)
             ymax = max(min(y+h,1) for (y,h,l) in yhli)
             ymin = min(max(y-l,0) for (y,h,l) in yhli)
             if mode == "midpoint":
                 yavg = 0.5*(ymax+ymin)
         elif mode.startswith("main:"):
-            yhli0 = [ (g0.GetY()[i], g0.GetErrorYhigh(i), g0.GetErrorYlow(i)) for i in xrange(g0.GetN()) if abs(g0.GetX()[i]-x) <= 0.01 ][0]
-            yhli  = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if g != g0 and abs(g.GetX()[i]-x) <= 0.01 ]
+            yhli0 = [ (g0.GetY()[i], g0.GetErrorYhigh(i), g0.GetErrorYlow(i)) for i in range(g0.GetN()) if abs(g0.GetX()[i]-x) <= 0.01 ][0]
+            yhli  = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in range(g.GetN()) if g != g0 and abs(g.GetX()[i]-x) <= 0.01 ]
             yavg  = yhli0[0]
             ymax  = max([yavg+yhli0[1]]+[y for (y,h,l) in yhli])
             ymin  = min([yavg-yhli0[2]]+[y for (y,h,l) in yhli])
@@ -143,7 +143,7 @@ if __name__ == "__main__":
             alleffs.append( ( opts['Label'], graphs[p] ) )
             graphs[p].order = opts['#']
             outfile.WriteTObject(graphs[p], opts['key'])
-    alleffs.sort(key = lambda (l,g) : g.order)
+    alleffs.sort(key = lambda l_g : l_g[1].order)
     stackEffs(options.out,None,alleffs,options)
     shortEffs = [ (l,g) for (l,g) in alleffs if g.order == 0 ]
     cdata = combine([ g for (l,g) in alleffs if 'data' in g.GetName() ], options.combMode)

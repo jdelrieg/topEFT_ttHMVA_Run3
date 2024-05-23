@@ -16,7 +16,7 @@ class ttHLeptonCombMasses( Module ):
     def analyze(self, event):
         leps = []
         for tag, sel in self.leptonsAndSels:
-            leps += filter(sel, Collection(event, tag))
+            leps += list(filter(sel, Collection(event, tag)))
         leps.sort(key = lambda l : -l.pt)
         if self.maxLeps:
             leps = leps[:self.maxLeps]

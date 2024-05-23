@@ -13,15 +13,14 @@ import subprocess
 def splitPFN(pfn):
     """Split the PFN in to { <protocol>, <host>, <path>, <opaque> }"""
     groups = re.match("^(\w+)://([^/]+)/(/[^?]+)(\?.*)?", pfn)
-    if not groups: raise RuntimeError, "Malformed pfn: '%s'" % pfn
+    if not groups: raise RuntimeError("Malformed pfn: '%s'" % pfn)
     return (groups.group(1), groups.group(2), groups.group(3), groups.group(4))
 
 def _runCommand(cmd):
     myCommand = subprocess.Popen( cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
     ( out, err ) = myCommand.communicate()
     if myCommand.returncode != 0:
-        print >> sys.stderr, "Command (%s) failed with return code: %d" % ( cmd, myCommand.returncode )
-        print >> sys.stderr, err
+        raise OSError("Command (%s) failed with return code: %d" % ( cmd, myCommand.returncode ))
     return out,err,myCommand.returncode
 
 def runXRDCommand(path, cmd, *args):
@@ -44,7 +43,6 @@ def runXRDFSCommand(path, cmd, *args):
 
     command = ['xrdfs', '%s://%s'%(tokens[0],tokens[1]), cmd, tokens[2]]
     command.extend(args)
-    # print ' '.join(command)
     return _runCommand(command)
 
 def runEOSCommand(path, cmd, *args):
@@ -135,8 +133,11 @@ isCastorDir = isEOSDir
 def isEOSFile( path ):
     """Returns True if path is a file or directory stored on EOS (checks for path existence)"""
     if not isEOSDir(path): return False
-    _, _, ret = runEOSCommand( path, 'ls')
-    return ret == 0
+    try:
+        _, _, ret = runEOSCommand( path, 'ls')
+        return True
+    except OSError:
+        return False
 
 #also define an alias for backwards compatibility
 isCastorFile = isEOSFile
@@ -176,7 +177,7 @@ def eosDirSize(path):
 def fileChecksum(path):
     '''Returns the checksum of a file (local or on EOS).'''
     checksum='ERROR'
-    if not fileExists(path): raise RuntimeError, 'File does not exist.'
+    if not fileExists(path): raise RuntimeError('File does not exist.')
     if isEOS(path):
         lfn = eosToLFN(path)
         res = runEOSCommand(lfn, 'find', '--checksum')
@@ -230,9 +231,13 @@ def isDirectory(path):
     ???Will, this function also seems to work for paths like:
     /eos/cms/...
     ??? I think that it should work also for local files, see isFile."""
+    print("Running command")
+    try:
+        runXRDFSCommand(path,'ls')
+        return True
+    except OSError:
+        return False
 
-    out, _, _ = runXRDCommand(path,'existdir')
-    return 'The directory exists' in out
 
 def isFile(path):
     """Returns True if a path is a file.
@@ -251,7 +256,7 @@ def isFile(path):
         else:
             return False
     else: 
-        out, _, _ = runXRDCommand(path,'existfile')
+        out, _, _ = runXRDFSCommand(path,'existfile')
         return 'The file exists' in out
 
 def chmod(path, mode):
@@ -280,11 +285,11 @@ def listFiles(path, rec = False, full_info = False):
             return result
     # -- listing on EOS --
     if not isEOSDir(path):
-        raise RuntimeError, "Bad path '%s': not existent, and not in EOS" % path
+        raise RuntimeError("Bad path '%s': not existent, and not in EOS" % path)
     cmd = 'dirlist'
     if rec:
         cmd = 'dirlistrec'
-    files, _, _ = runXRDCommand(path, cmd)
+    files, _, _ = runXRDFSCommand(path, cmd)
     result = []
     for line in files.split('\n'):
         tokens = [t for t in line.split() if t]
@@ -355,7 +360,7 @@ def cat(path):
     path = lfnToEOS(path)
     if isEOS(path):
         #print "the file to cat is:", path
-        out, err, _ = runXRDCommand(path,'cat') 
+        out, err, _ = runXRDFSCommand(path,'cat') 
         lines = []
         if out:
             pattern = re.compile('cat returned [0-9]+')
@@ -367,8 +372,8 @@ def cat(path):
                 else:
                     lines.append(line)
         if err:
-            print >> sys.stderr, out
-            print >> sys.stderr, err
+            print(out, file=sys.stderr)
+            print(err, file=sys.stderr)
         allLines = '\n'.join(lines)
         if allLines and not allLines.endswith('\n'):
             allLines += '\n'
@@ -455,8 +460,8 @@ def _xrdcpSingleFile( pfn_src, pfn_dest):
     if run: 
         out, err, ret = _runCommand(command)
         if err:
-            print >> sys.stderr, out
-            print >> sys.stderr, err
+            print(out, file=sys.stderr)
+            print(err, file=sys.stderr)
         return ret
 
 def move(src, dest):
@@ -465,7 +470,7 @@ def move(src, dest):
     src = eosToLFN(src)
     dest = eosToLFN(dest)
 
-    runXRDCommand(src,'mv', lfnToEOS(dest))
+    runXRDFSCommand(src,'mv', lfnToEOS(dest))
                 
 def matchingFiles( path, regexp):
     """Return a list of files matching a regexp"""
@@ -499,5 +504,5 @@ def cmsStage( absDestDir, files, force):
             command.append('-f')
         command.append(eosToLFN(fname))
         command.append(eosToLFN(absDestDir))
-        print ' '.join(command)
+        print(' '.join(command))
         _runCommand(command)

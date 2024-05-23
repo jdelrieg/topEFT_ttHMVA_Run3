@@ -41,7 +41,7 @@ process.out = cms.OutputModule(
     fileName = cms.untracked.string('AOD_%s.root' % ( name.split('/')[1].split('_')[0] )),
     )
 
-print process.out.fileName
+print(process.out.fileName)
 
 process.load("CommonTools.ParticleFlow.PF2PAT_EventContent_cff")
 process.out.outputCommands.extend( process.prunedAODForPF2PATEventContent.outputCommands )

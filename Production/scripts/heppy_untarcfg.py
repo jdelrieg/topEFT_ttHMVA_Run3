@@ -17,14 +17,14 @@ def _UnTar(tars,dry_run):
             tar = tarfile.open(tarsuffix)
             if dry_run:
                 for tarinfo in tar:
-                    print "Extracting" , tarinfo.name, "from", tarsuffix
+                    print("Extracting" , tarinfo.name, "from", tarsuffix)
                     sys.exit(1)
             tar.extractall()
             tar.close()
             os.chdir(cwd)
-            print 'Extracted in %s directory'  %directory
+            print('Extracted in %s directory'  %directory)
     except TypeError:
-        print 'Unable to extract tar'
+        print('Unable to extract tar')
 
 ##_______________________________________________________________||
 def _ListTars(direc,dry_run):
@@ -34,10 +34,10 @@ def _ListTars(direc,dry_run):
             for dirpath, dirnames, files in os.walk(direc)
                 for f in fnmatch.filter(files,tarsuffix)]        
         if len(tarfiles) == 0:
-            print 'No list formed'
+            print('No list formed')
             sys.exit(1)
     except ValueError:
-        print 'Could not form list'
+        print('Could not form list')
 
     _UnTar(tarfiles,dry_run)
 
@@ -54,10 +54,10 @@ if __name__ == '__main__':
     (options,args) = parser.parse_args()
 
     if len(args)>1:
-        print 'Please only provide 1 argument'
+        print('Please only provide 1 argument')
         sys.exit(1)
     elif len(args) == 0:
-        print 'Please provide the path'
+        print('Please provide the path')
         sys.exit(1)
     else:
         iDir = args[0]

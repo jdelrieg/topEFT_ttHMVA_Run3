@@ -17,7 +17,7 @@ class TTHDumper(Module):
     def beginComponent(self,tty):
         pass
     def openOutFile(self,dumpFileName):
-        if self.dumpFile: raise RuntimeError,'Output file already open'
+        if self.dumpFile: raise RuntimeError('Output file already open')
         self.dumpFile = open(dumpFileName,'w')
     def getPassingEntries(self):
         return self.passing_entries
@@ -27,7 +27,7 @@ class TTHDumper(Module):
         if len(out)>0:
             self.passing_entries += 1
             if self.dumpFile: self.dumpFile.write(out+'\n')
-            else:             print out
+            else:             print(out)
         return True
     def makeVars(self,ev):
         self.leps = [l for l in Collection(ev,"LepGood","nLepGood") ]
@@ -35,7 +35,7 @@ class TTHDumper(Module):
         jets1 = Collection(ev,"Jet","nJet")
         jets2 = Collection(ev,"DiscJet","nDiscJet")
         ijets = ev.iJ_Recl
-        self.jets = [ (jets1[ijets[i]] if ijets[i] >= 0 else jets2[-1-ijets[i]]) for i in xrange(ev.nJetSel_Recl) ]
+        self.jets = [ (jets1[ijets[i]] if ijets[i] >= 0 else jets2[-1-ijets[i]]) for i in range(ev.nJetSel_Recl) ]
         self.jets.sort(key = lambda j : j.pt, reverse=True)
     def makeText(self,ev):
         ret = ""

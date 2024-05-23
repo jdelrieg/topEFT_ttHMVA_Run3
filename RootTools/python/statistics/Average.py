@@ -82,22 +82,22 @@ class Averages(object):
 
 class Averages(diclist):
     def write(self, dirname):
-        map( lambda x: x.write(dirname), self)
+        list(map( lambda x: x.write(dirname), self))
 
 
 if __name__ == '__main__':
     c = Average('TestAve')
     c.add( 1, 1 )
     c.add( 3, 2 )
-    print c.variance()
+    print(c.variance())
 
     c2 = Average('TestAve2')
     # c2.add(10,1)
 
     sum = c+c2
-    print c
-    print c2
-    print sum
+    print(c)
+    print(c2)
+    print(sum)
     sum.write('.')
 
     import random
@@ -105,5 +105,5 @@ if __name__ == '__main__':
     c3 = Average('Gauss')
     for i in range(0,1000):
         c3.add( random.gauss( 5, 1 ) ) 
-    print c3
+    print(c3)
     # print math.sqrt( c3.variance(c3.average()[0]) )

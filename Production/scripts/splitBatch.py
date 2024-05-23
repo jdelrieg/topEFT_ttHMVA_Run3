@@ -259,20 +259,20 @@ runningMode = None
 try:
    runningMode = batchManager.RunningMode( options.batch )
 except CmsBatchException as err:
-   print err
+   print(err)
    sys.exit(1)
 
 grouping = int(args[0])
 cfgFileName = args[1]
 
-print 'Loading cfg'
+print('Loading cfg')
 
 pycfg_params = options.cmdargs
 trueArgv = sys.argv
 sys.argv = [cfgFileName]
 if pycfg_params:
    sys.argv.extend(pycfg_params.split(' '))
-print  sys.argv
+print(sys.argv)
 
 
 # load cfg script
@@ -288,7 +288,7 @@ sys.argv = trueArgv
 fullSource = process.source.clone()
 
 if len( fullSource.fileNames )!=1:
-   print 'your source must contain only one file, so that you can split it.'
+   print('your source must contain only one file, so that you can split it.')
    sys.exit(1)
 
 # getting the total number of events:
@@ -314,7 +314,7 @@ def nJobs(nEvents, grouping):
       nJ += 1
    return nJ
 
-listOfValues = range( nJobs(nEvents(fileName), grouping) ) 
+listOfValues = list(range( nJobs(nEvents(fileName), grouping))) 
 
 batchManager.PrepareJobs( listOfValues )
 

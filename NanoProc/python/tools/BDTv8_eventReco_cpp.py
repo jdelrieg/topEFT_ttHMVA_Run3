@@ -52,7 +52,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
 
         for var in self.systsJEC:
             _var = var
@@ -60,9 +60,9 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
 
             jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+            if (_var==0): jets = [x for x in jets if x.pt>jetptcut]
+            elif (_var==1): jets = [x for x in jets if x.pt*x.corr_JECUp/x.corr>jetptcut]
+            elif (_var==-1): jets = [x for x in jets if x.pt*x.corr_JECDown/x.corr>jetptcut]
 
             if (_var==0): jetcorr = [1 for x in jets]
             elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
@@ -103,8 +103,8 @@ if __name__ == '__main__':
                                       '../../data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                       )
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 500)
 

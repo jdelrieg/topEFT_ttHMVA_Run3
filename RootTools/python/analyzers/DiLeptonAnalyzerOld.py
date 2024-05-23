@@ -36,13 +36,13 @@ class DiLeptonAnalyzer( Analyzer ):
     def buildDiLeptons(self, cmgDiLeptons, event):
         '''Creates python DiLeptons from the di-leptons read from the disk.
         to be overloaded if needed.'''
-        return map( self.__class__.DiObjectClass, cmgDiLeptons )
+        return list(map( self.__class__.DiObjectClass, cmgDiLeptons ))
 
 
     def buildLeptons(self, cmgLeptons, event):
         '''Creates python Leptons from the leptons read from the disk.
         to be overloaded if needed.'''
-        return map( self.__class__.LeptonClass, cmgLeptons )
+        return list(map( self.__class__.LeptonClass, cmgLeptons ))
 
 
         

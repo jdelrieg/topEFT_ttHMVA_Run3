@@ -58,7 +58,7 @@ class CombinedObjectTaggerForCleaning(Module):
 
         tags = ROOT.CombinedObjectTags(len(leps),len(taus),len(jets))
 
-        if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
+        if not self.coneptdef: raise RuntimeError('Choose the definition to be used for cone pt')
         for lep in leps: lep.conept = self.coneptdef(lep)
 
         year = event.year if self.lepSelYearDependent else -1 # to avoid trying to read event.year if not needed (old trees)

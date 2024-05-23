@@ -135,7 +135,7 @@ getInfo.py -a getTags /QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6/Fall11-PU_S6
         ## TOTO: Make sure this is specified in the Oracle account
         select = re.compile('select', re.IGNORECASE)
         if not select.search(query):
-            print "getDataset.py is for search uses only (SELECT queries). To publish, please use the publish.py script"
+            print("getDataset.py is for search uses only (SELECT queries). To publish, please use the publish.py script")
             sys.exit(1)
     # If an alias is specified    
     elif options.alias:
@@ -143,7 +143,7 @@ getInfo.py -a getTags /QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6/Fall11-PU_S6
         if options.alias in aliasDict:
             # Check the user has entered the correct number of arguments
             if len(args) != len(aliasDict[options.alias].split("ARG"))-1:
-                print "Please use the correct amount of arguments %d are required in this alias" % (len(aliasDict[options.alias].split("ARG"))-1)
+                print("Please use the correct amount of arguments %d are required in this alias" % (len(aliasDict[options.alias].split("ARG"))-1))
                 sys.exit(1)
             
             # Sub Argument 1 into the query string
@@ -154,9 +154,9 @@ getInfo.py -a getTags /QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6/Fall11-PU_S6
         
         # Alias was invalid
         else:
-            print "Alias %s was not found current alias' are:" % options.alias
+            print("Alias %s was not found current alias' are:" % options.alias)
             for i in aliasDict:
-                print i
+                print(i)
             sys.exit(1)
     
     # Execute the Query
@@ -167,7 +167,7 @@ getInfo.py -a getTags /QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6/Fall11-PU_S6
     colnames = ""
     for column in columns:
         colnames += str(column) + "\t"
-    print colnames
+    print(colnames)
     
     # Print out the results
     for row in rows:
@@ -175,7 +175,7 @@ getInfo.py -a getTags /QCD_Pt-20to30_EMEnriched_TuneZ2_7TeV-pythia6/Fall11-PU_S6
         for column in row:
             string += str(column) + " ||\t"
         string = string.rstrip(" ||\t")
-        print string
+        print(string)
     
     
  

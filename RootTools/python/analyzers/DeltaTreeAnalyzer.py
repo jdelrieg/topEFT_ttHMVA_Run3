@@ -55,7 +55,7 @@ class DeltaTreeAnalyzer( TreeAnalyzer ):
         
         assert( len(event.pairsG1) == len(event.pairsG2) )
         
-        for (gen, col1), (gen, col2) in zip( event.pairsG1.iteritems(), event.pairsG2.iteritems()):
+        for (gen, col1), (gen, col2) in zip( iter(event.pairsG1.items()), iter(event.pairsG2.items())):
             fParticleVars('gen', gen)
             if col1 is None: col1 = dummyParticle
             if col2 is None: col2 = dummyParticle

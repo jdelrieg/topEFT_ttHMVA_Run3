@@ -11,7 +11,7 @@ def ymax(hists):
     def getmax(h):
         hw = h.weighted
         return  hw.GetBinContent(hw.GetMaximumBin())
-    maxs = map(getmax, hists)
+    maxs = list(map(getmax, hists))
     ymax = max( maxs )*1.1
     if ymax == 0:
         ymax = 1
@@ -73,7 +73,7 @@ class DataMCPlot(object):
         for name in namesToGroup:
             hist = self.histosDict.get(name, None)
             if hist is None:
-                print 'warning, no histo with name', name
+                print('warning, no histo with name', name)
                 continue
             if groupHist is None:
                 groupHist = hist.Clone(groupName)
@@ -93,7 +93,7 @@ class DataMCPlot(object):
         '''Ungroup groupName, recover the histograms in the group'''
         group = self.groups.get(groupName, None)
         if group is None:
-            print groupName, 'is not a group in this plot.'
+            print(groupName, 'is not a group in this plot.')
             return
         for name in group:
             self.histosDict[name].on = True
@@ -111,7 +111,7 @@ class DataMCPlot(object):
         pyhist.SetStyle( oldh.style )
         pyhist.weighted.SetFillStyle( oldh.weighted.GetFillStyle())
         if oldh is None:
-            print 'histogram', name, 'does not exist, cannot replace it.'
+            print('histogram', name, 'does not exist, cannot replace it.')
             return
         else:
             index = self.histos.index( oldh )

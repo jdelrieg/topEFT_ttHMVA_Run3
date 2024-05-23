@@ -30,7 +30,7 @@ process.source.fileNames.extend([
 
 fileName = process.source.fileNames[0]
 fileName = fileName.replace('file:', '')
-print "Building list of events in file '%s'" % fileName
+print("Building list of events in file '%s'" % fileName)
 
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
@@ -73,12 +73,12 @@ while True:
 if len(events):
     events.sort()
     if len(events) == 1:
-        print "Found 1 event:"
+        print("Found 1 event:")
     else:
-        print "Found %d events:" % len(events)
+        print("Found %d events:" % len(events))
     for (run, ls, evt) in events:
-        print "Run:  %7d\tEvent:  %12d\tLumi:  %10d" % (run, evt, ls)
+        print("Run:  %7d\tEvent:  %12d\tLumi:  %10d" % (run, evt, ls))
 else:
-    print "No events found"
+    print("No events found")
 
-print
+print()

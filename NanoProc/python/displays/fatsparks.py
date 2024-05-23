@@ -20,7 +20,7 @@ if __name__ == "__main__":
         cut = options.cut
     if options.doS2V:
         cut = scalarToVector(cut)
-    print "Reading %s (%d entries)" % (args[0], t.GetEntries())
+    print("Reading %s (%d entries)" % (args[0], t.GetEntries()))
     if not os.path.exists((options.pdir)):
         os.system("mkdir -p "+(options.pdir))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+(options.pdir))

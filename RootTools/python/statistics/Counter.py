@@ -99,10 +99,10 @@ class Counters(object):
         return self.counters[ self.ranks[name] ] 
 
     def write(self, dirname):
-        map( lambda x: x.write(dirname), self.counters)
+        list(map( lambda x: x.write(dirname), self.counters))
 
     def __str__(self):
-        prints = map( str, self.counters )
+        prints = list(map( str, self.counters ))
         return '\n'.join(prints)
         
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     c.register('a')
     c.register('b')
     c.inc('a')
-    print c
+    print(c)
 
     cs = Counters()
     cs.addCounter('test')
@@ -126,25 +126,25 @@ if __name__ == '__main__':
     cs.counter('test').inc('b')
     cs.counter('test2').inc('a')
     
-    print cs
+    print(cs)
 
     cs.write('.')
-    print 'loading ...'
+    print('loading ...')
     file = open('test.pck')
     lcs = pickle.load(file)
-    print lcs
+    print(lcs)
 
     c1 = cs.counter('test2')
 
-    print 'test addition, adding test and test2'
+    print('test addition, adding test and test2')
     import copy
     c2 = cs.counter('test')
     c1 += c2 
-    print c1
+    print(c1)
 
-    print 'test addition : incompatible'
+    print('test addition : incompatible')
     c = Counter('Test3')
     c.register('b')
     c.inc('b')
     c1 += c
-    print c1
+    print(c1)

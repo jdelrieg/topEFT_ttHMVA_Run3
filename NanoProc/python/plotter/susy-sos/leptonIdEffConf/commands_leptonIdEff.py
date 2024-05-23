@@ -37,4 +37,4 @@ else :
 if sys.argv[2]=="2017" :
     command = command + " --mcc susy-sos-v2-clean/leptonIdEffConf/mcc_leptonIdEff_2017.txt"
 
-print command
+print(command)

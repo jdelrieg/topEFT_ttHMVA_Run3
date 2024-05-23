@@ -25,10 +25,10 @@ if __name__=='__main__':
     import sys
     
     pprint.pprint(packages)
-    print
+    print()
     pprint.pprint(sys.path)
     sys.path = pythonpath + sys.path 
-    print 
+    print() 
     pprint.pprint(sys.path)
 
     

@@ -125,13 +125,13 @@ class TriggerAnalyzer( Analyzer ):
 
         ### Riccardo: I want the trigger objects corresponding to the trigger I want to fire even if it has not been fired
         if hltPath is not None :
-          trigObjs = map( TriggerObject, self.handles['cmgTriggerObjectListSel'].product())
+          trigObjs = list(map( TriggerObject, self.handles['cmgTriggerObjectListSel'].product()))
           # selecting the trigger objects used in this path
           event.triggerObjects = selTriggerObjects( trigObjs, hltPath )
         elif keepFailingEvents :
           event.triggerObjects = []
           for hltPath in self.cfg_comp.triggers :
-            trigObjs = map( TriggerObject, self.handles['cmgTriggerObjectListSel'].product())
+            trigObjs = list(map( TriggerObject, self.handles['cmgTriggerObjectListSel'].product()))
             event.triggerObjects.extend( selTriggerObjects( trigObjs, hltPath, skipPath=True ) )
           hltPath = None
           #import pdb ; pdb.set_trace()
@@ -147,7 +147,7 @@ class TriggerAnalyzer( Analyzer ):
         return True
 
     def write(self):
-        print 'writing TriggerAnalyzer'
+        print('writing TriggerAnalyzer')
         super(TriggerAnalyzer, self).write()
         self.triggerList.write( self.dirName )
 

@@ -140,17 +140,17 @@ class BTagEventWeightFriend:
             if not tagged:
                 efficiency = 1.0 - efficiency # MC
                 eff_data = 1.0 - eff_data # Data
-                if eff_data < 0.0: print "WARNING: Negative efficiency computed!"
+                if eff_data < 0.0: print("WARNING: Negative efficiency computed!")
 
 
             pmc *= efficiency
             pdata *= eff_data
-            if pdata < 0.0: print "WARNING: Negative probability computed!"
+            if pdata < 0.0: print("WARNING: Negative probability computed!")
 
         try:
             return pdata/pmc
         except ZeroDivisionError:
-            print "WARNING: scale factor of 0 found"
+            print("WARNING: scale factor of 0 found")
             return 1.0
 
 
@@ -163,9 +163,9 @@ class BTagEventWeightFriend:
         for _var in self.systsJEC:
             jets = [j for j in Collection(event,"JetSel"+self.recllabel)]
             jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
+            if (_var==0): jets = [x for x in jets if x.pt>jetptcut]
+            elif (_var==1): jets = [x for x in jets if x.pt_jesTotalUp>jetptcut]
+            elif (_var==-1): jets = [x for x in jets if x.pt_jesTotalDown>jetptcut]
             if (_var==0): jetcorr = [1 for x in jets]
             elif (_var==1): jetcorr = [ x.pt_jesTotalUp/x.pt if x.pt != 0 else 1 for x in jets]
             elif (_var==-1): jetcorr = [ x.pt_jesTotalDown/x.pt  if x.pt != 0 else 1 for x in jets]
@@ -192,13 +192,13 @@ if __name__ == '__main__':
     treefile = ROOT.TFile.Open(argv[1])
     tree = treefile.Get("tree")
     tree.vectorTree = True
-    print "... processing %s" % argv[1]
+    print("... processing %s" % argv[1])
 
     try:
         friendfile = ROOT.TFile.Open(argv[2])
         friendtree = friendfile.Get("sf/t")
         tree.AddFriend(friendtree)
-        print "... adding friend tree from %s" % argv[2]
+        print("... adding friend tree from %s" % argv[2])
     except IndexError:
         pass
 
@@ -210,24 +210,24 @@ if __name__ == '__main__':
         def __init__(self, name):
             Module.__init__(self,name,None)
             self.sf = BTagEventWeightFriend(btagsf_payload, recllabel="Recl", algo='csv')
-            print "Adding these branches:", self.sf.listBranches()
+            print("Adding these branches:", self.sf.listBranches())
 
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
+            print("\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData)))
             ret = self.sf(ev)
             jets = Collection(ev,"Jet")
             # leps = Collection(ev,"LepGood")
 
             for i,j in enumerate(jets):
-                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1))
+                print("\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1)))
 
             for label in self.sf.listBranches()[:10]:
-                print "%8s"%label[-8:],
-            print ""
+                print("%8s"%label[-8:], end=' ')
+            print("")
 
             for label in self.sf.listBranches()[:10]:
-                print "%8.3f" % ret[label],
-            print ""
+                print("%8.3f" % ret[label], end=' ')
+            print("")
 
 
         def done(self):
@@ -243,7 +243,7 @@ if __name__ == '__main__':
                                             csvfastsim=btagsf_payload_fastsim,
                                             eff_rootfile=btag_efficiency_file,
                                             recllabel="Recl", algo='csv')
-            print "Adding these branches:", self.sf.listBranches()
+            print("Adding these branches:", self.sf.listBranches())
 
         def analyze(self,ev):
             # print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
@@ -259,8 +259,8 @@ if __name__ == '__main__':
             # print ""
 
             for label in self.sf.listBranches()[:10]:
-                print "%8.3f" % ret[label],
-            print ""
+                print("%8.3f" % ret[label], end=' ')
+            print("")
 
 
         def done(self):

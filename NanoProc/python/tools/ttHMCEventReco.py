@@ -12,7 +12,7 @@ class TTHMCEventReco:
         self._helpers = []
     def init(self,tree):
         for v in self.floats+self.ints:
-            if not tree.GetBranch("GenPart_"+v): print "Missing branch GenPart_"+v
+            if not tree.GetBranch("GenPart_"+v): print("Missing branch GenPart_"+v)
         self.floats = [v for v in self.floats if tree.GetBranch("GenPart_"+v)]
         self.ints   = [v for v in self.ints   if tree.GetBranch("GenPart_"+v)]
 
@@ -43,17 +43,17 @@ class TTHMCEventReco:
         for x in self.collections:
             setattr(self,'_%s'%x,[])
 
-        for i in xrange(self.nGenPart.Get()[0]):
+        for i in range(self.nGenPart.Get()[0]):
             if self.pdgId[i]==25 and self.status[i]==62: self._Higgs.append(i)
             elif self.pdgId[i]==6 and self.status[i]==62: self._Top.append(i)
             elif self.pdgId[i]==-6 and self.status[i]==62: self._ATop.append(i)
-        for i in xrange(self.nGenPart.Get()[0]):
+        for i in range(self.nGenPart.Get()[0]):
             if self.pdgId[i]==5 and self.motherIndex[i] in self._Top: self._bFromTop.append(i)
             elif self.pdgId[i]==24 and self.motherIndex[i] in self._Top: self._WFromTop.append(i)
             elif self.pdgId[i]==-5 and self.motherIndex[i] in self._ATop: self._bFromATop.append(i)
             elif self.pdgId[i]==-24 and self.motherIndex[i] in self._ATop: self._WFromATop.append(i)
             elif self.motherIndex[i] in self._Higgs: self._dDirectFromHiggs.append(i)
-        for i in xrange(self.nGenPart.Get()[0]):
+        for i in range(self.nGenPart.Get()[0]):
             if self.motherIndex[i] in self._WFromTop: self._dFromWFromTop.append(i)
             elif self.motherIndex[i] in self._WFromATop: self._dFromWFromATop.append(i)
             elif abs(self.motherId[i]) in (23,24) and self.motherIndex[i] in self._dDirectFromHiggs: self._dAllFromHiggs.append(i)

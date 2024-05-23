@@ -79,7 +79,7 @@ class MyBatchManager( BatchManager ):
          
    def PrepareJobUser(self, jobDir, jobValue ):
        '''Prepare one job. This function is called by the base class.'''
-       print jobValue
+       print(jobValue)
 
        powheg_config = open(cfgFileName, 'r')
        ofile = open( '/'.join([jobDir, cfgFileName]), 'w')
@@ -130,15 +130,15 @@ if __name__ == '__main__':
 
     options, args = batchManager.ParseOptions()
     if len(args)!=2:
-        print batchManager.parser_.usage
-        print
-        print 'need exactly two arguments'
+        print(batchManager.parser_.usage)
+        print()
+        print('need exactly two arguments')
         sys.exit(1)
 
     njobs, cfgFileName = args
     njobs = int(njobs)
     
-    listOfValues = range(0, njobs)
+    listOfValues = list(range(0, njobs))
     batchManager.PrepareJobs( listOfValues )
     waitingTime = 0.1
     batchManager.SubmitJobs( waitingTime )

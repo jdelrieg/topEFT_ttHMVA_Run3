@@ -42,7 +42,7 @@ if __name__ == "__main__":
             bandN.Sort()
             xmin = bandN.GetX()[0]-bandN.GetErrorXlow(0)
             xmax = bandN.GetX()[bandN.GetN()-1]+bandN.GetErrorXhigh(bandN.GetN()-1)
-            ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in xrange(bandN.GetN())])
+            ymax = max([bandN.GetY()[i]+1.3*bandN.GetErrorYhigh(i) for i in range(bandN.GetN())])
             if var == "nJet25": xmin = 1.5 if "3l" in argv[1] else 3.5
             ## Prepare split screen
             c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()

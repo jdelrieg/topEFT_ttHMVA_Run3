@@ -16,8 +16,8 @@ class CrabStatus(object):
         stdout, stderr = subprocess.Popen(cmd, stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()
 
         if stderr:
-            print >>sys.stderr, stderr
-            print >>sys.stderr, stdout
+            print(stderr, file=sys.stderr)
+            print(stdout, file=sys.stderr)
 
         for line in stdout.split('\n'):
             if line.startswith('Log file is'):
@@ -63,12 +63,12 @@ class CrabStatus(object):
             sub = int(job.get('submission',0))
 
             status = '%s_%s_%s_%s' % (processStatus,scheduleStatus,ret,aret)
-            if self.job_info.has_key(status):
+            if status in self.job_info:
                 self.job_info[status].append(id)
             else:
                 self.job_info[status] = [id]
 
-            if self.sub_count.has_key(sub):
+            if sub in self.sub_count:
                 self.sub_count[sub] += 1
             else:
                 self.sub_count[sub] = 1
@@ -80,9 +80,9 @@ class CrabStatus(object):
 
     def printJobInfo(self):
     
-        for key, job_list in self.job_info.iteritems():
-            print '#',key,len(job_list),len(job_list)/(1.*self.job_count)
-        print '# Submission counts: %s' % str(self.sub_count)
+        for key, job_list in self.job_info.items():
+            print('#',key,len(job_list),len(job_list)/(1.*self.job_count))
+        print('# Submission counts: %s' % str(self.sub_count))
 
 
     def resubmit(self, status = 'created_Cleared_[0-9]+_[0-9]+'):
@@ -91,7 +91,7 @@ class CrabStatus(object):
         sub = []
         match = []
 
-        for key, job_list in self.job_info.iteritems():
+        for key, job_list in self.job_info.items():
             tokens = key.split('_')
             if re.match(status,key) is not None:
                 if not tokens[-1] == '0' or not tokens[-2] == '0':
@@ -116,7 +116,7 @@ crab -resubmit %s
 #crab -match %s
 #crab -resubmit %s
 """ % (jobs,jobs,jobs, ','.join(sub),mj,mj)
-            print script
+            print(script)
 
     def __del__(self):
 

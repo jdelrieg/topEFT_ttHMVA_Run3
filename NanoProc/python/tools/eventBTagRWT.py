@@ -29,7 +29,7 @@ class EventBTagRWT:
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nCleaning = getattr(event,"nLepCleaning"+self.inputlabel)
         chosen = getattr(event,"iC"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nCleaning)]
+        leps = [all_leps[chosen[i]] for i in range(nCleaning)]
 
         retwlabel = {};
 
@@ -46,7 +46,7 @@ class EventBTagRWT:
                 if thisvar!=None:
                     retwlabel["eventBTagSF"+self.label+thisvar] = self.bTag_eventRWT_SF(event,leps,jets,self.systsBTAG[btagsyst])
                     if (not self.suppressWarning) and hasattr(event,"eventBTagSF"+self.inputlabel+thisvar):
-                        if abs(retwlabel["eventBTagSF"+self.label+thisvar]-getattr(event,"eventBTagSF"+self.inputlabel+thisvar))>1e-4: print 'Difference from pre-calculated value:',retwlabel["eventBTagSF"+self.label+thisvar],getattr(event,"eventBTagSF"+self.inputlabel+thisvar)
+                        if abs(retwlabel["eventBTagSF"+self.label+thisvar]-getattr(event,"eventBTagSF"+self.inputlabel+thisvar))>1e-4: print('Difference from pre-calculated value:',retwlabel["eventBTagSF"+self.label+thisvar],getattr(event,"eventBTagSF"+self.inputlabel+thisvar))
 
         return retwlabel
 

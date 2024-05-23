@@ -5,8 +5,8 @@ import re
 
 class AliasSetter:
     def __init__(self, tree, aliases, process):
-        print '---'
-        print 'setting aliases for tree ', tree.GetName()
+        print('---')
+        print('setting aliases for tree ', tree.GetName())
         pprint.pprint( aliases )
         self.tree = tree
         self.aliases = aliases
@@ -22,7 +22,7 @@ class AliasSetter:
 
        # adding the process name, if it's necessary to do so:
        pattern = re.compile('.*_$')        
-       for alias,aliased in sorted(aliases.iteritems()):
+       for alias,aliased in sorted(aliases.items()):
            # print alias, aliased
            
            match = pattern.match( aliased )

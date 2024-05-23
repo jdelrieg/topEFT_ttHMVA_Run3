@@ -32,23 +32,23 @@ class Migrate(object):
         
         for d in self.dest_files:
             base = os.path.basename(d[0])
-            if src_dist.has_key(base):
+            if base in src_dist:
                 s = src_dist[base]
                 if d[1] != s[1]:
                     self.problem(s,'File exists in destination, but with different file size.')
-                print "Removing '%s' from copy list" % s[0]
+                print("Removing '%s' from copy list" % s[0])
                 self.src_files.remove(s)
                 
     
     def problem(self, name, reason):
-        print 'File problem',name,reason
+        print('File problem',name,reason)
         self.problem_files.append((name,reason))
     
     def copy(self, path, dest, fraction = 1.0):
-        print 'copying',path
+        print('copying',path)
         out, err, ret = castortools.runXRDCommand(path,'cp',dest)
         if "cp returned 0" in out:
-            print "[%f] The file '%s' was copied successfully" % (fraction,path)
+            print("[%f] The file '%s' was copied successfully" % (fraction,path))
         else:
             self.problem(path,'The copy failed. Someoutput is here "%s" and here "%s"' % (out, err))
     
@@ -61,9 +61,9 @@ class Migrate(object):
             count += 1
         
         if self.problem_files:
-            print >> sys.stderr, 'The following files had problems, and must be handled manually'
+            print('The following files had problems, and must be handled manually', file=sys.stderr)
             for p in self.problem_files:
-                print >> sys.stderr, p[0],p[1]
+                print(p[0],p[1], file=sys.stderr)
         
 
 if __name__ == '__main__':
@@ -83,11 +83,11 @@ Both the source and destination must exist
     (options,args) = parser.parse_args()
 
     if options.source is None or options.dest is None:
-        print >> sys.stderr, 'Both the source and destination must be set'
+        print('Both the source and destination must be set', file=sys.stderr)
         sys.exit(-1)
         
     if not castortools.isDirectory(options.source) or not castortools.isDirectory(options.dest):
-        print >> sys.stderr, 'Both the source and destination directories must exist'
+        print('Both the source and destination directories must exist', file=sys.stderr)
         sys.exit(-1)
         
     m = Migrate(options.source,options.dest)

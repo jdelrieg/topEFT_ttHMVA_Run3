@@ -383,7 +383,7 @@ class LepMVATreeProducer(Module):
                 if not self.fast:
                     setattr(self.t, "LepGood%d_mvaNewUncorr"     % (i+1), self.mva(l,ncorr=0))
                     setattr(self.t, "LepGood%d_mvaNewDoubleCorr" % (i+1), self.mva(l,ncorr=2))
-        for i in xrange(len(lep),8):
+        for i in range(len(lep),8):
             setattr(self.t, "LepGood%d_mvaNew" % (i+1), -99.)
             if self.others:
                 setattr(self.t, "LepGood%d_mvaNoSIP" % (i+1), -99.)
@@ -413,10 +413,10 @@ parser.add_option("-q", "--queue",   dest="queue",     type="string", default=No
 (options, args) = parser.parse_args()
 
 if len(args) != 2: 
-    print "Usage: program <TREE_DIR> <TRAINING>"
+    print("Usage: program <TREE_DIR> <TRAINING>")
     exit()
 if len(options.chunks) != 0 and len(options.datasets) != 1:
-    print "must specify a single dataset with -d if using -c to select chunks"
+    print("must specify a single dataset with -d if using -c to select chunks")
     exit()
 
 jobs = []
@@ -433,18 +433,18 @@ for D in glob(args[0]+"/*"):
         f.Close()
         chunk = options.chunkSize
         if entries < chunk:
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/lepMVAFriend_%s.root" % (args[1],short),data,xrange(entries),-1))
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk")
+            jobs.append((short,fname,"%s/lepMVAFriend_%s.root" % (args[1],short),data,range(entries),-1))
         else:
             nchunk = int(ceil(entries/float(chunk)))
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
-            for i in xrange(nchunk):
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk)
+            for i in range(nchunk):
                 if options.chunks != []:
                     if i not in options.chunks: continue
-                r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
+                r = range(int(i*chunk),min(int((i+1)*chunk),entries))
                 jobs.append((short,fname,"%s/lepMVAFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i))
-print "\n"
-print "I have %d taks to process" % len(jobs)
+print("\n")
+print("I have %d taks to process" % len(jobs))
 
 if options.queue:
     import os, sys
@@ -457,9 +457,9 @@ if options.queue:
     # specify what to do
     for (name,fin,fout,data,range,chunk) in jobs:
         if chunk != -1:
-            print "{base} -d {data} -c {chunk}".format(base=basecmd, data=name, chunk=chunk)
+            print("{base} -d {data} -c {chunk}".format(base=basecmd, data=name, chunk=chunk))
         else:
-            print "{base} -d {data}".format(base=basecmd, data=name, chunk=chunk)
+            print("{base} -d {data}".format(base=basecmd, data=name, chunk=chunk))
     exit()
 
 maintimer = ROOT.TStopwatch()
@@ -470,23 +470,23 @@ def _runIt(myargs):
     tb = fb.Get("ttHLepTreeProducerBase")
     nev = tb.GetEntries()
     if options.pretend:
-        print "==== pretending to run %s (%d entries, %s) ====" % (name, nev, fout)
+        print("==== pretending to run %s (%d entries, %s) ====" % (name, nev, fout))
         return (name,(nev,0))
-    print "==== %s starting (%d entries) ====" % (name, nev)
+    print("==== %s starting (%d entries) ====" % (name, nev))
     booker = Booker(fout)
     el = EventLoop([ LepMVATreeProducer("newMVA",booker,args[1],data,fast=True,others=options.allMVAs), ])
     el.loop([tb], eventRange=range)
     booker.done()
     fb.Close()
     time = timer.RealTime()
-    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) )
+    print("=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) ))
     return (name,(nev,time))
 
 from multiprocessing import Pool
 pool = Pool(options.jobs)
 ret  = dict(pool.map(_runIt, jobs))
 fulltime = maintimer.RealTime()
-totev   = sum([ev   for (ev,time) in ret.itervalues()])
-tottime = sum([time for (ev,time) in ret.itervalues()])
-print "Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.)
+totev   = sum([ev   for (ev,time) in ret.values()])
+tottime = sum([time for (ev,time) in ret.values()])
+print("Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.))
 

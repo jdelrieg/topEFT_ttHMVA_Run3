@@ -2,7 +2,7 @@ from ROOT import TTree, gDirectory
 
 def setEventList( tree, cut=None ):
     '''to undo, call tree.SetEventList(0)'''
-    print 'now browsing the full tree... might take a while, but drawing will then be faster!'
+    print('now browsing the full tree... might take a while, but drawing will then be faster!')
     tree.Draw('>>pyplus', cut)
     pyplus = gDirectory.Get('pyplus')
     pyplus.SetReapplyCut(True)

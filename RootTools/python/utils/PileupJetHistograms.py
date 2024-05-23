@@ -190,7 +190,7 @@ class PileupJetHistograms(Histograms) :
         ## book histograms and keep track of what needs to be filled
         self.fillers = []
         if jetIdMva:
-            print jetIdMva
+            print(jetIdMva)
             self.identifier = PileupJetIdAlgo(*jetIdMva)
             self.jetIdMva = jetIdMva
             self.runMva = True
@@ -200,7 +200,7 @@ class PileupJetHistograms(Histograms) :
             self.runMva = True
         
         vNames = ""
-        for name,proto in self.prototypes.iteritems():
+        for name,proto in self.prototypes.items():
             self.fillers.append( (self.bookHistos(name,proto), name) )
             if name != "mva":
                 vNames += ":%s" % name
@@ -239,7 +239,7 @@ class PileupJetHistograms(Histograms) :
             args = proto[1:]
         t = tuple( tuple(
             tuple( TH1F("%s%s%s%s_%s" % (self.name,eta,vtx,pt,hname),
-                        formatTitle(title, dict({"name":self.name, "hname":hname, "vtxbin": vtx, "ptbin":pt, "etabin":eta}.items()+aux.items())),*args)
+                        formatTitle(title, dict(list({"name":self.name, "hname":hname, "vtxbin": vtx, "ptbin":pt, "etabin":eta}.items())+list(aux.items()))),*args)
                     for eta in self.etalabels ) for pt in self.ptlabels ) for vtx in self.vtxlabels) 
         ## self.__setattr__("list_%s" % hname) = t
         self.addHistos(t)

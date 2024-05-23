@@ -162,7 +162,7 @@ class EfficiencyAnalyzer( Analyzer ):
         self.file = TFile( '/'.join( [self.dirName, 'EfficiencyAnalyzer.root']),
                            'recreate')
 
-        print self.cfg_ana
+        print(self.cfg_ana)
         self.phaseSpaces = None
         if self.cfg_ana.genPdgId==13:
             self.phaseSpaces = copy.deepcopy(muonPhaseSpaces)
@@ -192,7 +192,7 @@ class EfficiencyAnalyzer( Analyzer ):
     def process(self, iEvent, event):
         self.readCollections( iEvent )
 
-        event.pusi = map( PileUpSummaryInfo, self.mchandles['pusi'].product() )
+        event.pusi = list(map( PileUpSummaryInfo, self.mchandles['pusi'].product() ))
         event.vertices = self.handles['vertices'].product()
         
         event.rec = self.handles['rec'].product()
@@ -243,12 +243,12 @@ class EfficiencyAnalyzer( Analyzer ):
         event.genmatchedRef = event.gen
         if event.refsel is not None:
             pairs = matchObjectCollection( event.gensel, event.refsel, 0.1)
-            event.genmatchedRef = [ gen for gen,ref in pairs.iteritems() if ref is not None]
+            event.genmatchedRef = [ gen for gen,ref in pairs.items() if ref is not None]
 
         # and gen objects wich are in addition matched to a
         # selected lepton
         pairs = matchObjectCollection( event.genmatchedRef, event.recsel, 0.1)
-        event.genmatched = [ gen for gen,rec in pairs.iteritems() if rec is not None]
+        event.genmatched = [ gen for gen,rec in pairs.items() if rec is not None]
 
         # reweighting OOTPU in chamonix samples to the OOTPU observed in Fall11 samples
         weight = 1
@@ -279,7 +279,7 @@ class EfficiencyAnalyzer( Analyzer ):
 
     def filterForPath(self, path):
         theFilter = None
-        for entry,filter in self.cfg_ana.triggerMap.iteritems():
+        for entry,filter in self.cfg_ana.triggerMap.items():
             if fnmatch.fnmatch( path, entry ):
                 theFilter = filter
                 break

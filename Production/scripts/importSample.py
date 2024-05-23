@@ -48,14 +48,14 @@ import CMGTools.Production.castorBaseDir as castorBaseDir
 try:
     cdir = castorBaseDir.castorBaseDir( options.user ) 
 except:
-    print 'user does not have a castor base dir'
+    print('user does not have a castor base dir')
     sys.exit(1)
     
 cdir += sampleName
 
 if not castortools.fileExists( cdir ):
-    print 'Directory ', cdir, 'does not exist'
-    print 'Please check the sample name, and the user. You can specify a different user using the -u option'
+    print('Directory ', cdir, 'does not exist')
+    print('Please check the sample name, and the user. You can specify a different user using the -u option')
     sys.exit(2)
 
 # making local source directory ---------
@@ -63,7 +63,7 @@ if not castortools.fileExists( cdir ):
 ldir = "./"+sampleName
 
 mkdir = 'mkdir -p ' + ldir
-print mkdir
+print(mkdir)
 
 if not options.negate:
     os.system( mkdir )
@@ -74,7 +74,7 @@ cmsStage = 'cmsStageAll.py -f %s %s "%s" ' % ( cdir, ldir, pattern )
 if options.negate:
     cmsStage += '-n'
 
-print cmsStage
+print(cmsStage)
 
 
 os.system( cmsStage )

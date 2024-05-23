@@ -12,7 +12,7 @@ else: ORIGIN="/afs/cern.ch/work/p/peruzzi";
 
 
 if len(sys.argv) < 3: 
-    print 'Sytaxis is %s [outputdir] [year]  [other]'%sys.argv[0]
+    print('Sytaxis is %s [outputdir] [year]  [other]'%sys.argv[0])
     raise RuntimeError 
 OUTNAME=sys.argv[1]
 YEAR=sys.argv[2]
@@ -51,4 +51,4 @@ if '_3l' in OUTNAME:
     B0 = B0 + " -p data -p WZ "
     B0 = B0 + " -E ^trilep "
     B0 = B0.replace("--sP dilep", "--sP trilep")
-print submit.format( command=B0 )
+print(submit.format( command=B0 ))

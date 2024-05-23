@@ -21,12 +21,12 @@ class VariableProducer(Module):
         self.t = PyTree(self.book("TTree","t","t"))
         self.branches = {}
         for name,mod in self._modules:
-            print name
-            print mod.listBranches()
+            print(name)
+            print(mod.listBranches())
             for B in mod.listBranches():
                 # don't add the same branch twice
                 if B in self.branches: 
-                    print "Will not add branch %s twice" % (B,)
+                    print("Will not add branch %s twice" % (B,))
                     continue
                 self.branches[B] = True
                 if type(B) == tuple:
@@ -41,7 +41,7 @@ class VariableProducer(Module):
     def analyze(self,event):
         for name,mod in self._modules:
             keyvals = mod(event)
-            for B,V in keyvals.iteritems():
+            for B,V in keyvals.items():
                 setattr(self.t, B, V)
                 setattr(event,  B, V)
         self.t.fill()
@@ -76,27 +76,27 @@ if options.imports:
         import_module(mod)
         obj = sys.modules[mod]
         for (name,x) in obj.MODULES:
-            print "Loaded %s from %s " % (name, mod)
+            print("Loaded %s from %s " % (name, mod))
             MODULES.append((name,x))
 
 if options.listModules:
-    print "List of modules"
+    print("List of modules")
     for (n,x) in MODULES:
         if type(x) == types.FunctionType: x = x()
-        print "   '%s': %s" % (n,x)
+        print("   '%s': %s" % (n,x))
     exit()
 
 if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
 if len(args) != 2 or not os.path.isdir(args[0]):
-    print "Usage: program <TREE_DIR> <OUT>"
+    print("Usage: program <TREE_DIR> <OUT>")
     exit()
 if not os.path.isdir(args[1]): 
     os.system("mkdir -p "+args[1])
     if not os.path.isdir(args[1]): 
-        print "Could not create output directory"
+        print("Could not create output directory")
         exit()
 if len(options.chunks) != 0 and len(options.datasets) != 1:
-    print "must specify a single dataset with -d if using -c to select chunks"
+    print("must specify a single dataset with -d if using -c to select chunks")
     exit()
 
 jobs = []
@@ -125,7 +125,7 @@ for D in glob(args[0]+"/*"):
         f = ROOT.TFile.Open(fname)
         t = f.Get(treename)
         if not t:
-            print "Corrupted ",fname
+            print("Corrupted ",fname)
             continue
         entries = t.GetEntries()
         f.Close()
@@ -135,26 +135,26 @@ for D in glob(args[0]+"/*"):
                 f = ROOT.TFile.Open(fname);
                 t = f.Get(treename)
                 if t.GetEntries() != entries:
-                    print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries()) 
+                    print("Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries())) 
                     f.Close()
                 else:
-                    print "Component %s exists already and has matching number of entries (%d)" % (short, entries) 
+                    print("Component %s exists already and has matching number of entries (%d)" % (short, entries)) 
                     continue 
         chunk = options.chunkSize
         nchunks = int(entries/chunk)+(1 if entries%chunk else 0)
         if entries < chunk:
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1))
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk")
+            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,range(entries),-1))
         else:
             nchunk = int(ceil(entries/float(chunk)))
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
-            for i in xrange(nchunk):
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk)
+            for i in range(nchunk):
                 if options.chunks != []:
                     if i not in options.chunks: continue
-                r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
+                r = range(int(i*chunk),min(int((i+1)*chunk),entries))
                 jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i))
-print "\n"
-print "I have %d task(s) to process" % len(jobs)
+print("\n")
+print("I have %d task(s) to process" % len(jobs))
 
 if options.queue:
     import os, sys
@@ -169,9 +169,9 @@ if options.queue:
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
     for (name,fin,fout,data,range,chunk) in jobs:
         if chunk != -1:
-            print "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            print("{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost))
         else:
-            print "{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            print("{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost))
         
     exit()
 
@@ -179,21 +179,21 @@ maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
     (name,fin,fout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
-    print 'i am running of filename', fin
+    print('i am running of filename', fin)
     fb = ROOT.TFile(fin)
-    print 'number of jobs', len(jobs)
+    print('number of jobs', len(jobs))
     fetchedfile = None
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
         if fin.startswith("root://"):
             try:
                 tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
                 tmpfile =  "%s/%s" % (tmpdir, os.path.basename(fin))
-                print "xrdcp %s %s" % (fin, tmpfile)
+                print("xrdcp %s %s" % (fin, tmpfile))
                 os.system("xrdcp %s %s" % (fin, tmpfile))
                 if os.path.exists(tmpfile):
                     fin = tmpfile 
                     fetchedfile = fin
-                    print "success :-)"
+                    print("success :-)")
             except:
                 pass
         fb = ROOT.TFile.Open(fin)
@@ -209,14 +209,14 @@ def _runIt(myargs):
         os.environ["DebugLevel"]="0"
     else:
         fb = ROOT.TFile.Open(fin)
-        print fb
+        print(fb)
 
     cn    = fb.Get('Count')
     cnlhe = fb.Get('CountLHE')
     cnsms = fb.Get('CountSMS')
     sumgen= fb.Get('SumGenWeights')
-    print 'this is the status of sumgen', sumgen
-    print "getting tree.."
+    print('this is the status of sumgen', sumgen)
+    print("getting tree..")
     tb = fb.Get(options.tree)
 
     if not tb: tb = fb.Get("tree") # new trees
@@ -233,13 +233,13 @@ def _runIt(myargs):
         friends_.append(tf) # to make sure pyroot does not delete them
     nev = tb.GetEntries()
     if options.pretend:
-        print "==== pretending to run %s (%d entries, %s) ====" % (name, nev, fout)
+        print("==== pretending to run %s (%d entries, %s) ====" % (name, nev, fout))
         return (name,(nev,0))
-    print "==== %s starting (%d entries) ====" % (name, nev)
+    print("==== %s starting (%d entries) ====" % (name, nev))
     booker = Booker(fout)
     #scaling = len(jobs)
     #int(ceil(entries/float(chunk)))
-    print 'total number of chunks', nchunks
+    print('total number of chunks', nchunks)
     
     if not cn     == None: cn    .Scale(1./nchunks); booker.book('TH1D', cn    )
     if not cnlhe  == None: cnlhe .Scale(1./nchunks); booker.book('TH1D', cnlhe )
@@ -258,9 +258,9 @@ def _runIt(myargs):
     booker.done()
     fb.Close()
     time = timer.RealTime()
-    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) )
+    print("=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) ))
     if fetchedfile and os.path.exists(fetchedfile):
-        print 'Cleaning up: removing %s'%fetchedfile
+        print('Cleaning up: removing %s'%fetchedfile)
         os.system("rm %s"%fetchedfile)
     return (name,(nev,time))
 
@@ -269,8 +269,8 @@ if options.jobs > 0:
     pool = Pool(options.jobs)
     ret  = dict(pool.map(_runIt, jobs)) if options.jobs > 0 else dict([_runIt(j) for j in jobs])
 else:
-    ret = dict(map(_runIt, jobs))
+    ret = dict(list(map(_runIt, jobs)))
 fulltime = maintimer.RealTime()
-totev   = sum([ev   for (ev,time) in ret.itervalues()])
-tottime = sum([time for (ev,time) in ret.itervalues()])
-print "Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.)
+totev   = sum([ev   for (ev,time) in ret.values()])
+tottime = sum([time for (ev,time) in ret.values()])
+print("Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.))

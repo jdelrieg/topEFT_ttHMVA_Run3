@@ -22,7 +22,7 @@ regexp = args[1]
 
 exists = castortools.fileExists( dir )
 if not exists:
-    print 'sourceFileList: directory does not exist. Exiting'
+    print('sourceFileList: directory does not exist. Exiting')
     sys.exit(1)
 
 
@@ -39,13 +39,13 @@ if options.check and file_mask:
     report = p.get(dir)
     if report is not None and report:
         dup = report.get('ValidDuplicates',{})
-        for name, status in report['Files'].iteritems():
+        for name, status in report['Files'].items():
             if not status[0]:
                 bad_files[name] = 'MarkedBad'
-            elif dup.has_key(name):
+            elif name in dup:
                 bad_files[name] = 'ValidDup'
 
 
 from CMGTools.Production.sourceFileListCff import sourceFileListCff
-print sourceFileListCff( files, bad_files)
+print(sourceFileListCff( files, bad_files))
 

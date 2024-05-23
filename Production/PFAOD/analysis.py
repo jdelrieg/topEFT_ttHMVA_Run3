@@ -93,7 +93,7 @@ def processDir(dir):
     os.chdir( dir )
     
     rootFiles = glob.glob( '*.root' )
-    print rootFiles
+    print(rootFiles)
     AOD = findAOD(rootFiles)
     aodCollections = dumpCollections( AOD )
 
@@ -120,7 +120,7 @@ def processDir(dir):
                                     oFileVREF )
         
         report = printFile(file, AOD, vref)
-        print report 
+        print(report) 
         oFileSizeReport.write( report + '\n')
     os.chdir( baseDir )
 

@@ -39,7 +39,7 @@ class Collection():
 		else: setattr(obj, sl[0], {key:[v.strip() for v in val]})
 	def get(self, tag):
 		thelist = [o.name for o in self.objs]
-		if not tag in thelist: raise RuntimeError, "Object '" + tag + "' does not exist in collection '" + self.path + "'"
+		if not tag in thelist: raise RuntimeError("Object '" + tag + "' does not exist in collection '" + self.path + "'")
 		return self.objs[thelist.index(tag)]
 	def getAllNames(self):
 		return [o.name for o in self.obj]

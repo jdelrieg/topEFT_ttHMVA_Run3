@@ -32,7 +32,7 @@ thebase  = "THEBASE"
 ## ---------
 
 def cmd(cmd):
-	print cmd
+	print(cmd)
 	os.system(cmd)
 
 def cp(location, destination):
@@ -49,7 +49,7 @@ def makeFakeRate(thefrfiles, more = [], index = 0):
 			myfrfiles = [x if x != more[0] else more[index] for x in myfrfiles]
 		else:
 			myfrfiles.append(more[index])
-	myfrfiles = filter(None, myfrfiles)
+	myfrfiles = [_f for _f in myfrfiles if _f]
 	if len(myfrfiles) == 0: return ""
 	return ", FakeRate=\"" + "\,".join(myfrfiles) + "\""
 
@@ -76,7 +76,7 @@ def doMetVariation(infile, outfile, sig, jec, met, wVars):
 	jecUp  = f.Get("x_sig_{s}_{j}_Up".format(s=sig, j=jec))
 	jecDn  = f.Get("x_sig_{s}_{j}_Dn".format(s=sig, j=jec))
 	wvHist = {}
-	for key, vals in wVars.iteritems():
+	for key, vals in wVars.items():
 		wvHist[key + "Up"] = f.Get("x_sig_{s}_{j}_Up".format(s=sig, j=key))
 		wvHist[key + "Dn"] = f.Get("x_sig_{s}_{j}_Dn".format(s=sig, j=key))
 	final  = pfMET.Clone("x_sig_{s}"       .format(s=sig))
@@ -110,7 +110,7 @@ def doMetVariation(infile, outfile, sig, jec, met, wVars):
 		metDn   .SetBinContent(bin, avg-diff)
 		jecUp   .SetBinContent(bin, jecUp   .GetBinContent(bin)*sf)
 		jecDn   .SetBinContent(bin, jecDn   .GetBinContent(bin)*sf)
-		for key, vals in wVars.iteritems():
+		for key, vals in wVars.items():
 			wvHist[key + "Up"].SetBinContent(bin, wvHist[key + "Up"].GetBinContent(bin)*sf)
 			wvHist[key + "Dn"].SetBinContent(bin, wvHist[key + "Dn"].GetBinContent(bin)*sf)
 	## write all to output file
@@ -124,7 +124,7 @@ def doMetVariation(infile, outfile, sig, jec, met, wVars):
 	metDn   .Write()
 	jecUp   .Write()
 	jecDn   .Write()
-	for key, vals in wVars.iteritems():
+	for key, vals in wVars.items():
 		wvHist[key + "Up"].Write()
 		wvHist[key + "Dn"].Write()
 	ff.Close()
@@ -159,7 +159,7 @@ if len(frmet)==2:
 	if len(frjec)==3:
 		f.write(mcabase.format(name=sig+"_"+thejec+"_Up"   , ws=makeWeight(wstr, wvjec[1]), FRfiles=makeFakeRate(frfiles,frjec, 1)) + "\n")
 		f.write(mcabase.format(name=sig+"_"+thejec+"_Dn"   , ws=makeWeight(wstr, wvjec[2]), FRfiles=makeFakeRate(frfiles,frjec, 2)) + "\n")
-	for k,vals in wVars.iteritems():
+	for k,vals in wVars.items():
 		f.write(mcabase.format(name=sig+"_"+k+"_Up", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + "\n")
 		f.write(mcabase.format(name=sig+"_"+k+"_Dn", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + "\n")
 	f.close()
@@ -181,7 +181,7 @@ if len(frjec)==3:
 if len(frmet)==2:
 	f.write(mcabase.format(name=sig+"_"+themet+"_Up+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
 	f.write(mcabase.format(name=sig+"_"+themet+"_Dn+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
-for k,vals in wVars.iteritems():
+for k,vals in wVars.items():
 	f.write(mcabase.format(name=sig+"_"+k+"_Up+", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + ",SkipMe=True\n")
 	f.write(mcabase.format(name=sig+"_"+k+"_Dn+", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + ",SkipMe=True\n")
 if q2file:

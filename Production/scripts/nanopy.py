@@ -1,9 +1,11 @@
-#!/usr/bin/env python
-from __future__ import print_function
-import os, sys, imp, pickle, multiprocessing, types, json
-from copy import copy
+#!/usr/bin/env python3
+
+import os, sys,  pickle, multiprocessing, types, json
+import importlib.util
+from copy import copy, deepcopy
 from math import ceil
 import ROOT
+import uuid
 
 def _loadCMGGlobalOptions(options):
     from CMGTools.Production.globalOptions import _cmgToolsProdGlobalOptions
@@ -15,15 +17,16 @@ def _loadCMGGlobalOptions(options):
             _cmgToolsProdGlobalOptions[opt] = True
     if options.optionFile:
         opt = json.load(open(options.optionFile, 'r'))
-        for key,val in opt.iteritems(): 
+        for key,val in opt.items(): 
             _cmgToolsProdGlobalOptions[key] = val
 
 def _processOneComponent(pp, comp, outdir, preprocessor, options):
     if not comp.files: return
-
-    if isinstance(pp, str) or isinstance(pp, unicode):
+    if isinstance(pp, str):
         _loadCMGGlobalOptions(options)
-        cfo = imp.load_source(os.path.basename(pp).rstrip('.py'), pp, open(pp,'r'))
+        spec = importlib.util.spec_from_file_location(os.path.basename(pp).rstrip('.py'), pp)
+        cfo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module( cfo )
         pp = cfo.POSTPROCESSOR
 
     pp.postfix = "_nanopy"
@@ -66,20 +69,9 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
     trigSel = getattr(comp, 'triggers', [])
     trigVeto = getattr(comp, 'vetoTriggers', [])
     if trigSel:
-        if hasattr(comp, 'year'):
-            year = comp.year
-        elif ("Autumn18" in comp.dataset) or ("Run2018" in comp.dataset):
-            year = 2018
-        elif ("Fall17" in comp.dataset) or ("Run2017" in comp.dataset):
-            year = 2017
-        elif ("Summer16" in comp.dataset) or ("Run2016" in comp.dataset):
-            year = 2016
-        else:
-            raise RuntimeError("Can't detect year scenario for %s, %s" % (comp.name, comp.dataset))
-
-        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join("fires_{trigger}_{year}(run,AltBranch$({trigger},0))".format(year=year, trigger=t.rstrip("_v*")) for t in trigSel))
+        cut = "(%s) && (%s)" % (cut if cut else 1, " || ".join("{trigger}".format(trigger=t.rstrip("_v*")) for t in trigSel))
         if trigVeto:
-            cut += " && !(%s)" % (" || ".join("fires_{trigger}_{year}(run,AltBranch$({trigger},0))".format(year=year, trigger=t.rstrip("_v*")) for t in trigVeto))
+            cut += " && !(%s)" % (" || ".join("{trigger}".format(trigger=t.rstrip("_v*")) for t in trigVeto))
     elif trigVeto: raise RuntimeError("vetoTriggers specified without triggers for component %s" % comp.name)
     pp.cut = cut
     # input
@@ -133,8 +125,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     if len(args) < 2 :
-	 parser.print_help()
-         sys.exit(1)
+        parser.print_help()
+        sys.exit(1)
     outdir = args[0] 
 
     # this must be done before calling the source
@@ -142,13 +134,15 @@ if __name__ == "__main__":
     ROOT.gROOT.LoadMacro(os.environ['CMSSW_BASE'] + '/src/CMGTools/Production/src/hasfiredtriggers.cc+')
 
     cfg = args[1]
-    cfo = imp.load_source(os.path.basename(cfg).rstrip('.py'), cfg, open(cfg,'r'))
+    spec = importlib.util.spec_from_file_location(os.path.basename(cfg).rstrip('.py'), cfg)
+    cfo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module( cfo )
     pp = cfo.POSTPROCESSOR
-
+    
     if len(args) == 2:
         components = cfo.selectedComponents
     else:
-        components = [ pickle.load(open(arg, 'r')) for arg in args[2:] ]
+        components = [ pickle.load(open(arg, 'rb')) for arg in args[2:] ]
 
     preprocessor = getattr(cfo, 'PREPROCESSOR', None)
 
@@ -161,8 +155,8 @@ if __name__ == "__main__":
     else:
         from CMGTools.RootTools.samples.configTools import split
         components = split(components)
-        if options.ntasks == 0 or len(components) == 1: # single core, for debugging
-            map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ])
+        if  options.ntasks == 0 or len(components) == 1: # single core, for debugging
+            list(map(_processOneComponentAsync, [(copy(pp), comp, outdir, preprocessor, options) for comp in components ]))
         else:
             pool = multiprocessing.Pool(processes=min(len(components),options.ntasks,multiprocessing.cpu_count()))
             pool.map(_processOneComponentAsync, [(cfg, comp, outdir, preprocessor, options) for comp in components ])

@@ -14,8 +14,8 @@ plot_delta.py [root_file]
 file = None
 if len(args)>1:
     parser.print_help()
-    print
-    print 'Maximum one argument (a root file)'
+    print()
+    print('Maximum one argument (a root file)')
     sys.exit(1)
 elif len(args)==1:
     file = TFile( args[0] )

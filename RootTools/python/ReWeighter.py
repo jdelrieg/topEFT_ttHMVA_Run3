@@ -17,7 +17,7 @@ class ReWeighter(object):
             xmin = self.weights.GetBinLowEdge(i)
             xmax = self.weights.GetBinLowEdge(i) + self.weights.GetBinWidth(i)
             weight = self.weights.GetBinContent(i)
-            print i, xmin, xmax, weight
+            print(i, xmin, xmax, weight)
             cut = '({var}>={xmin} && {var}<{xmax})*{weight}'.format(var=var, xmin=xmin, xmax=xmax, weight=weight)
             cuts.append(cut)
         return ' + '.join(cuts)

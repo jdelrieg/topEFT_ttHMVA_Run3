@@ -122,14 +122,14 @@ class BDT_eventReco(Module): # has to run on a recleaner with label _Recl
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
         for var in self.systsJEC:
             _var = var
             if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
 
             jetptcut = 25
-            jets = filter(lambda x : getattr(x, 'pt%s'%self.systsJEC[_var]) > jetptcut, jets)
+            jets = [x for x in jets if getattr(x, 'pt%s'%self.systsJEC[_var]) > jetptcut]
 
             res = [-100]*len(self.branches)
 
@@ -172,8 +172,8 @@ if __name__ == '__main__':
                                                   lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,],
                                     )
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d, jets %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood, getattr(ev,'nJetSel'+self.sf.inputlabel))
-            print sorted(self.sf(ev).iteritems())
+            print("\nrun %6d lumi %4d event %d: leps %d, jets %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood, getattr(ev,'nJetSel'+self.sf.inputlabel)))
+            print(sorted(self.sf(ev).items()))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 3)
 

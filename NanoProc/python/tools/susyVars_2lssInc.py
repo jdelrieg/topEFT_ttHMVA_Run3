@@ -16,8 +16,8 @@ class SusyVars2LSSInc:
         ret = (0,1)
         if len(leps) > 2:
             pairs = []
-            for il1 in xrange(len(leps)-1):
-                for il2 in xrange(il1+1,len(leps)): 
+            for il1 in range(len(leps)-1):
+                for il2 in range(il1+1,len(leps)): 
                     l1 = leps[il1]
                     l2 = leps[il2]
                     if l2.pt < 10: break 
@@ -32,8 +32,8 @@ class SusyVars2LSSInc:
         return ret
     def bestZ1WithCut(self,leps,bothcut=lambda lep:True,onecut=lambda lep:True):
           pairs = []
-          for il1 in xrange(len(leps)-1):
-              for il2 in xrange(il1+1,len(leps)):
+          for il1 in range(len(leps)-1):
+              for il2 in range(il1+1,len(leps)):
                   l1 = leps[il1]
                   l2 = leps[il2]
                   if not bothcut(l1) or not bothcut(l2): continue
@@ -48,8 +48,8 @@ class SusyVars2LSSInc:
           return 0
     def minMllWithCut(self,leps,bothcut=lambda lep:True,onecut=lambda lep:True,paircut=lambda lep1,lep2:True):
             pairs = []
-            for il1 in xrange(len(leps)-1):
-                for il2 in xrange(il1+1,len(leps)):
+            for il1 in range(len(leps)-1):
+                for il2 in range(il1+1,len(leps)):
                     l1 = leps[il1]
                     l2 = leps[il2]
                     if not bothcut(l1) or not bothcut(l2): continue
@@ -108,13 +108,13 @@ if __name__ == '__main__':
             self.sf = SusyVars2LSSInc()
         def analyze(self,ev):
             if ev.nLepGood <= 2: return True
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
             leps = [l for l in Collection(ev,"LepGood","nLepGood")]
             if len(leps) > 2:
                 for i,l in enumerate(leps):
-                    print "\t%2d  pdgId: %+2d  pT: %6.2f" % (i,l.pdgId,l.pt)
-                print ""
+                    print("\t%2d  pdgId: %+2d  pT: %6.2f" % (i,l.pdgId,l.pt))
+                print("")
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

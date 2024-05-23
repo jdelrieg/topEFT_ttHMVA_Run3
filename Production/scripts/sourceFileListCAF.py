@@ -30,5 +30,5 @@ for line in dbsOut:
 
 
 from sourceFileListCff import sourceFileListCff
-print sourceFileListCff( allFiles )
+print(sourceFileListCff( allFiles ))
 

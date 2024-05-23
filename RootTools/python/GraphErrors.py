@@ -60,10 +60,10 @@ class GraphErrors( TGraphErrors ):
         # print pattern
         pat = re.compile(pattern)
         if pat.groups<2 or pat.groups>4:
-            print 'GraphErrors.parseFile : need between 2 and 4 groups:'
-            print 'x y'
-            print 'x y erry'
-            print 'x errx y erry'
+            print('GraphErrors.parseFile : need between 2 and 4 groups:')
+            print('x y')
+            print('x y erry')
+            print('x errx y erry')
             return False
         for line in input.readlines():
             # print line

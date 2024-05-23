@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 import os, subprocess, time, hashlib
 
 def _stripv(x):
@@ -21,7 +21,7 @@ class nanoAODPreprocessor:
     def clone(self, **kwargs):
         import copy
         ret = copy.copy(self)
-        for k,v in kwargs.items():
+        for k,v in list(kwargs.items()):
             if not hasattr(self, "_"+k): raise RuntimeError("No parameter %s to be modified" % k)
             setattr(ret, "_"+k, v)
         return ret

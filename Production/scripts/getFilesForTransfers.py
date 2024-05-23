@@ -70,8 +70,8 @@ fileowner%dataset
         elif eostools.isDirectory(castor2):
             files = burrow(LFN2)
             
-        print dataset
-        for i in files: print "\t"+i
+        print(dataset)
+        for i in files: print("\t"+i)
         
             #print "Dataset: "+dataset+" not found"
         

@@ -24,7 +24,7 @@ def processRootFiles( descmap ):
     ifiles = dict()
     ofiles = dict()
     # odirs = []
-    for input, output in descmap.iteritems():
+    for input, output in descmap.items():
         ifnam, idnam = file_dir_names( input )
         ofnam, odnam = file_dir_names( output )
         ifile = ifiles.get(ifnam, None)
@@ -43,11 +43,11 @@ def processRootFiles( descmap ):
         if odnam:
             odir = ofile.Get(odnam)
             if odir == None:
-                print 'mkdir', odnam
+                print('mkdir', odnam)
                 odir = ofile.mkdir( odnam )
         copyDirItems( idir, odir )
     ofile.cd()
-    for file in ofiles.values():
+    for file in list(ofiles.values()):
         file.Write()
     pprint.pprint(ifiles)
     pprint.pprint(ofiles)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     import sys
 
     if len(sys.argv)!=2:
-        print '''
+        print('''
         usage: fileOrganizer.py <desc_map>
 
         where desc_map is a text file like this:
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         muTau_vbf_CMS_scale_tUp.root            muTau_ColinJuly2_mVis.root:muTau_vbf       
         muTau_vbf_CMS_scale_tDown.root          muTau_ColinJuly2_mVis.root:muTau_vbf       
 
-        '''
+        ''')
         sys.exit(1)
     descMap = loadDescMap( sys.argv[1] ) 
     processRootFiles( descMap )

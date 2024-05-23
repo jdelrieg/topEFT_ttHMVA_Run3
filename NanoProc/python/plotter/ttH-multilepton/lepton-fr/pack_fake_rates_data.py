@@ -14,20 +14,20 @@ def makeH2D(name,xedges,yedges):
 
 def fillSliceY(th2,plot1d,yvalue,xslice):
     ybin = th2.GetYaxis().FindBin(yvalue)
-    for xbin in xrange(1,th2.GetNbinsX()+1):
+    for xbin in range(1,th2.GetNbinsX()+1):
         xval = th2.GetXaxis().GetBinCenter(xbin)
         if xslice[0] <= xval and xval <= xslice[1]:
             msg = "trying to fill %s bin %2d x %5.1f from %s: " % (th2.GetName(), xbin, xval, plot1d.GetName())
             found = "Not found!!"
             if "TGraph" in plot1d.ClassName():
-                for i in xrange(plot1d.GetN()):
+                for i in range(plot1d.GetN()):
                     x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
                     if x-xm <= xval and xval <= x+xp:
                         th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
                         th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
                         found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, x-xm,x+xp, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
             elif "TH1" in plot1d.ClassName():
-                for i in xrange(1,plot1d.GetNbinsX()+1):
+                for i in range(1,plot1d.GetNbinsX()+1):
                     x,xh,xl = plot1d.GetXaxis().GetBinCenter(i), plot1d.GetXaxis().GetBinUpEdge(i), plot1d.GetXaxis().GetBinLowEdge(i)
                     if xl <= xval and xval <= xh:
                         th2.SetBinContent(xbin,ybin,plot1d.GetBinContent(i))
@@ -35,14 +35,14 @@ def fillSliceY(th2,plot1d,yvalue,xslice):
                         found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, xl, xh, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
             else: raise RuntimeError()
             if "Not" in found:
-                print msg, found
+                print(msg, found)
 def readSliceY(th2,filename,plotname,yvalue,xslice):
     slicefile = ROOT.TFile.Open(filename)
-    if not slicefile: raise RuntimeError, "Cannot open "+filename
+    if not slicefile: raise RuntimeError("Cannot open "+filename)
     plot = slicefile.Get(plotname)
     if not plot: 
         slicefile.ls()
-        raise RuntimeError, "Cannot find "+plotname+" in "+filename
+        raise RuntimeError("Cannot find "+plotname+" in "+filename)
     fillSliceY(th2,plot,yvalue,xslice)
     slicefile.Close()
 def read2D(th2,filepattern,plotname,yslices,xslice):
@@ -72,16 +72,16 @@ def makeVariants(h,altsrc=None,norm=None):
     ret = []
     for s,func in shifters:
         hsyst = h.Clone(h.GetName()+"_"+s)
-        for bx in xrange(1,h.GetNbinsX()+1):
+        for bx in range(1,h.GetNbinsX()+1):
             x = h.GetXaxis().GetBinCenter(bx) 
-            for by in xrange(1,h.GetNbinsY()+1):
+            for by in range(1,h.GetNbinsY()+1):
                 y = h.GetYaxis().GetBinCenter(by) 
                 fr0 = h.GetBinContent(bx,by)
                 if altsrc == None:
                     err = h.GetBinError(bx,by)
                 else:
                     if altsrc.GetBinContent(bx,by) <= 0:
-                        print "Warning: in %s, pt %4.1f, eta %3.1f: nominal %.4f +- %.4f , alternate %.4f +- %.4f  "  % (hsyst.GetName(), x, y, fr0, err, altsrc.GetBinContent(bx,by), altsrc.GetBinError(bx,by))
+                        print("Warning: in %s, pt %4.1f, eta %3.1f: nominal %.4f +- %.4f , alternate %.4f +- %.4f  "  % (hsyst.GetName(), x, y, fr0, err, altsrc.GetBinContent(bx,by), altsrc.GetBinError(bx,by)))
                     else:
                         err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
                 fr = func(x,y,fr0,err)
@@ -90,16 +90,16 @@ def makeVariants(h,altsrc=None,norm=None):
                 hsyst.SetBinError(bx, by, 0)
         if norm and s not in ("up","down"):
             sum0, sums = 0, 0
-            for bx in xrange(1,h.GetNbinsX()+1):
+            for bx in range(1,h.GetNbinsX()+1):
                 x = h.GetXaxis().GetBinCenter(bx) 
                 binw = h.GetXaxis().GetBinWidth(bx)
                 #if x <= 15: continue
-                for by in xrange(1,h.GetNbinsY()+1):
+                for by in range(1,h.GetNbinsY()+1):
                     f0, f = h.GetBinContent(bx,by), hsyst.GetBinContent(bx,by)
                     sum0 += norm.GetBinContent(bx,by) * binw * f0/(1-f0)
                     sums += norm.GetBinContent(bx,by) * binw * f /(1-f) 
                     #print "     at bx %2d by %2d pt %5.1f abseta %5.2f    N = %9.2f  fr0 = %.3f   fr = %.3f" % (bx,by,x,h.GetYaxis().GetBinCenter(by), norm.GetBinContent(bx,by), f0, f)
-            print "   pre-normalization for %s: sum0 %9.2f   sum %9.2f    ratio %.3f " % (hsyst.GetName(), sums, sum0, sums/sum0)
+            print("   pre-normalization for %s: sum0 %9.2f   sum %9.2f    ratio %.3f " % (hsyst.GetName(), sums, sum0, sums/sum0))
             hsyst.Scale(sum0/sums)
         ret.append(hsyst)
      
@@ -108,15 +108,15 @@ def makeVariants(h,altsrc=None,norm=None):
 def fixLastBin(ibin, hdata, hmc=None, blowup=2.0):
     isrc = hdata.GetNbinsX()+ibin
     idst = isrc+1
-    for iy in xrange(1,hdata.GetNbinsY()+1):
+    for iy in range(1,hdata.GetNbinsY()+1):
         fr0 = hdata.GetBinContent(isrc, iy)
         er0 = hdata.GetBinError(isrc, iy)
         if hmc:
             sf = hmc.GetBinContent(idst, iy)/hmc.GetBinContent(isrc, iy)
-            print "extrapolate %s from pt %.1f to pt %.1f with SF %.3f from %s" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc), hdata.GetXaxis().GetBinCenter(idst), sf, hmc.GetName())
+            print("extrapolate %s from pt %.1f to pt %.1f with SF %.3f from %s" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc), hdata.GetXaxis().GetBinCenter(idst), sf, hmc.GetName()))
             fr0 *= sf; er0 *= sf
         else:
-            print "extrapolate %s from pt %.1f to pt %.1f" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc))
+            print("extrapolate %s from pt %.1f to pt %.1f" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc)))
         hdata.SetBinContent(idst, iy, fr0)
         hdata.SetBinError(idst, iy, er0 * blowup)
 
@@ -227,8 +227,8 @@ if __name__ == "__main__":
         readMany2D(["QCDEl_red_El17","QCDEl_redNC_El17"], h2d_el_mc4cc, "/".join([MCPlots, "el_sum17_wp"+mva_el+ID+"_recJet30_eta_%s.root"]), NumXVarBins_el, etaslices_el, (32,999) )
         h2d_el_cc = [ make2D(outfile,"FR_mva"+mva_el+"_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
         for hu,hc in zip(h2d_el,h2d_el_cc):
-           for ie in xrange(1,len(etabins_el)):
-             for ip in xrange(1,len(ptbins_el)):
+           for ie in range(1,len(etabins_el)):
+             for ip in range(1,len(ptbins_el)):
                  mcratio = h2d_el_mc4cc[1].GetBinContent(ip,ie)/h2d_el_mc4cc[0].GetBinContent(ip,ie)
                  hc.SetBinContent(ip,ie, hu.GetBinContent(ip,ie)*mcratio)
                  hc.SetBinError(ip,ie, hu.GetBinError(ip,ie)*mcratio)
@@ -268,4 +268,4 @@ if __name__ == "__main__":
            for v in mcvariants: outfile.WriteTObject(v, v.GetName())
 
         outfile.Close()
-        print "Saved FR for year %s in %s" % (year, outname)
+        print("Saved FR for year %s in %s" % (year, outname))

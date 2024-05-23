@@ -15,7 +15,7 @@ class diclist( list ):
         try:
             # index = int( index )
             return super(diclist, self).__getitem__(index)
-        except TypeError, ValueError:
+        except TypeError as ValueError:
             return super(diclist, self).__getitem__( self.dico[index] )
             
     def __setitem__(self, index, value):
@@ -24,7 +24,7 @@ class diclist( list ):
             # why did I add this cast? it's casting string to int...
             # index = int( index )
             return super(diclist, self).__setitem__(index, value)
-        except TypeError,ValueError:
+        except TypeError as ValueError:
             return super(diclist, self).__setitem__( self.dico[index], value )
             
 if __name__ == '__main__':
@@ -33,15 +33,15 @@ if __name__ == '__main__':
     dl.add(2, 2)
     dl.add(1, 3)
 
-    print dl
-    print dl[0], dl[1]
+    print(dl)
+    print(dl[0], dl[1])
     
     dl = diclist()
     dl.add('0', 1)
     dl.add('2', 2)
     dl.add('1', 3)
 
-    print dl
-    print dl['0'], dl['1']
+    print(dl)
+    print(dl['0'], dl['1'])
     
     

@@ -27,13 +27,13 @@ class Tree(object):
 
     def book(self):
         structcode = ['struct', 'struct_name', '{']
-        for var,type in self.vars.iteritems():
+        for var,type in self.vars.items():
             structcode.append('{type} {var};'.format(type=type, var=var))
         structcode.append('};')
         gROOT.ProcessLine( ' '.join(structcode) )
         from ROOT import struct_name
         self.s = struct_name()
-        for var, type in self.vars.iteritems():
+        for var, type in self.vars.items():
             self.ttree.Branch(var,
                               AddressOf(self.s, var),
                               '/'.join([var, self.shortType(type)]) )

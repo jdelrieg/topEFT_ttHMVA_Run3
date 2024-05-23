@@ -44,7 +44,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iF"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
 
         for var in self.systsJEC:
             _var = var
@@ -58,11 +58,11 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             max_mva_value = -99
             best_permutation = None
 
-            _jets = range(len(jets))
+            _jets = list(range(len(jets)))
             if len(jets)<8: _jets.extend([-1]*3)
             elif len(jets)==8: _jets.extend([-1]*2)
             else: _jets.extend([-1])
-            _leps = range(len(leps))
+            _leps = list(range(len(leps)))
 
             permutations_leps = [x for x in itertools.permutations(_leps,2)]
             permutations_jets = set()
@@ -161,8 +161,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = BDTv8_eventReco(weightfile = '../../data/kinMVA/tth/TMVAClassification_BDTG_slimmed_v8.weights.xml')
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 5)
 

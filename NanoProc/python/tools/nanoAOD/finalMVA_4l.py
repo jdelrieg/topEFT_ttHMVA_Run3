@@ -7,7 +7,7 @@ def mL4(ev):
     all_leps = [l for l in Collection(ev,"LepGood")]
     nFO = getattr(ev,"nLepFO_Recl")
     chosen = getattr(ev,"iLepFO_Recl")
-    leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+    leps = [all_leps[chosen[i]] for i in range(nFO)]
     if len(leps) < 4: return 0
     leps = leps[:4]
     min_mass = 999999
@@ -39,12 +39,12 @@ class FinalMVA_4L(Module):
         
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.wrappedOutputTree = wrappedOutputTree
-        for out in self._MVAs.keys():
+        for out in list(self._MVAs.keys()):
             self.wrappedOutputTree.branch(out,'F')
 
     def analyze(self, event):
         myvars = [event.iLepFO_Recl[0],event.iLepFO_Recl[1],event.iLepFO_Recl[2]]
-        writeOutput(self, dict([ (name, mva(event)) for name, mva in self._MVAs.iteritems()]))
+        writeOutput(self, dict([ (name, mva(event)) for name, mva in self._MVAs.items()]))
         return True
 
 if __name__ == '__main__':
@@ -57,8 +57,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = FinalMVA_3L()
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

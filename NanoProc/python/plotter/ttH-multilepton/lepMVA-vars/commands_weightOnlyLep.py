@@ -11,12 +11,12 @@ COMMOPT='--s2v --tree treeProducerSusyMultilepton -W "puw(nTrueInt)*LepGood_jetB
 SELECTIONS=["ttbar_MLM","ttbar_semiLeptonic","ZtoEE","ZtoMuMu","Wl","Zl"]#,"ttbar_Powheg","ttbar_MLM","ttbar_aMCatNLO","ttbar_Powheg_scaleUp","ttbar_aMCatNLO_scaleUp"]
 
 for SEL in SELECTIONS:
-    print '#'+SEL
+    print('#'+SEL)
     MCA = 'mca_13tev_%s.txt'%SEL if SEL in ["ttbar_Powheg","ttbar_aMCatNLO","ttbar_MLM","ttbar_Powheg_scaleUp","ttbar_aMCatNLO_scaleUp",'Wl','Zl','ttbar_semiLeptonic'] else 'mca_13tev.txt'
     MYMCC = '--mcc %s/mcc_%s.txt'%(WDIR,SEL)
     COARSE = '_coarse' if SEL in ['Wl','Zl','ttbar_semiLeptonic'] else ''
-    print '%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s -l %s %s --scaleSigToData --fitRatio 1 --pdir %s/%s/ScaleToData'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
-    print '%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)
+    print('%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s -l %s %s --scaleSigToData --fitRatio 1 --pdir %s/%s/ScaleToData'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL))
+    print('%s %s/%s %s/cuts_%s.txt %s/plots_lepquantities%s.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COARSE,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL))
 #####    print '%s %s/%s %s/cuts_%s.txt %s/plots_eventquantities.txt %s -P %s -l %s %s --pdir %s/%s/ScaleToLumi'%(EXE,WDIR,MCA,WDIR,SEL,WDIR,COMMOPT,MYTREEDIR,MYLUMI,MYMCC,ODIR,SEL)   # makes no sense with iChosen btag weight
 
 

@@ -24,4 +24,4 @@ if __name__ == '__main__':
     dir = castorBaseDir(user)
     if options.castorpath:
         dir = castortools.lfnToCastor( dir )
-    print dir
+    print(dir)

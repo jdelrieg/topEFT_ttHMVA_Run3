@@ -12,7 +12,7 @@ def getThem(tdirs, var, procs, norm=False):
     norm0 = 0
     for T,P in zip(tdirs,procs):
         if not T.Get("%s_%s" % (var,P)):
-            print "Missing %s_%s in %s" % (var,P,T.GetName())
+            print("Missing %s_%s in %s" % (var,P,T.GetName()))
             T.ls()
             exit()
         hist = T.Get("%s_%s" % (var,P)).Clone() 
@@ -28,7 +28,7 @@ def makeRatios(hists):
     ratios = []
     for h in hists:
         r = h.Clone(h.GetName()+"_ratio")
-        for b in xrange(1,ref.GetNbinsX()+1):
+        for b in range(1,ref.GetNbinsX()+1):
             if ref.GetBinContent(b) == 0: continue
             r.SetBinContent(b, r.GetBinContent(b)/ref.GetBinContent(b))
             r.SetBinError(b,   r.GetBinError(b)/ref.GetBinContent(b))

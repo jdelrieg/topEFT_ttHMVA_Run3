@@ -27,7 +27,7 @@ class fastCombinedObjectRecleaner:
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS','mZ2','m4l']
         self._outjetvars = [x%self.jc for x in ['ht%s%%dj','mht%s%%d','nB%sLoose%%d','nB%sMedium%%d','n%s%%d']]
         self.outjetvars=[]
-        for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt+y,'I' if ('nB%s'%self.jc in x or 'n%s'%self.jc in x) else 'F') for x in self._outjetvars for y in self.systsJEC.values()])
+        for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt+y,'I' if ('nB%s'%self.jc in x or 'n%s'%self.jc in x) else 'F') for x in self._outjetvars for y in list(self.systsJEC.values())])
         self.branches = [var+self.label for var in self.outmasses]
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
         self.branches += [("LepGood_conePt","F",20,"nLepGood")]
@@ -39,13 +39,13 @@ class fastCombinedObjectRecleaner:
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
 
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ recleaner worker module"
+            print("Load C++ recleaner worker module")
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/NanoProc/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
         self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,btagL_thr,btagM_thr)
         for x in self.jetPts: self._worker.addJetPt(x)
 
         if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ recleaner mass and veto calculator module"
+            print("Load C++ recleaner mass and veto calculator module")
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/NanoProc/python/tools/fastCombinedObjectRecleanerMassVetoCalculator.cxx+O" % os.environ['CMSSW_BASE'])
         self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(self._helper_lepsF.cppImpl(),self._helper_lepsT.cppImpl(),doVetoZ,doVetoLMf,doVetoLMt)
 
@@ -87,13 +87,13 @@ class fastCombinedObjectRecleaner:
 
         tags = getattr(event,'_CombinedTagsForCleaning%s'%self.inlabel)
         ret = {}
-        ret['LepGood_conePt'] = [tags.leps_conept[i] for i in xrange(self.nLepGood.Get()[0])]
+        ret['LepGood_conePt'] = [tags.leps_conept[i] for i in range(self.nLepGood.Get()[0])]
 
         self._worker.clear()
         self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
         self._worker.run()
 
-        for delta,varname in self.systsJEC.iteritems():
+        for delta,varname in self.systsJEC.items():
             for x in self._worker.GetJetSums(delta):
                 for var in self._outjetvars: ret[var%x.thr+varname+self.label]=getattr(x,var.replace('%d','').replace(self.jc,'Jet'))
 

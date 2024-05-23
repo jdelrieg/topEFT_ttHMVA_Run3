@@ -13,8 +13,8 @@ input = sys.argv[2]
 sampleStr = os.path.splitext( input )[0]
 
 
-print 'running: ', thisCfg
-print 'input file', input
+print('running: ', thisCfg)
+print('input file', input)
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(

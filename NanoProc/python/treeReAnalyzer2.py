@@ -105,7 +105,7 @@ class EventLoop:
         for tree in trees:
             TRAT.initTree(tree)
             for m in modules: m.init(tree)
-            for i in xrange(tree.GetEntries()) if eventRange == None else eventRange:
+            for i in range(tree.GetEntries()) if eventRange == None else eventRange:
                 if maxEvents > 0 and i >= maxEvents-1: break
                 e = Event(tree,i)
                 if cut != None:
@@ -119,7 +119,7 @@ class EventLoop:
                 self._doneEvents += 1
                 if i > 0 and i % 10000 == 0:
                     t1 = time.clock()
-                    print "Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(max(t1-tlast,1e-9)),i/1000./(max(t1-t0,1e-9)))
+                    print("Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(max(t1-tlast,1e-9)),i/1000./(max(t1-t0,1e-9))))
                     tlast = t1
         for m in modules: m.endJob()
     def beginComponent(self,component):
@@ -135,16 +135,16 @@ if __name__ == '__main__':
     class DummyModule(Module):
         def beginJob(self):
             self.maxEta = self.book("TH1F","maxEta","maxEta",20,0.,5.0)
-            print "Booked histogram 'maxEta'"
+            print("Booked histogram 'maxEta'")
         def analyze(self,event):
             genB = Collection(event,"LepGood")  
-            print "Number of leptons: %d" % len(genB)
+            print("Number of leptons: %d" % len(genB))
             jetB = Collection(event,"Jet")  
-            print "Number of jets: %d" % len(jetB)
+            print("Number of jets: %d" % len(jetB))
             #if not event.eval("nJet == 5"): return False
-            for i in xrange(len(genB)):
-                print "eta of leptons #%d: %+5.3f" % (i+1, genB[i].eta)
-            print ""
+            for i in range(len(genB)):
+                print("eta of leptons #%d: %+5.3f" % (i+1, genB[i].eta))
+            print("")
             maxEta = max([abs(gb.eta) for gb in genB])
             self.maxEta.Fill(maxEta)
     from sys import argv
@@ -155,5 +155,5 @@ if __name__ == '__main__':
     el = EventLoop([DummyModule("dummy",booker)])
     el.loop(t,1000)
     booker.done()
-    print "Wrote to test.root"
+    print("Wrote to test.root")
 

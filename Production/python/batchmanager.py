@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import print_function
+
 from datetime import datetime
 from optparse import OptionParser
 from collections import defaultdict
@@ -154,11 +154,11 @@ class BatchManager:
         self.outputDir_ = os.path.abspath(outputDir)
 
         if( os.path.isdir(self.outputDir_) == True ):
-            input = ''
+            inp = ''
             if not self.options_.force:
-                while input != 'y' and input != 'n':
-                    input = raw_input( 'The directory ' + self.outputDir_ + ' exists. Are you sure you want to continue? its contents will be overwritten [y/n] ' )
-            if input == 'n':
+                while inp != 'y' and inp != 'n':
+                    inp = input( 'The directory ' + self.outputDir_ + ' exists. Are you sure you want to continue? its contents will be overwritten [y/n] ' )
+            if inp == 'n':
                 sys.exit(1)
             else:
                 os.system( 'rm -rf ' + self.outputDir_)
@@ -204,7 +204,7 @@ class BatchManager:
                 m = re.match(r"(.*)_Chunk\d+$", jobDir)
                 if m: bulks[m.group(1)] += 1;
                 else: nobulk.append(jobDir)
-            for jobDir, njobs in bulks.iteritems():
+            for jobDir, njobs in bulks.items():
                 pardir, sample = os.path.dirname(jobDir), os.path.basename(jobDir)
                 print('Bulk submission for %s (%d chunks)' % (sample, njobs))
                 os.chdir( pardir )

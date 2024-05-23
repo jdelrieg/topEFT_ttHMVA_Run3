@@ -13,19 +13,19 @@ class TagAndProbeOneLeg:
         style.formatHisto( self.hEff, title)
         
     def fillHistos(self, events, var, nBins, min, max, probeCut, tagCut, nEvents):
-        print 'var  : ', var
-        print 'tag  : ', tagCut
-        print 'probe: ', probeCut
+        print('var  : ', var)
+        print('tag  : ', tagCut)
+        print('probe: ', probeCut)
         self.tagCut = tagCut
         self.probeCut = probeCut
         # the definition of the histogram should be external...
         self.hTot = TH1F('hTot_'+self.name,';'+var, nBins, min, max)
         self.hSel = self.hTot.Clone('hSel_'+self.name)
-        print 'n_tot...'
+        print('n_tot...')
         events.Draw(var + '>>hTot_'+self.name, tagCut,'goff', nEvents)
-        print 'n_sel...'
+        print('n_sel...')
         events.Draw(var + '>>hSel_'+self.name, tagCut + '&&' + probeCut,'goff', nEvents)
-        print self.hSel.GetEntries(), '/', self.hTot.GetEntries()
+        print(self.hSel.GetEntries(), '/', self.hTot.GetEntries())
         
     def efficiency(self): 
         self.hEff = self.hSel.Clone('hEff_'+self.name)
@@ -66,14 +66,14 @@ class TagAndProbeBothLegs:
     def fillHistos(self, events, var, nBins, min, max,
                    probeCut, tagCut, nEvents ):
         
-        print 'leg 1:'
+        print('leg 1:')
         
         probeCut.leg = 'leg1'
         tagCut.leg = 'leg2'
         var = var.replace('leg2', 'leg1')
         self.leg1.fillHistos( events, var, nBins, min, max,
                               probeCut.__str__(), tagCut.__str__(), nEvents)    
-        print 'leg 2:'
+        print('leg 2:')
         probeCut.leg = 'leg2'
         tagCut.leg = 'leg1'
         var = var.replace('leg1', 'leg2')

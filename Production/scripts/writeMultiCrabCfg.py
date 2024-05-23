@@ -23,8 +23,8 @@ The script will write a file named 'multicrab.cfg' in the current working direct
     parser.add_option_group(group)    
     (opts, datasets) = parser.parse_args()
 
-    import ConfigParser
-    config = ConfigParser.SafeConfigParser()
+    import configparser
+    config = configparser.SafeConfigParser()
     #set options to be case sensitive
     config.optionxform = str
 

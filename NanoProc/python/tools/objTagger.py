@@ -31,7 +31,7 @@ class ObjTagger(Module):
         try :
             assert (getattr(event,"n"+self.coll) <= self.sizelimit)
         except AssertionError:
-            print 'ERROR in ObjTagger: branch size limit is '+str(self.sizelimit)+' while n'+self.coll+'=='+str(getattr(event,"n"+self.coll))
+            print('ERROR in ObjTagger: branch size limit is '+str(self.sizelimit)+' while n'+self.coll+'=='+str(getattr(event,"n"+self.coll)))
             raise
         objs  = [l for l in Collection(event,self.coll,"n"+self.coll)]
         linked= [g for g in Collection(event,self.linkColl, "n"+self.linkColl)] if self.linkColl != "" else []
@@ -69,8 +69,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf1 = ObjTagger("LepPt25","LepGood",[lambda ob : ob.pt >= 25])
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf1(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf1(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

@@ -6,7 +6,7 @@ def getEOSlslist(directory, mask='', prepend='root://eoscms//eos/cms'):
     '''Takes a directory on eos (starting from /store/...) and returns
     a list of all files with root://eoscms//eos/cms/ prepended'''
     from subprocess import Popen, PIPE
-    print 'looking into:',directory,'...'
+    print('looking into:',directory,'...')
 
     eos_cmd = 'eos'
     if not osp.exists(eos_cmd):
@@ -42,14 +42,15 @@ def cacheLocally(infile, tmpDir='/tmp/'):
     # Copy locally if it's not there already
     if not osp.exists(tmpfile):
         xrcmd = "xrdcp %s %s" % (infile, tmpfile)
-        print " transferring to %s" % tmpDir
+        print(" transferring to %s" % tmpDir)
         os.system(xrcmd)
-        print "... copied successfully"
+        print("... copied successfully")
 
     infile = tmpfile
     return infile
 
-def run((infile, outfile, options)):
+def run(xxx_todo_changeme):
+    (infile, outfile, options) = xxx_todo_changeme
     if infile.startswith("root://"):
         infile = cacheLocally(infile, os.environ.get('TMPDIR', '/tmp'))
 
@@ -59,16 +60,16 @@ def run((infile, outfile, options)):
 
     try: tree.GetName()
     except ReferenceError:
-        print "Error: tree not found in %s" % infile
+        print("Error: tree not found in %s" % infile)
         return False
-    print "... processing %s" %infile
+    print("... processing %s" %infile)
 
 
     from ROOT import gSystem, TChain
 
     ## Load the previously compiled shared object library into ROOT
     libfile = "lepTnPFriendTreeMaker_cc.so"
-    print '... loading shared object library from %s'%libfile
+    print('... loading shared object library from %s'%libfile)
     gSystem.Load(libfile)
     ## Load it into PyROOT (this is where the magic happens)
     from ROOT import lepTnPFriendTreeMaker
@@ -138,7 +139,7 @@ if __name__ == '__main__':
     # Apply filter (if more than one file)
     if len(inputfiles) > 1 and len(options.filter.split(','))>0:
         filters = options.filter.split(',')
-        print "Will filter for", filters
+        print("Will filter for", filters)
         posfilters = [f     for f in filters if not f.startswith('-')]
         negfilters = [f[1:] for f in filters if     f.startswith('-')]
 
@@ -148,8 +149,8 @@ if __name__ == '__main__':
         inputfiles = [i for i in inputfiles if not
                                     any([(f in i) for f in negfilters])]
 
-    print "Will process the following files:"
-    for ifile in inputfiles: print ifile
+    print("Will process the following files:")
+    for ifile in inputfiles: print(ifile)
 
     os.system('mkdir -p %s'%options.outDir)
 
@@ -177,16 +178,16 @@ if __name__ == '__main__':
                               ifile=ifile,
                               odir=osp.abspath(options.outDir))
             os.system(cmd)
-        print "Submitted %d jobs to queue <%s>" % (len(tasks), options.queue)
+        print("Submitted %d jobs to queue <%s>" % (len(tasks), options.queue))
 
 
     elif options.jobs > 0 and len(tasks) > 1:
-        print "Running in parallel using %d jobs" % options.jobs
+        print("Running in parallel using %d jobs" % options.jobs)
         from multiprocessing import Pool
         pool = Pool(options.jobs)
         pool.map(run, tasks)
 
     else:
-        print "Running sequentially"
-        map(run, tasks)
+        print("Running sequentially")
+        list(map(run, tasks))
 

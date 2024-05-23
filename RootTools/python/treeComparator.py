@@ -27,13 +27,13 @@ def draw(var1=None, cut=1, t1=None, t2=None, w1='1', w2='1',
         name1 = a1
     if name2 is None:
         name2 = a2
-    print 'tree1',
-    print '\t var   : ' , var1
-    print '\t weight:', w1
-    print 'tree2',
-    print '\t var   : ' , var2
-    print '\t weight:', w2
-    print 'cut', cut
+    print('tree1', end=' ')
+    print('\t var   : ' , var1)
+    print('\t weight:', w1)
+    print('tree2', end=' ')
+    print('\t var   : ' , var2)
+    print('\t weight:', w2)
+    print('cut', cut)
     global legend
     h1 = TH1F(hname(), '', nbins, xmin, xmax)
     h1.Sumw2()
@@ -66,7 +66,7 @@ def draw(var1=None, cut=1, t1=None, t2=None, w1='1', w2='1',
     legend.AddEntry(h1, name1, 'lp')
     legend.AddEntry(h2, name2, 'lpf')
 
-    print 'number of selected rows:', t1.GetSelectedRows(), t2.GetSelectedRows()
+    print('number of selected rows:', t1.GetSelectedRows(), t2.GetSelectedRows())
 
     comparator = HistComparator(var1, h1, h2)
     comparator.draw(opt2='e2')
@@ -85,7 +85,7 @@ def simpleDraw(var, cut='1'):
 def getTreesOld( treeName, patterns ):
     trees = dict()
     for alias, pattern in patterns:
-        print 'loading', alias, treeName, pattern
+        print('loading', alias, treeName, pattern)
         tree = Chain(treeName, pattern)
         tmpalias = alias
         num=0

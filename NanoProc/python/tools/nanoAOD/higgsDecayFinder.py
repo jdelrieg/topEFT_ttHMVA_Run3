@@ -18,13 +18,13 @@ class higgsDecayFinder( Module ):
                     return self.getHiggsDecay( genParts.index(g),genParts)
                 else: 
                     decayproducts.append( abs(g.pdgId) )
-        if len(decayproducts) > 2: print "More than two decay products?", decayproducts
-        if not len(decayproducts): print 'No decay products found...'
+        if len(decayproducts) > 2: print("More than two decay products?", decayproducts)
+        if not len(decayproducts): print('No decay products found...')
         return decayproducts
 
     def analyze(self, event):
         genParts = [ g for g in Collection(event, self.genCollection) ]
-        if not any( map(lambda x : x.pdgId == 25, genParts)):
+        if not any( [x.pdgId == 25 for x in genParts]):
             self.out.fillBranch('GenHiggsDecayMode',0)
             return True
         decay = None

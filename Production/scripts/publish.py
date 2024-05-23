@@ -22,7 +22,7 @@ if __name__ == '__main__':
 		line = line.lstrip().rstrip()
 		line = line.split(" ")
 		if len(line) > 3:
-			print "too many args in line"
+			print("too many args in line")
 			return False
 		for word in line: word = word.lstrip().rstrip()
 		comment = None
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 		sampleName = None
 		if isCMGDBName(line[0]):
 			if len(line)>2:
-				print "too many args in line"
+				print("too many args in line")
 				return False
 			fileowner = getFileOwner(line[0])
 			sampleName = getSampleName(line[0])
@@ -41,7 +41,7 @@ if __name__ == '__main__':
 			if len(line)==2:
 				comment = isComment(line[1])
 			if len(line)>2:
-				print "too many args in line"
+				print("too many args in line")
 				return False
 		elif isSampleName(line[0]):
 			sampleName = line[0]

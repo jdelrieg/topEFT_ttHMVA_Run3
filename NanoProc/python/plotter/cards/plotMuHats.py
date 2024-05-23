@@ -31,7 +31,7 @@ c1.SetLeftMargin(0.30)
 results = {}
 postfix = sys.argv[1] if len(sys.argv) > 1 else ""
 if postfix == "":
-    raise RuntimeError, "No"
+    raise RuntimeError("No")
     results = {
       '4l'   : [ -4.18   , -(6.0-4.18), (0.246+4.18) ],
       '2l'    : [5.65773, -1.8374, 2.17504],
@@ -42,7 +42,7 @@ if postfix == "":
       'comb'  : [3.83225, -1.41544, 1.67779],
     }
 elif postfix == "NJet":
-    raise RuntimeError, "No"
+    raise RuntimeError("No")
     results = {
       '4l'   : [ -4.18   , -(6.0-4.18), (0.246+4.18) ],
       'ee'    : [0.690485, -4.05982, 4.47307],

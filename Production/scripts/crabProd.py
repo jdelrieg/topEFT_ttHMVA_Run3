@@ -68,8 +68,8 @@ if options.tier != "":
 
 try:
     oldCrab = open('crab.cfg','r')
-except Exception, e:
-    print "Cannot find crab.cfg file in current directory. Error was '%s'." % str(e)
+except Exception as e:
+    print("Cannot find crab.cfg file in current directory. Error was '%s'." % str(e))
     sys.exit(1)
 
 # preparing castor dir -----------------
@@ -79,13 +79,13 @@ cdir = castortools.lfnToCastor( castorBaseDir.castorBaseDir(user=options.user) )
 cdir += sampleNameDir
 
 if castortools.isCastorFile( cdir ) and not options.force:
-    print 'The destination castor directory already exists:'
-    print cdir
-    print 'Please check. If everything is fine, run again with the -f option.'
+    print('The destination castor directory already exists:')
+    print(cdir)
+    print('Please check. If everything is fine, run again with the -f option.')
     sys.exit(1)
 
 rfmkdir = 'rfmkdir -m 775 -p ' + cdir
-print rfmkdir
+print(rfmkdir)
 castortools.createCastorDir(cdir)
 castortools.chmod(cdir, '775')
 
@@ -93,7 +93,7 @@ castortools.chmod(cdir, '775')
 ldir = '.' + sampleNameDir
 
 mkdir = 'mkdir -p ' + ldir
-print mkdir
+print(mkdir)
 os.system( mkdir )
 
 #cpcrab = 'cp crab.cfg %s/crab.cfg' % ldir
@@ -102,7 +102,7 @@ os.system( mkdir )
 
 #prepare the crab file
 newCrabPath = '%s/crab.cfg' % ldir
-print newCrabPath
+print(newCrabPath)
 
 newCrab = open(newCrabPath,'w')
 newPSet = ""
@@ -158,12 +158,12 @@ log.addFile( oldPwd + '/' + pset )
 log.addFile( oldPwd + '/' + 'crab.cfg' )
 log.stageOut( cdir )
 
-print ''
-print 'SUMMARY'
-print cdir
-print ldir
-print newCrabPath
-print newPSet
-print newJson
+print('')
+print('SUMMARY')
+print(cdir)
+print(ldir)
+print(newCrabPath)
+print(newPSet)
+print(newJson)
 
 

@@ -12,7 +12,7 @@ parser = OptionParser(usage='%prog <target_directories> [options]',
 (options,args) = parser.parse_args()
 
 if len(args)==0:
-    print 'provide at least one directory in argument. Use -h to display help'
+    print('provide at least one directory in argument. Use -h to display help')
 
 dirs = sys.argv[1:]
 
@@ -25,7 +25,7 @@ for dir in dirs:
         continue
     logName  = '/'.join([dir, 'log.txt'])
     if not os.path.isfile( logName ):
-        print dir, ': log.txt does not exist'
+        print(dir, ': log.txt does not exist')
         badDirs.append(dir)
         continue
     logFile = open(logName)
@@ -36,9 +36,9 @@ for dir in dirs:
         except:
             pass
     if nEvents == -1:
-        print dir, 'cannot find number of processed events'
+        print(dir, 'cannot find number of processed events')
     elif nEvents == 0:
-        print dir, '0 events'
+        print(dir, '0 events')
     else:
         continue
     badDirs.append(dir)

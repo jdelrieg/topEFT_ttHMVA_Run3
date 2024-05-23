@@ -60,7 +60,7 @@ triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_T
 triggers_FR_jetHT  = [ "HLT_PFHT200_v*", "HLT_PFHT250_v*", "HLT_PFHT350_v*" ]
 triggers_FR_jet  =  [ "HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
 triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ]
-triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in xrange(1,9) ]
+triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in range(1,9) ]
 
 # tau triggers for EWKino
 triggers_leptautau = ["HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*",

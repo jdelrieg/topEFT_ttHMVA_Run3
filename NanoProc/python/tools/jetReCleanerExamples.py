@@ -37,8 +37,8 @@ class JetReCleaner_TreeReaders(JetReCleaner_base):
         for v in self.vars:
             setattr(self,"Jet_"+v, tree.arrayReader("Jet_"+v))
     def makeCleanJets(self,event):
-        leps = [ (self.LepGood_eta[i],self.LepGood_phi[i]) for i in xrange(self.nLepGood.Get()[0]) ]
-        jets = [ (i, self.Jet_eta[i], self.Jet_phi[i]) for i in xrange(self.nJet.Get()[0]) ]
+        leps = [ (self.LepGood_eta[i],self.LepGood_phi[i]) for i in range(self.nLepGood.Get()[0]) ]
+        jets = [ (i, self.Jet_eta[i], self.Jet_phi[i]) for i in range(self.nJet.Get()[0]) ]
         cleanJets = []
         for ij,je,jp in jets:
             good = True
@@ -91,7 +91,7 @@ class JetReCleaner_CppHelper(JetReCleaner_CollectionSkimmer):
     def __init__(self,label=""):
         JetReCleaner_CollectionSkimmer.__init__(self,label)
         if "/jetReCleanerExampleHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ Worker"
+            print("Load C++ Worker")
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/NanoProc/python/tools/jetReCleanerExampleHelper.cxx+" % os.environ['CMSSW_BASE'])
         self._worker = ROOT.JetReCleanerExampleHelper(self._helper.cppImpl())
     def init(self,tree):
@@ -114,7 +114,7 @@ class JetReCleaner_CppHelper2(JetReCleaner_CppHelper):
     def __init__(self,label=""):
         JetReCleaner_CollectionSkimmer.__init__(self,label)
         if "/jetReCleanerExampleHelper2_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ Worker"
+            print("Load C++ Worker")
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/NanoProc/python/tools/jetReCleanerExampleHelper2.cxx+" % os.environ['CMSSW_BASE'])
         self._worker = ROOT.JetReCleanerExampleHelper2()
     def __call__(self,event):

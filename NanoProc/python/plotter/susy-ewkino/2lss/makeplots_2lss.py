@@ -52,12 +52,12 @@ def runIt(GO,name,queue='',plots=[],noplots=[]):
             f.write(cmd + "\n")
             f.close()
             basecmd = "bsub -q 8nh {workdir}/{runner}".format(workdir = os.getcwd(), runner=script)
-            print basecmd
+            print(basecmd)
         else: 
-            print cmd
+            print(cmd)
                     
-    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
+    elif dowhat == "yields": print('echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:]))
+    elif dowhat == "dumps":  print('echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:]))
     
 def add(GO,opt):
     return '%s %s'%(GO,opt)
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     queue = ''
     if len(sys.argv)>3: queue = sys.argv[3]
     
-    if (not allow_unblinding) and 'data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']])): raise RuntimeError, 'You are trying to unblind!'
+    if (not allow_unblinding) and 'data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']])): raise RuntimeError('You are trying to unblind!')
 
     if '2lss_' in torun:
         x = base('2lss')

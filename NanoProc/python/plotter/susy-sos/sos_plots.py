@@ -201,7 +201,7 @@ def runIt(GO,plotting,name):
                 'FILENAME': FILENAME,
                 'GENMODELSTRING': GENMODELSTRING,
             }).replace("root://eoscms.cern.ch/","")
-            print ret
+            print(ret)
             GO = GO.replace(P0,"${MYTEMPSKIMDIR}/")
 
         GO+=plotting
@@ -215,10 +215,10 @@ def runIt(GO,plotting,name):
             'GO': GO,
         })
 
-    print ret
+    print(ret)
 
     if args.preskim and not args.keep_preskim:
-        print 'rm -r ${MYTEMPSKIMDIR}'
+        print('rm -r ${MYTEMPSKIMDIR}')
 
 
 def add(GO,opt):
@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
     torun = conf
 
-    if (not args.doWhat=="cards" ) and ((not allow_unblinding) and args.data and (not any([re.match(x.strip()+'$',torun) for x in ['.*appl.*','.*cr.*','3l.*_Zpeak.*']]))): raise RuntimeError, 'You are trying to unblind!'
+    if (not args.doWhat=="cards" ) and ((not allow_unblinding) and args.data and (not any([re.match(x.strip()+'$',torun) for x in ['.*appl.*','.*cr.*','3l.*_Zpeak.*']]))): raise RuntimeError('You are trying to unblind!')
 
 
     if '2los_' in torun:

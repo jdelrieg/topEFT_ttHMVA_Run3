@@ -23,7 +23,7 @@ def getTreeNEvt(treedir, samplename = None):
 	return "0"
 
 def cmd(base):
-	print base
+	print(base)
 	os.system(base)
 
 def submit(base, name, queue):

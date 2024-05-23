@@ -11,7 +11,7 @@ tag = 'caloClusters'
 output = '_'.join( [sampleStr, tag] )
 output += '.root'
 
-print 'output file', output 
+print('output file', output) 
 
 process.out.fileName = output 
 

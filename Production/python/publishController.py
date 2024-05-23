@@ -78,8 +78,8 @@ class PublishController(object):
         for group_name in datasetDetails['FileGroups']:
             group_id = self._cmgdbAPI.addFileGroup(group_name,
                                                    datasetDetails['CMGDBID'])
-            print "Group: %s added with ID: %d" % (group_name, 
-                                                   group_id)
+            print("Group: %s added with ID: %d" % (group_name, 
+                                                   group_id))
             if datasetDetails['FileGroups'][group_name]["BadFiles"] is not None:
                 for badFile in datasetDetails['FileGroups'][group_name]["BadFiles"]:
                     self._cmgdbAPI.addBadFile(datasetDetails['CMGDBName'],
@@ -128,7 +128,7 @@ class PublishController(object):
 
         # Add tags to CMGDB
         if datasetDetails['Tags'] is None or len(datasetDetails['Tags']) is 0:
-            print "No tags could be added to CMGDB as none were found"
+            print("No tags could be added to CMGDB as none were found")
             return datasetDetails['CMGDBID']
         tagIDs = []
 

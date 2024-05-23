@@ -15,7 +15,7 @@ if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
 
 SAFE_COLOR_LIST=[
 ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kBlue, ROOT.kMagenta+1, ROOT.kOrange+7, ROOT.kCyan+1, ROOT.kGray+2, ROOT.kViolet+5, ROOT.kSpring+5, ROOT.kAzure+1, ROOT.kPink+7, ROOT.kOrange+3, ROOT.kBlue+3, ROOT.kMagenta+3, ROOT.kRed+2,
-]+range(11,40)
+]+list(range(11,40))
 def _unTLatex(string):
     return string.replace("#chi","x").replace("#mu","m").replace("#rightarrow","->")
 class PlotFile:
@@ -29,7 +29,7 @@ class PlotFile:
             iline += 1
             if re.match("\s*#.*", line) or len(line.strip())==0: continue
             while line.strip()[-1] == "\\":
-                line = line.strip()[:-1] + infile.next()
+                line = line.strip()[:-1] + next(infile)
                 iline += 1
             extra = {}
             if ";" in line:
@@ -42,20 +42,20 @@ class PlotFile:
                         try:
                             extra[key] = eval(val)
                         except:
-                            print "ERROR at line %d of %s:\n\t%s\n" % (iline, fileName, oldline)
+                            print("ERROR at line %d of %s:\n\t%s\n" % (iline, fileName, oldline))
                             raise
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
             field = [f.strip().replace(";",":") for f in line.replace("::",";;").replace("\\:",";").split(':')]
             if len(field) == 1 and field[0] == "*":
-                if len(self._plots): raise RuntimeError, "PlotFile defaults ('*') can be specified only before all plots"
-                print "Setting the following defaults for all plots: "
-                for k,v in extra.iteritems():
-                    print "\t%s: %r" % (k,v)
+                if len(self._plots): raise RuntimeError("PlotFile defaults ('*') can be specified only before all plots")
+                print("Setting the following defaults for all plots: ")
+                for k,v in extra.items():
+                    print("\t%s: %r" % (k,v))
                     defaults[k] = v
                 continue
             else:
-                for k,v in defaults.iteritems():
+                for k,v in defaults.items():
                     if k not in extra: extra[k] = v
             if len(field) <= 2: continue
             if len(options.plotselect):
@@ -80,7 +80,7 @@ def getDataPoissonErrors(h, drawZeroBins=False, drawXbars=False):
     q=(1-0.6827)/2.;
     points = []
     errors = []
-    for i in xrange(h.GetNbinsX()):
+    for i in range(h.GetNbinsX()):
         N = h.GetBinContent(i+1);
         dN = h.GetBinError(i+1);
         if drawZeroBins or N > 0:
@@ -112,18 +112,18 @@ def getDataPoissonErrors(h, drawZeroBins=False, drawXbars=False):
 def PrintHisto(h):
     if not h:
         return
-    print h.GetName()
+    print(h.GetName())
     c=[]
     if "TH1" in h.ClassName():
-        for i in xrange(h.GetNbinsX()):
+        for i in range(h.GetNbinsX()):
             c.append((h.GetBinContent(i+1),h.GetBinError(i+1)))
     elif "TH2" in h.ClassName():
-        for i in xrange(h.GetNbinsX()):
-            for j in xrange(h.GetNbinsY()):
+        for i in range(h.GetNbinsX()):
+            for j in range(h.GetNbinsY()):
                 c.append((h.GetBinContent(i+1,j+1),h.GetBinError(i+1,j+1)))
     else:
-        print 'not th1 or th2'
-    print c
+        print('not th1 or th2')
+    print(c)
 
 def doSpam(text,x1,y1,x2,y2,align=12,fill=False,textSize=0.033,_noDelete={}):
     cmsprel = ROOT.TPaveText(x1,y1,x2,y2,"NDC");
@@ -163,10 +163,10 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     max0 = hist.GetMaximum()
     max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
     if hasattr(hist2,'poissonGraph'):
-       for i in xrange(hist2.poissonGraph.GetN()):
+       for i in range(hist2.poissonGraph.GetN()):
           max2 = max(max2, (hist2.poissonGraph.GetY()[i] + 1.3*hist2.poissonGraph.GetErrorYhigh(i))*(factorLog if islog else factorLin))
     elif "TH1" in hist2.ClassName():
-       for b in xrange(1,hist2.GetNbinsX()+1):
+       for b in range(1,hist2.GetNbinsX()+1):
           max2 = max(max2, (hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
@@ -183,7 +183,7 @@ def doShadedUncertainty(h):
 
 def doDataNorm(pspec,pmap):
     if "data" not in pmap: return None
-    total = sum([v.Integral() for k,v in pmap.iteritems() if k != 'data' and not hasattr(v,'summary')])
+    total = sum([v.Integral() for k,v in pmap.items() if k != 'data' and not hasattr(v,'summary')])
     sig = pmap["data"].Clone(pspec.name+"_data_norm")
     sig.SetFillStyle(0)
     sig.SetLineColor(1)
@@ -195,12 +195,12 @@ def doDataNorm(pspec,pmap):
     return sig
 
 def doStackSignalNorm(pspec,pmap,individuals,extrascale=1.0,norm=True):
-    total = sum([v.Integral() for k,v in pmap.iteritems() if k != 'data' and not hasattr(v,'summary')])
+    total = sum([v.Integral() for k,v in pmap.items() if k != 'data' and not hasattr(v,'summary')])
     if options.noStackSig:
-        total = sum([v.Integral() for k,v in pmap.iteritems() if not hasattr(v,'summary') and mca.isBackground(k) ])
+        total = sum([v.Integral() for k,v in pmap.items() if not hasattr(v,'summary') and mca.isBackground(k) ])
     if individuals:
         sigs = []
-        for sig in [pmap[x] for x in mca.listSignals() if pmap.has_key(x) and pmap[x].Integral() > 0]:
+        for sig in [pmap[x] for x in mca.listSignals() if x in pmap and pmap[x].Integral() > 0]:
             sig = sig.Clone(sig.GetName()+"_norm")
             sig.SetFillStyle(0)
             sig.SetLineColor(sig.GetFillColor())
@@ -213,7 +213,7 @@ def doStackSignalNorm(pspec,pmap,individuals,extrascale=1.0,norm=True):
         sig = None
         if "signal" in pmap: sig = pmap["signal"].Clone(pspec.name+"_signal_norm")
         else: 
-            sigs = [pmap[x] for x in mca.listBackgrounds() if pmap.has_key(x) and pmap[x].Integral() > 0]
+            sigs = [pmap[x] for x in mca.listBackgrounds() if x in pmap and pmap[x].Integral() > 0]
             sig = sigs[0].Clone(sigs.GetName()+"_norm")
         sig.SetFillStyle(0)
         sig.SetLineColor(206)
@@ -255,7 +255,7 @@ def doScaleSigNormData(pspec,pmap,mca):
         bkg = sig.raw().Clone(); bkg.Reset()
     sf = (data.Integral()-bkg.Integral())/sig.Integral() if sig.Integral() else 1
     signals = [ "signal" ] + mca.listSignals()
-    for p,h in pmap.iteritems():
+    for p,h in pmap.items():
         if p in signals: h.Scale(sf)
     pspec.setLog("ScaleSig", [ "Signal processes scaled by %g" % sf ] )
     return sf
@@ -270,7 +270,7 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
     rm = bkg.Integral() - integral
     sf = (data.Integral() - rm) / integral if integral else 0
     bkgs = ["background"] + list
-    for p,h in pmap.iteritems():
+    for p,h in pmap.items():
         if p in bkgs: h.Scale(sf)
     return sf
 
@@ -286,27 +286,27 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     w.nodelete = []
     _global_workspaces.append(w)
     # get the data, deal with non-empty bins where the MC prediction is zero
-    hmc = mergePlots('htemp', [v for (k,v) in pmap.iteritems() if k != 'data'])
+    hmc = mergePlots('htemp', [v for (k,v) in pmap.items() if k != 'data'])
     hdata = pmap['data'].raw(); hdata.killbins = False
-    for b in xrange(1,hmc.GetNbinsX()+2):
+    for b in range(1,hmc.GetNbinsX()+2):
         if hdata.GetBinContent(b) > 0 and hmc.GetBinContent(b) == 0:
             if not hdata.killbins:
                 hdata = hdata.Clone()
                 hdata.killbins = True
-            for b2 in xrange(b-1,0,-1):
+            for b2 in range(b-1,0,-1):
                 if hmc.GetBinContent(b2) > 0:
                     hdata.SetBinContent(b2, hdata.GetBinContent(b2) + hdata.GetBinContent(b))
                     hdata.SetBinContent(b, 0)
                     break
             if hdata.GetBinContent(b) > 0:
-                for b2 in xrange(b+1,hmc.GetNbinsX()+2):
+                for b2 in range(b+1,hmc.GetNbinsX()+2):
                     if hmc.GetBinContent(b2) > 0:
                         hdata.SetBinContent(b2, hdata.GetBinContent(b2) + hdata.GetBinContent(b))
                         hdata.SetBinContent(b, 0)
                         break
             if hdata.GetBinContent(b) > 0: hdata.SetBinContent(b, 0)
         if hdata.killbins: 
-            print "WARNING: data has been modified to avoid non-zero observations for zero expectations in some bins"
+            print("WARNING: data has been modified to avoid non-zero observations for zero expectations in some bins")
     # create the nuisances
     nuisances = hmc.getVariationList()
     nuisanceList = ROOT.RooArgList()
@@ -343,7 +343,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
         model = ROOT.RooProdPdf("prod","",constraints)
     result = model.fitTo( roodata, ROOT.RooFit.Save(1) )
     postfit = PostFitSetup(fitResult=result)
-    for k,h in pmap.iteritems():
+    for k,h in pmap.items():
         if k != "data" and h.Integral() > 0:
             h.setPostFitInfo(postfit,True)
     if saveScales:
@@ -356,7 +356,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
            sf    = pmap[p].Integral()/norm0
            sferr = pmap[p].integralSystError()/norm0
            fitlog.append("Process %s scaled by %.3f +/- %.3f [ rel: %.3f ]" % (p,sf,sferr,sferr/sf if sf else 0))
-           if saveScales: print fitlog[-1]
+           if saveScales: print(fitlog[-1])
         # no need to recompute totals as they are also roofitized
     fitlog.append("")
     if pois:
@@ -378,7 +378,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     if "data" not in pmap: 
         if len(pmap) >= 2 and ratioDen in pmap:
             numkeys = []
-            for p in pmap.iterkeys():
+            for p in pmap.keys():
                 for s in ratioNums.split(","):
                     if re.match(s,p): 
                         numkeys.append(p)
@@ -401,7 +401,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     for numkey in numkeys:
         if hasattr(pmap[numkey], 'poissonGraph'):
             ratio = pmap[numkey].poissonGraph.Clone("data_div"); 
-            for i in xrange(ratio.GetN()):
+            for i in range(ratio.GetN()):
                 x    = ratio.GetX()[i]
                 div  = total.GetBinContent(total.GetXaxis().FindBin(x))
                 ratio.SetPoint(i, x, ratio.GetY()[i]/div if div > 0 else 0)
@@ -416,22 +416,22 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     unityErr  = total.graphAsymmTotalErrors(relative=True)
     unityErr0 = total.graphAsymmTotalErrors(toadd=[],relative=True)
     rmin, rmax =  1,1
-    for b in xrange(1,unity.GetNbinsX()+1):
+    for b in range(1,unity.GetNbinsX()+1):
         e,n = unity.GetBinError(b), unity.GetBinContent(b)
         unity.SetBinContent(b, 1 if n > 0 else 0)
         unity.SetBinError(b, 0)
         if not errorsOnRef: 
             raise RuntimeError("Not implemented yet with histoWithNuisances")
-    rmin = min(1-2*unityErr.GetErrorYlow(b)  for b in xrange(unityErr.GetN())) if unityErr.GetN() else 1
-    rmax = max(1+2*unityErr.GetErrorYhigh(b) for b in xrange(unityErr.GetN())) if unityErr.GetN() else 1
+    rmin = min(1-2*unityErr.GetErrorYlow(b)  for b in range(unityErr.GetN())) if unityErr.GetN() else 1
+    rmax = max(1+2*unityErr.GetErrorYhigh(b) for b in range(unityErr.GetN())) if unityErr.GetN() else 1
     for ratio in ratios:
         if ratio.ClassName() != "TGraphAsymmErrors":
-            for b in xrange(1,unity.GetNbinsX()+1):
+            for b in range(1,unity.GetNbinsX()+1):
                 if ratio.GetBinContent(b) == 0: continue
                 rmin = min( rmin, ratio.GetBinContent(b) - 2*ratio.GetBinError(b) ) 
                 rmax = max( rmax, ratio.GetBinContent(b) + 2*ratio.GetBinError(b) )  
         else:
-            for i in xrange(ratio.GetN()):
+            for i in range(ratio.GetN()):
                 rmin = min( rmin, ratio.GetY()[i] - 2*ratio.GetErrorYlow(i)  ) 
                 rmax = max( rmax, ratio.GetY()[i] + 2*ratio.GetErrorYhigh(i) )  
     if rmin < maxRange[0] or fixRange: rmin = maxRange[0]; 
@@ -533,7 +533,7 @@ def doStatTests(total,data,test,legendCorner):
     #ksprob = data.KolmogorovTest(total,"XN")
     #print "\tKS  %.4f" % ksprob
     chi2l, chi2p, chi2gq, chi2lp, nb = 0, 0, 0, 0, 0
-    for b in xrange(1,data.GetNbinsX()+1):
+    for b in range(1,data.GetNbinsX()+1):
         oi = data.GetBinContent(b)
         ei = total.GetBinContent(b)
         dei = total.GetBinError(b)
@@ -543,9 +543,9 @@ def doStatTests(total,data,test,legendCorner):
         chi2p += (oi-ei)**2 / ei
         chi2gq += (oi-ei)**2 /(ei+dei**2)
         #chi2lp +=
-    print "\tc2p  %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2p,  nb), chi2p,  nb)
-    print "\tc2l  %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2l,  nb), chi2l,  nb)
-    print "\tc2qg %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2gq, nb), chi2gq, nb)
+    print("\tc2p  %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2p,  nb), chi2p,  nb))
+    print("\tc2l  %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2l,  nb), chi2l,  nb))
+    print("\tc2qg %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2gq, nb), chi2gq, nb))
     #print "\tc2lp %.4f (%6.2f/%3d)" % (ROOT.TMath.Prob(chi2lp, nb), chi2lp, nb)
     chi2s = { "chi2l":chi2l, "chi2p":chi2p, "chi2gq":chi2gq, "chi2lp":chi2lp }
     if test in chi2s:
@@ -565,7 +565,7 @@ def doStatTests(total,data,test,legendCorner):
 legend_ = None;
 def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,totalError=None,header="",doWide=False,columns=1):
         if (corner == None): return
-        total = sum([x.Integral() for x in pmap.itervalues()])
+        total = sum([x.Integral() for x in pmap.values()])
         sigEntries = []; bgEntries = []
         for p in mca.listSignals(allProcs=True):
             if mca.getProcessOption(p,'HideInLegend',False): continue
@@ -616,8 +616,8 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         for (plot,label,style) in  bgEntries: entries.append((plot.raw(),label,style))
         if totalError:  entries.append((totalError,"Total unc.","F"))
         nrows = int(ceil(len(entries)/float(columns)))
-        for r in xrange(nrows):
-            for c in xrange(columns):
+        for r in range(nrows):
+            for c in range(columns):
                 i = r+c*nrows
                 if i >= len(entries): break
                 leg.AddEntry(*entries[i])
@@ -635,7 +635,7 @@ class PlotMaker:
         ROOT.gROOT.ProcessLine(".L smearer.cc+")
         ROOT.gStyle.SetOptStat(0)
         ROOT.gStyle.SetOptTitle(0)
-        if self._options.perBin and not "txt" in self._options.printPlots: raise RuntimeError, "Error: cannot print yields per bin if txt option not given" 
+        if self._options.perBin and not "txt" in self._options.printPlots: raise RuntimeError("Error: cannot print yields per bin if txt option not given") 
  
     def run(self,mca,cuts,plots,makeStack=True,makeCanvas=True):
         if self._options.wideplot: ROOT.gStyle.SetTitleYOffset(0.55)
@@ -652,7 +652,7 @@ class PlotMaker:
                 sets.append((cnsafe,cn,cv))
         elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 0) # temporary workaround to avoid multiple negative bin cropping
         for subname, title, cut in sets:
-            print "cut set: ",title
+            print("cut set: ",title)
             if elist: mca.applyCut(cut)
             dir = self._dir
             if subname:
@@ -664,10 +664,10 @@ class PlotMaker:
             pspecs = plots.plots()
             if self._options.preFitData:
                 matchspec = [ p for p in pspecs if p.name == self._options.preFitData ]
-                if not matchspec: raise RuntimeError, "Error: plot %s not found" % self._options.preFitData
+                if not matchspec: raise RuntimeError("Error: plot %s not found" % self._options.preFitData)
                 pspecs = matchspec + [ p for p in pspecs if p.name != self._options.preFitData ]
             for pspec in pspecs:
-                print "    plot: ",pspec.name
+                print("    plot: ",pspec.name)
                 pmap = mca.getPlots(pspec,cut,makeSummary=True,closeTreeAfter=True)
                 #
                 # blinding policy
@@ -678,7 +678,7 @@ class PlotMaker:
                     xfunc = (lambda h,b: b)             if 'bin' in blind else (lambda h,b : h.GetXaxis().GetBinCenter(b));
                     test  = eval("lambda bin : "+blind) if 'bin' in blind else eval("lambda x : "+blind) 
                     hdata = pmap['data']
-                    for b in xrange(1,hdata.GetNbinsX()+1):
+                    for b in range(1,hdata.GetNbinsX()+1):
                         if test(xfunc(hdata,b)):
                             #print "blinding bin %d, x = [%s, %s]" % (b, hdata.GetXaxis().GetBinLowEdge(b), hdata.GetXaxis().GetBinUpEdge(b))
                             hdata.SetBinContent(b,0)
@@ -687,11 +687,11 @@ class PlotMaker:
                             xblind[1] = max(xblind[1],hdata.GetXaxis().GetBinUpEdge(b))
                     #print "final blinded range x = [%s, %s]" % (xblind[0],xblind[1])
                 elif blind != "None":
-                    raise RuntimeError, "Unrecongnized value for 'Blinded' option, stopping here"
+                    raise RuntimeError("Unrecongnized value for 'Blinded' option, stopping here")
                 #
                 # Pseudo-data?
                 if self._options.pseudoData: # to be fixed with HistoWithNuisances
-                    if "data" in pmap: raise RuntimeError, "Can't use --pseudoData if there's also real data (maybe you want --xp data?)"
+                    if "data" in pmap: raise RuntimeError("Can't use --pseudoData if there's also real data (maybe you want --xp data?)")
                     if "background" in self._options.pseudoData:
                         pdata = pmap["background"]
                         pdata = pdata.Clone(str(pdata.GetName()).replace("_background","_data"))
@@ -700,23 +700,23 @@ class PlotMaker:
                         pdata = pdata.Clone(str(pdata.GetName()).replace("_background","_data"))
                         if "signal" in pmap: pdata.Add(pmap["signal"])
                     else:
-                        raise RuntimeError, "Pseudo-data option %s not supported" % self._options.pseudoData
+                        raise RuntimeError("Pseudo-data option %s not supported" % self._options.pseudoData)
                     if "asimov" not in self._options.pseudoData:
                         if "TH1" in pdata.ClassName():
-                            for i in xrange(1,pdata.GetNbinsX()+1):
+                            for i in range(1,pdata.GetNbinsX()+1):
                                 pdata.SetBinContent(i, ROOT.gRandom.Poisson(pdata.GetBinContent(i)))
                                 pdata.SetBinError(i, sqrt(pdata.GetBinContent(i)))
                         elif "TH2" in pdata.ClassName():
-                            for ix in xrange(1,pdata.GetNbinsX()+1):
-                              for iy in xrange(1,pdata.GetNbinsY()+1):
+                            for ix in range(1,pdata.GetNbinsX()+1):
+                              for iy in range(1,pdata.GetNbinsY()+1):
                                 pdata.SetBinContent(ix, iy, ROOT.gRandom.Poisson(pdata.GetBinContent(ix, iy)))
                                 pdata.SetBinError(ix, iy, sqrt(pdata.GetBinContent(ix, iy)))
                         else:
-                            raise RuntimeError, "Can't make pseudo-data for %s" % pdata.ClassName()
+                            raise RuntimeError("Can't make pseudo-data for %s" % pdata.ClassName())
                     pmap["data"] = pdata
                 #
                 if not makeStack: 
-                    for k,v in pmap.iteritems():
+                    for k,v in pmap.items():
                         if hasattr(v,'writeToFile'):
                             v.writeToFile(dir)
                         else:
@@ -747,16 +747,16 @@ class PlotMaker:
                         v1 = _hf.Get('%s/%s'%(_hdname,k2))
                         if v1:
                             if 'TH1' not in pmap[k].ClassName(): raise RuntimeError('getHistosFromFile is only implemented for 1-D histograms')
-                            if pmap[k].GetNbinsX()!=v1.GetNbinsX(): print 'WARNING: getHistosFromFile: found inconsistent number of bins for process %s (%d,%d)'%(k,pmap[k].GetNbinsX(),v1.GetNbinsX())
-                            print 'getHistosFromFile: imported histogram for process %s: integral %.2f -> %.2f'%(k,pmap[k].Integral(),v1.Integral())
+                            if pmap[k].GetNbinsX()!=v1.GetNbinsX(): print('WARNING: getHistosFromFile: found inconsistent number of bins for process %s (%d,%d)'%(k,pmap[k].GetNbinsX(),v1.GetNbinsX()))
+                            print('getHistosFromFile: imported histogram for process %s: integral %.2f -> %.2f'%(k,pmap[k].Integral(),v1.Integral()))
                             pmap[k].Reset()
-                            for i in xrange(pmap[k].GetNbinsX()):
+                            for i in range(pmap[k].GetNbinsX()):
                                 pmap[k].SetBinContent(i+1,v1.GetBinContent(i+1))
                                 pmap[k].SetBinError(i+1,v1.GetBinError(i+1))
-                            for i in xrange(pmap[k].GetNbinsX(),v1.GetNbinsX()):
+                            for i in range(pmap[k].GetNbinsX(),v1.GetNbinsX()):
                                 if v1.GetBinContent(i+1)!=0: raise RuntimeError("getHistosFromFile: found non-zero content beyond the boundary of the target histogram for process %s"%k)
                         else:
-                            print('getHistosFromFile: not found histogram for process %s, leaving it untouched'%k)
+                            print(('getHistosFromFile: not found histogram for process %s, leaving it untouched'%k))
                     if options.noStackSig:
                         total_for_err = pmap['background']
                         print('getHistosFromFile: will use total background for overall uncertainty')
@@ -764,12 +764,12 @@ class PlotMaker:
                         total_for_err = pmap['background'].Clone('total')
                         total_for_err.Reset();
                         v1 = _hf.Get('%s/total'%_hdname).Clone('total')
-                        for i in xrange(total_for_err.GetNbinsX()):
+                        for i in range(total_for_err.GetNbinsX()):
                             total_for_err.SetBinContent(i+1,v1.GetBinContent(i+1))
                             total_for_err.SetBinError(i+1,v1.GetBinError(i+1))
                         print('getHistosFromFile: will use total signal+background for overall uncertainty')
                 #
-                for k,v in pmap.iteritems():
+                for k,v in pmap.items():
                     if hasattr(v,'writeToFile'):
                         v.writeToFile(dir)
                     else:
@@ -786,14 +786,14 @@ class PlotMaker:
                     roofit = roofitizeReport(pmap)
                     if self._options.processesToPeg == []:
                         hasR = False
-                        for pfs in mca._altPostFits.itervalues():
+                        for pfs in mca._altPostFits.values():
                             if pfs.fitResult.floatParsFinal().find("r"):
                                 hasR = True
                         if hasR: addExternalDefaultPOI(roofit,pmap,mca,"r")
                     else:
                         addExternalPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
-                    for key,pfs in mca._altPostFits.iteritems():
-                        for k,h in pmap.iteritems():
+                    for key,pfs in mca._altPostFits.items():
+                        for k,h in pmap.items():
                             if k != "data":
                                 h.setPostFitInfo(pfs,True)
                         subdir = dir.GetDirectory("post_"+key);
@@ -809,14 +809,14 @@ class PlotMaker:
                         if getattr(pfs, 'label', None):
                             self._options.legendHeader = legendHeaderBackup
                 if pspec.getOption("SlicesY",None):
-                    h0 = pmap.values()[0]
-                    for iy in xrange(1,h0.GetNbinsY()+1):
+                    h0 = list(pmap.values())[0]
+                    for iy in range(1,h0.GetNbinsY()+1):
                         postfix = "_"+(pspec.getOption("SlicesY") % (h0.GetYaxis().GetBinLowEdge(iy), h0.GetYaxis().GetBinUpEdge(iy)))
                         bins_slice = pspec.bins.split("*",1) if "[" == pspec.bins[0] else ",".join(pspec.bins.split(",")[:3])
                         pspec_slice = PlotSpec(pspec.name+postfix, pspec.expr, bins_slice, pspec.opts)
-                        pmap_slice = dict( (k,h.projectionX(h.GetName()+postfix,iy,iy)) for (k,h) in pmap.iteritems() )
+                        pmap_slice = dict( (k,h.projectionX(h.GetName()+postfix,iy,iy)) for (k,h) in pmap.items() )
                         allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
-                        for k,h in pmap_slice.iteritems():
+                        for k,h in pmap_slice.items():
                             if k in allprocs:
                                 stylePlot(h,pspec_slice, lambda opt, deft: mca.getProcessOption(k, opt, deft))
                         self.printOnePlot(mca,pspec_slice,pmap_slice,
@@ -825,7 +825,7 @@ class PlotMaker:
             if elist: mca.clearCut()
 
     def printOnePlot(self,mca,pspec,pmapIn,mytotal=None,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
-                pmap = dict( (k, h if isinstance(h,HistoWithNuisances) else HistoWithNuisances(h)) for (k,h) in pmapIn.iteritems() )
+                pmap = dict( (k, h if isinstance(h,HistoWithNuisances) else HistoWithNuisances(h)) for (k,h) in pmapIn.items() )
                 options = self._options
                 if printDir == None: printDir=self._options.printDir
                 if outputDir == None: outputDir = self._dir
@@ -833,11 +833,11 @@ class PlotMaker:
                 if outputName == None: outputName = pspec.name
                 stack = ROOT.THStack(outputName+"_stack",outputName)
                 if mytotal != None:
-                    print 'Using %s for total histogram, with an integral of %.2f'%(mytotal.GetName(),mytotal.Integral())
+                    print('Using %s for total histogram, with an integral of %.2f'%(mytotal.GetName(),mytotal.Integral()))
                     total = mytotal
                 else:
-                    hists = [v for k,v in pmap.iteritems() if k != 'data'  and v.Integral() > 0 ]
-                    if not hists: hists = [v for k,v in pmap.iteritems() if k != 'data' ]
+                    hists = [v for k,v in pmap.items() if k != 'data'  and v.Integral() > 0 ]
+                    if not hists: hists = [v for k,v in pmap.items() if k != 'data' ]
                     total = hists[0].Clone(outputName+"_total"); total.Reset()
                 if plotmode == "norm": 
                     if 'data' in pmap:
@@ -852,14 +852,14 @@ class PlotMaker:
                         #if plot.Integral() == 0:
                         #    print 'Warning: plotting histo %s with zero integral, there might be problems in the following'%p
                         if plot.Integral() < 0:
-                            print 'Warning: plotting histo %s with negative integral (%f), the stack plot will probably be incorrect.'%(p,plot.Integral())
+                            print('Warning: plotting histo %s with negative integral (%f), the stack plot will probably be incorrect.'%(p,plot.Integral()))
                         if 'TH1' in plot.ClassName():
-                            for b in xrange(1,plot.GetNbinsX()+1):
-                                if plot.GetBinContent(b)<0: print 'Warning: histo %s has bin %d with negative content (%f), the stack plot will probably be incorrect.'%(p,b,plot.GetBinContent(b))
+                            for b in range(1,plot.GetNbinsX()+1):
+                                if plot.GetBinContent(b)<0: print('Warning: histo %s has bin %d with negative content (%f), the stack plot will probably be incorrect.'%(p,b,plot.GetBinContent(b)))
                         elif 'TH2' in plot.ClassName():
-                            for b1 in xrange(1,plot.GetNbinsX()+1):
-                                for b2 in xrange(1,plot.GetNbinsY()+1):
-                                    if plot.GetBinContent(b1,b2)<0: print 'Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b1,b2))
+                            for b1 in range(1,plot.GetNbinsX()+1):
+                                for b2 in range(1,plot.GetNbinsY()+1):
+                                    if plot.GetBinContent(b1,b2)<0: print('Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b1,b2)))
 #                        if plot.Integral() <= 0: continue
                         if mca.isSignal(p): plot.Scale(options.signalPlotScale)
                         if mca.isSignal(p) and options.noStackSig == True: 
@@ -893,7 +893,7 @@ class PlotMaker:
                         total.GetYaxis().SetLabelSize(0.05)
 
                 if not self._options.emptyStack and stack.GetNhists() == 0:
-                    print "ERROR: for %s, all histograms are empty\n " % pspec.name
+                    print("ERROR: for %s, all histograms are empty\n " % pspec.name)
                     return
 
                 # define aspect ratio
@@ -1046,9 +1046,9 @@ class PlotMaker:
                     new = pmap['signal']
                     ref = pmap['background']
                     if "TH1" in new.ClassName():
-                        for b in xrange(1,new.GetNbinsX()+1):
+                        for b in range(1,new.GetNbinsX()+1):
                             if abs(new.GetBinContent(b) - ref.GetBinContent(b)) > options.toleranceForDiff*ref.GetBinContent(b):
-                                print "Plot: difference found in %s, bin %d" % (outputName, b)
+                                print("Plot: difference found in %s, bin %d" % (outputName, b))
                                 p1.SetFillColor(ROOT.kYellow-10)
                                 if p2: p2.SetFillColor(ROOT.kYellow-10)
                                 break
@@ -1119,7 +1119,7 @@ class PlotMaker:
                                 if plot.Integral() <= 0: continue
                                 norm = plot.Integral()
                                 if p not in ["signal","background","total"] and mca.isSignal(p): norm /= options.signalPlotScale # un-scale what was scaled
-                                stat = sqrt(sum([plot.GetBinError(b)**2 for b in xrange(1,plot.GetNbinsX()+1)]))
+                                stat = sqrt(sum([plot.GetBinError(b)**2 for b in range(1,plot.GetNbinsX()+1)]))
                                 syst = plot.integralSystError(symmetrize=True)
                                 if p == "signal": dump.write(("-"*(maxlen+45))+"\n");
                                 dump.write(fmt % (_unTLatex(mca.getProcessOption(p,'Label',p) if p not in ["signal", "background","total"] else p.upper()), norm, stat))
@@ -1255,7 +1255,7 @@ if __name__ == "__main__":
         os.system("mkdir -p "+os.path.dirname(outname))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
         elif os.path.exists("/pool/ciencias/"): os.system("cp /pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/index.php "+os.path.dirname(outname))
-    print "Will save plots to ",outname
+    print("Will save plots to ",outname)
     fcmd = open(re.sub("\.root$","",outname)+"_command.txt","w")
     fcmd.write("%s\n\n" % " ".join(sys.argv))
     fcmd.write("%s\n%s\n" % (args,options))

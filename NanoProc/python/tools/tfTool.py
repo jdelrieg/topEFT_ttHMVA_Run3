@@ -23,11 +23,11 @@ class TFTool:
         ret = {} 
         for key in self.varorder:
             var = self.vars[key]
-            if self.debug: print key, var(ev) 
+            if self.debug: print(key, var(ev)) 
             inp[key] = var(ev) 
         res = self.worker(inp)
         for cla in self.classes: 
-            if self.debug: print cla, res[cla]
+            if self.debug: print(cla, res[cla])
             ret['%s_%s'%(self.name,cla)] = res[cla]
         
         return ret

@@ -6,6 +6,6 @@ import sys
 for myfile in sys.argv[1:]:
     f = ROOT.TFile.Open(myfile)
     t = f.Get("Friends")
-    print(myfile+': '),
-    print t.GetEntries()
+    print((myfile+': '), end=' ')
+    print(t.GetEntries())
     f.Close()

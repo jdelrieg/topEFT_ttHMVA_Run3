@@ -42,12 +42,12 @@ class MCDumpModule(Module):
         self.mcde.beginComponent(tty)
         if self.dumpFileName:
             self.dumpFile = open(self.dumpFileName.format(cname=tty.cname()),'w')
-            print "Saving to %s" % self.dumpFileName.format(cname=tty.cname())
+            print("Saving to %s" % self.dumpFileName.format(cname=tty.cname()))
     def openOutFile(self,dumpFileName):
         if "{cname}" in dumpFileName: 
             self.dumpFileName = dumpFileName
             return
-        if self.dumpFile: raise RuntimeError,'Output file already open'
+        if self.dumpFile: raise RuntimeError('Output file already open')
         self.dumpFile = open(dumpFileName,'w')
     def getPassingEntries(self):
         return self.passing_entries
@@ -77,4 +77,4 @@ if __name__ == "__main__":
     if options.dumpFile: mcdm.openOutFile(options.dumpFile)
     el = EventLoop([mcdm])
     mca.processEvents(EventLoop([mcdm]), cut=cut)
-    print 'Passing entries:',mcdm.getPassingEntries()
+    print('Passing entries:',mcdm.getPassingEntries())

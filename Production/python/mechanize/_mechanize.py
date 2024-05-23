@@ -9,7 +9,7 @@ included with the distribution).
 
 """
 
-import copy, re, os, urllib, urllib2
+import copy, re, os, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse
 
 from _html import DefaultFactory
 import _response
@@ -25,7 +25,7 @@ class FormNotFoundError(Exception): pass
 
 
 def sanepathname2url(path):
-    urlpath = urllib.pathname2url(path)
+    urlpath = urllib.request.pathname2url(path)
     if os.name == "nt" and urlpath.startswith("///"):
         urlpath = urlpath[2:]
     # XXX don't ask me about the mac...
@@ -228,7 +228,7 @@ class Browser(UserAgentBase):
         success = True
         try:
             response = UserAgentBase.open(self, request, data)
-        except urllib2.HTTPError, error:
+        except urllib.error.HTTPError as error:
             success = False
             if error.fp is None:  # not a response
                 raise
@@ -615,7 +615,7 @@ class Browser(UserAgentBase):
 
         """
         try:
-            return self._filter_links(self._factory.links(), **kwds).next()
+            return next(self._filter_links(self._factory.links(), **kwds))
         except StopIteration:
             raise LinkNotFoundError()
 

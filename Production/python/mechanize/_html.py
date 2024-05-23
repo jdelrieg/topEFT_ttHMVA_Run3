@@ -10,7 +10,7 @@ included with the distribution).
 
 import codecs
 import copy
-import htmlentitydefs
+import html.entities
 import re
 
 import _sgmllib_copy as sgmllib
@@ -157,7 +157,7 @@ class LinksFactory:
         p = self.link_parser_class(response, encoding=encoding)
 
         try:
-            for token in p.tags(*(self.urltags.keys()+["base"])):
+            for token in p.tags(*(list(self.urltags.keys())+["base"])):
                 if token.type == "endtag":
                     continue
                 if token.data == "base":
@@ -188,7 +188,7 @@ class LinksFactory:
                     #text = p.get_compressed_text()
 
                 yield Link(base_url, url, text, tag, token.attrs)
-        except sgmllib.SGMLParseError, exc:
+        except sgmllib.SGMLParseError as exc:
             raise _form.ParseError(exc)
 
 class FormsFactory:
@@ -283,7 +283,7 @@ class TitleFactory:
                 return None
             else:
                 return self._get_title_text(p)
-        except sgmllib.SGMLParseError, exc:
+        except sgmllib.SGMLParseError as exc:
             raise _form.ParseError(exc)
 
 
@@ -298,7 +298,7 @@ def unescape(data, entities, encoding):
 
         repl = entities.get(ent[1:-1])
         if repl is not None:
-            repl = unichr(repl)
+            repl = chr(repl)
             if type(repl) != type(""):
                 try:
                     repl = repl.encode(encoding)
@@ -314,7 +314,7 @@ def unescape_charref(data, encoding):
     name, base = data, 10
     if name.startswith("x"):
         name, base= name[1:], 16
-    uc = unichr(int(name, base))
+    uc = chr(int(name, base))
     if encoding is None:
         return uc
     else:
@@ -326,12 +326,12 @@ def unescape_charref(data, encoding):
 
 
 class MechanizeBs(_beautifulsoup.BeautifulSoup):
-    _entitydefs = htmlentitydefs.name2codepoint
+    _entitydefs = html.entities.name2codepoint
     # don't want the magic Microsoft-char workaround
     PARSER_MASSAGE = [(re.compile('(<[^<>]*)/>'),
-                       lambda(x):x.group(1) + ' />'),
+                       lambda x:x.group(1) + ' />'),
                       (re.compile('<!\s+([^<>]*)>'),
-                       lambda(x):'<!' + x.group(1) + '>')
+                       lambda x:'<!' + x.group(1) + '>')
                       ]
 
     def __init__(self, encoding, text=None, avoidParserProblems=True,
@@ -389,7 +389,7 @@ class RobustLinksFactory:
         encoding = self._encoding
         for ch in bs.recursiveChildGenerator():
             if (isinstance(ch, _beautifulsoup.Tag) and
-                ch.name in self.urltags.keys()+["base"]):
+                ch.name in list(self.urltags.keys())+["base"]):
                 link = ch
                 attrs = bs.unescape_attrs(link.attrs)
                 attrs_dict = dict(attrs)

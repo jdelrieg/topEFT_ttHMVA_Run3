@@ -273,10 +273,10 @@ class DatasetInformation(object):
         try:
             self.dataset = Dataset(sampleName, fileOwner)
         except IOError as ex:
-            print ex.args[0]
+            print(ex.args[0])
             exit(-1)
         except:
-            print "ERROR:", sys.exc_info()[0]
+            print("ERROR:", sys.exc_info()[0])
             raise
 
     def checkForLogger(self, sampleName, fileOwner):
@@ -307,11 +307,11 @@ class DatasetInformation(object):
             self._logger_tar_object = tarfile.open(fileobj=self._logger_file)
 
             if len(self._logger_tar_object.getmembers())==0:
-                print "\nERROR: Failed to stage logger file"
+                print("\nERROR: Failed to stage logger file")
                 self._logger_tar_object = None
                 self._logger_file = None
         except:
-            print "\nERROR: Failed to stage logger file"
+            print("\nERROR: Failed to stage logger file")
             self._logger_tar_object = None
             self._logger_file = None
 
@@ -393,7 +393,7 @@ class DatasetInformation(object):
             showtagsFile=logger.extractfile("Logger/logger_showtags.txt")
             lines = showtagsFile.read().split("\n")
         except:
-            print "ERROR: No showtags file found in logger"
+            print("ERROR: No showtags file found in logger")
             return None
         #Sets tags and release
         #Get the release from the first line of showtags
@@ -544,8 +544,8 @@ class DatasetInformation(object):
         files = self._report['Files']
 
         if len(files) == 0:
-            print "ERROR: Integrity check was not completed properly,\
-            resubmission is advised."
+            print("ERROR: Integrity check was not completed properly,\
+            resubmission is advised.")
             return 0
 
         for fg in self.dataset_details['FileGroups']:
@@ -599,5 +599,5 @@ if __name__ == '__main__':
 
     #print d.dataset_details
     for fg in d.dataset_details['FileGroups']:
-        print '='*72
-        print fg, d.dataset_details['FileGroups'][fg]['FileEntries']
+        print('='*72)
+        print(fg, d.dataset_details['FileGroups'][fg]['FileEntries'])

@@ -104,7 +104,7 @@ class LepMVATreeProducer(Module):
                 #if not self.fast:
                 #    setattr(self.t, "LepGood%d_mvaNewUncorr"     % (i+1), self.mva(l,ncorr=0))
                 #    setattr(self.t, "LepGood%d_mvaNewDoubleCorr" % (i+1), self.mva(l,ncorr=2))
-        for i in xrange(len(lep),8):
+        for i in range(len(lep),8):
             setattr(self.t, "LepGood%d_mvaNew" % (i+1), -99.)
             #if not self.data and not self.fast:
             #    setattr(self.t, "LepGood%d_mvaNewUncorr"     % (i+1), -99.)
@@ -113,7 +113,7 @@ class LepMVATreeProducer(Module):
 
 import os, itertools
 from sys import argv
-if len(argv) < 3: print "Usage: %s [-e] <TREE_DIR> <TRAINING>" % argv[0]
+if len(argv) < 3: print("Usage: %s [-e] <TREE_DIR> <TRAINING>" % argv[0])
 jobs = []
 if argv[1] == "-e": # use existing training
     argv = [argv[0]] + argv[2:]
@@ -138,16 +138,16 @@ for D in glob(argv[1]+"/*"):
         f.Close()
         chunk = 500000.
         if entries < chunk:
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/lepMVAFriend_%s.root" % (argv[2],short),data,xrange(entries)))
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk")
+            jobs.append((short,fname,"%s/lepMVAFriend_%s.root" % (argv[2],short),data,range(entries)))
         else:
             nchunk = int(ceil(entries/chunk))
-            print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
-            for i in xrange(nchunk):
-                r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
+            print("  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk)
+            for i in range(nchunk):
+                r = range(int(i*chunk),min(int((i+1)*chunk),entries))
                 jobs.append((short,fname,"%s/lepMVAFriend_%s.chunk%d.root" % (argv[2],short,i),data,r))
-print 4*"\n"
-print "I have %d taks to process" % len(jobs)
+print(4*"\n")
+print("I have %d taks to process" % len(jobs))
 
 maintimer = ROOT.TStopwatch()
 def _runIt(args):
@@ -156,21 +156,21 @@ def _runIt(args):
     fb = ROOT.TFile(fin)
     tb = fb.Get("ttHLepTreeProducerBase")
     nev = tb.GetEntries()
-    print "==== %s starting (%d entries) ====" % (name, nev)
+    print("==== %s starting (%d entries) ====" % (name, nev))
     booker = Booker(fout)
     el = EventLoop([ LepMVATreeProducer("newMVA",booker,argv[2],data,fast=True), ])
     el.loop([tb], eventRange=range)
     booker.done()
     fb.Close()
     time = timer.RealTime()
-    print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) )
+    print("=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) ))
     return (name,(nev,time))
 
 from multiprocessing import Pool
 pool = Pool(8)
 ret  = dict(pool.map(_runIt, jobs))
 fulltime = maintimer.RealTime()
-totev   = sum([ev   for (ev,time) in ret.itervalues()])
-tottime = sum([time for (ev,time) in ret.itervalues()])
-print "Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.)
+totev   = sum([ev   for (ev,time) in ret.values()])
+tottime = sum([time for (ev,time) in ret.values()])
+print("Done %d tasks in %.1f min (%d entries, %.1f min)" % (len(jobs),fulltime/60.,totev,tottime/60.))
 

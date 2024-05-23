@@ -44,8 +44,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf1 = EvtTagger("Met50",[lambda ev : ev.met_pt >= 50])
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d" % (ev.run, ev.lumi, ev.evt)
-            print self.sf1(ev)
+            print("\nrun %6d lumi %4d event %d" % (ev.run, ev.lumi, ev.evt))
+            print(self.sf1(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 

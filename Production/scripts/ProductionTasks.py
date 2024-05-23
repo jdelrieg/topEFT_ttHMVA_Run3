@@ -104,13 +104,13 @@ if __name__ == '__main__':
             t.run({})
     
     def callback(result):
-        print 'Production thread done: ',str(result)
+        print('Production thread done: ',str(result))
     
     def log(output,s, tostdout = True):
         """Brain-dead utility function"""
         if tostdout:
-            print s
-        print >> output,s
+            print(s)
+        print(s, file=output)
     
     def work(dataset,op_parse,task_list):
         """Do the work for one dataset"""
@@ -132,10 +132,10 @@ if __name__ == '__main__':
             try:
                 previous[t.getname()] = t.run(previous)
                 log(output,'%s: \t%s' % (dataset,previous[t.getname()]),tostdout=False)
-            except Exception, e:
+            except Exception as e:
 
-                import traceback, StringIO
-                sb = StringIO.StringIO()
+                import traceback, io
+                sb = io.StringIO()
                 traceback.print_exc(file=sb)
                 tb = sb.getvalue()
                 sb.close()
@@ -163,7 +163,7 @@ if __name__ == '__main__':
     if op.options.max_threads is not None and op.options.max_threads:
         op.options.max_threads = int(op.options.max_threads)
     pool = multiprocessing.Pool(processes=op.options.max_threads)
-    print op.dataset
+    print(op.dataset)
     for d in op.dataset:
         pool.apply_async(work, args=(d,copy.deepcopy(op),copy.deepcopy(tasks)),callback=callback)
     pool.close()

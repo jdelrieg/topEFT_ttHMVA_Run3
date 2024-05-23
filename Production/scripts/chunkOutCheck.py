@@ -27,7 +27,7 @@ parser.add_option("-l","--log-file", dest="logfile",
 (options,args) = parser.parse_args()
 
 if len(args)==0:
-    print 'provide at least one directory in argument. Use -h to display help'
+    print('provide at least one directory in argument. Use -h to display help')
 
 dirs = sys.argv[1:]
 
@@ -40,7 +40,7 @@ for d in dirs:
         continue
     logName  = '/'.join([d, 'log.txt'])
     if not os.path.isfile( logName ):
-        print d, ': log.txt does not exist'
+        print(d, ': log.txt does not exist')
         badDirs.append(d)
         continue
     logFile = open(logName)
@@ -51,9 +51,9 @@ for d in dirs:
         except:
             pass
     if nEvents == -1:
-        print d, 'cannot find number of processed events'
+        print(d, 'cannot find number of processed events')
     elif nEvents == 0:
-        print d, '0 events'
+        print(d, '0 events')
     else:
         #everything ok so far
         if options.checkCopy:
@@ -64,7 +64,7 @@ for d in dirs:
             succeeded = False
             for logName in logNames:
                 if not os.path.isfile( logName ):
-                    print logName, 'does not exist'
+                    print(logName, 'does not exist')
                 else:
                     logFile = open(logName)
                     isRemote = False
@@ -76,20 +76,20 @@ for d in dirs:
                                 succeeded = True
                                 break
                             else:
-                                print logName, ': remote copy failed. Copied locally'
+                                print(logName, ': remote copy failed. Copied locally')
                 if succeeded:
                     break
             if succeeded:
                 continue # all good
             if logNames == []:
-                print d, ": no log files found matchig", match
+                print(d, ": no log files found matchig", match)
             else:
-                print logNames, ': copy failed or not sent to the expected location'
+                print(logNames, ': copy failed or not sent to the expected location')
         else:
             continue # all good
     badDirs.append(d)
 
-print 'list of bad directories:'
+print('list of bad directories:')
 pprint.pprint(badDirs)
 
 if options.batch is not None:
@@ -97,9 +97,9 @@ if options.batch is not None:
         oldPwd = os.getcwd()
         os.chdir( d )
         cmd =  [options.batch, '-J', d, ' < batchScript.sh' ]
-        print 'resubmitting in', os.getcwd()
+        print('resubmitting in', os.getcwd())
         cmds = ' '.join( cmd )
-        print cmds
+        print(cmds)
         os.system( cmds )
         os.chdir( oldPwd )
         

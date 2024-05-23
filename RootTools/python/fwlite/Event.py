@@ -21,7 +21,7 @@ class Event(object):
         header = '{type}: {iEv}'.format( type=self.__class__.__name__,
                                          iEv = self.iEv)
         varlines = []
-        for var,value in sorted(vars(self).iteritems()):
+        for var,value in sorted(vars(self).items()):
             # if hasattr(value, '__dict__'):
             #    value = str( vars(value) )
 ##             tmp = None
@@ -35,9 +35,9 @@ class Event(object):
 ##                 tmp = value
             tmp = value
             if isinstance( value, collections.Iterable ) and \
-                   not isinstance( value, (str,unicode)) and \
+                   not isinstance( value, str) and \
                    not str(iter( value )).startswith('<ROOT.reco::candidate'):
-                tmp = map(str, value)
+                tmp = list(map(str, value))
             
             varlines.append( '\t{var:<15}:   {value}'.format(var=var, value=tmp) )
         all = [ header ]

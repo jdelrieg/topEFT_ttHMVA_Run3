@@ -15,35 +15,35 @@ def allSampleInfo( sampleName, listLevel ):
     if listLevel == 3:
         contents = castortools.ls(castorDir)
         for c in contents:
-            print c
+            print(c)
         #os.system("rfdir %s | awk '{print \"%s/\"$9}'" % (castorDir,castorDir) )
         return
 
-    print sampleName
+    print(sampleName)
 
     if listLevel>0:
-        print '------------------------------------------------------------------------------------------------------------'
-        print 'PFN:'
-        print castorDir
-        print 'LFN:'
-        print castortools.castorToLFN(castorDir)
+        print('------------------------------------------------------------------------------------------------------------')
+        print('PFN:')
+        print(castorDir)
+        print('LFN:')
+        print(castortools.castorToLFN(castorDir))
     if listLevel>1:
         contents = castortools.ls(castorDir)
         for c in contents:
-            print c
+            print(c)
     if listLevel>0 and localDir!=None:
-        print 'local:'
-        print localDir
+        print('local:')
+        print(localDir)
         if os.path.isdir( localDir ):
             if listLevel>1:
                 os.system('ls -l ' + localDir )
                 # print localDir + '*.root'
         else:
             if listLevel>0:
-                print 'TO BE IMPORTED'
+                print('TO BE IMPORTED')
     if listLevel>0:
-        print
-        print
+        print()
+        print()
 
 
 parser = OptionParser()

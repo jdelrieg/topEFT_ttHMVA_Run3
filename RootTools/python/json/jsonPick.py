@@ -50,7 +50,7 @@ def jsonPick( dataset, jsonMap):
     # jsonFile = jmap[ baseDataSet ]
     jsonFiles = []
     jsonFile = None
-    for key, value in  jsonMap.iteritems():
+    for key, value in  jsonMap.items():
         pat = re.compile(key)
         if pat.match(baseDataSet) or pat.match(dataset):
             jsonFiles.append(value)
@@ -93,8 +93,8 @@ if __name__ == '__main__':
     from CMGTools.RootTools.json.dcsJSONS import dcsJsonMap
 
     for sample in samples:
-        print 'Sample', sample
-        print '\tJSON (DCS)     =', jsonPick( sample, dcsJsonMap )
+        print('Sample', sample)
+        print('\tJSON (DCS)     =', jsonPick( sample, dcsJsonMap ))
 
 
     

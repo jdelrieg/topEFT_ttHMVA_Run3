@@ -76,4 +76,4 @@ for run in runs:
     RUN="python %s -j 8 -l 0.01 --s2v --tree treeProducerSusyMultilepton" % ("mcPlots.py -e -f --plotmode nostack --print 'pdf'" if isplot else "mcAnalysis.py")
     B0=' '.join([RUN,MYPATH,"susy-multilepton/fake_rate/susy_2lss_fake_rate_mca_sync.txt",run[1],"susy-multilepton/fake_rate/apply/susy_2lss_fake_rate_plots.txt" if isplot else ""])
     B0 += ' '.join([' ',add_cuts(prepare_cuts(run[2],run[3],run[4])),"--pdir "+OUTDIR+'_'+run[0] if isplot else "",run[5]])
-    print B0
+    print(B0)

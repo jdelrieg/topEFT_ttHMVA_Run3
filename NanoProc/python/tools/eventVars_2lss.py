@@ -62,7 +62,7 @@ class EventVars2LSS(Module):
         all_leps = [l for l in Collection(event,"LepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         chosen = getattr(event,"iLepFO"+self.inputlabel)
-        leps = [all_leps[chosen[i]] for i in xrange(nFO)]
+        leps = [all_leps[chosen[i]] for i in range(nFO)]
         if nFO >= 2: 
             allret['drlep12'] = deltaR(leps[0],leps[1])
         else: 
@@ -104,7 +104,7 @@ class EventVars2LSS(Module):
                 _var = 0; 
             jets = [j for j in Collection(event,"JetSel"+self.inputlabel)]
             jetptcut = 25
-            jets = filter(lambda x : getattr(x,'pt%s'%self.systsJEC[_var]) > jetptcut, jets)
+            jets = [x for x in jets if getattr(x,'pt%s'%self.systsJEC[_var]) > jetptcut]
 
 
             if getattr(event, 'nFwdJet%s_Recl'%self.systsJEC[_var]) > 0 and len(jets):
@@ -112,8 +112,8 @@ class EventVars2LSS(Module):
             else: 
                 ret['min_Deta_leadfwdJet_jet'] = 0
                 
-            bmedium = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1], jets)
-            bloose  = filter(lambda x : x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1], jets)
+            bmedium = [x for x in jets if x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1]]
+            bloose  = [x for x in jets if x.btagDeepFlavB > _btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1]]
             if len(bmedium) >1: 
                 bmedium.sort(key = lambda x : getattr(x,'pt%s'%self.systsJEC[_var]), reverse = True)
                 b1 = bmedium[0].p4()
@@ -174,8 +174,8 @@ class EventVars2LSS(Module):
 
             for br in self.namebranches:
                 allret[br+self.label+self.systsJEC[_var]] = ret[br]
-	 	
-	return allret
+                 
+        return allret
 
 
 if __name__ == '__main__':
@@ -189,8 +189,8 @@ if __name__ == '__main__':
             Module.__init__(self,name,None)
             self.sf = EventVars2LSS('','Recl')
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            print("\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood))
+            print(self.sf(ev))
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 
