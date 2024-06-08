@@ -10,7 +10,7 @@ def fineSplitComponent(c):
             nc = copy.deepcopy(c)
             nc.name = c.name + '_Chunk%d'%idx
             nc.files = [f]
-            nc.fineSplit = (idx,c.fineSplitFactor)
+            nc.fineSplit = (i,c.fineSplitFactor)
             splitted.append(nc)
     return splitted
 

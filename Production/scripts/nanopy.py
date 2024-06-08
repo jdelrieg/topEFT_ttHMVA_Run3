@@ -51,6 +51,8 @@ def _processOneComponent(pp, comp, outdir, preprocessor, options):
         tfile.Close()
         pp.maxEntries = int(ceil(totEvents/float(fineSplitFactor)))
         pp.firstEntry = fineSplitIndex * pp.maxEntries
+        if pp.firstEntry > pp.maxEntries:
+            raise RuntimeError("First entry larger than maxEntries. Theres something wrong in the component splitting") 
         pp.postfix += "_fineSplit_%d" % fineSplitIndex
 
     preprocessor = getattr(comp, 'preprocessor', preprocessor)
