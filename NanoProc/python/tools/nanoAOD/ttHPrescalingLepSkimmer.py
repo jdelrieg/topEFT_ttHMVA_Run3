@@ -11,9 +11,9 @@ class ttHPrescalingLepSkimmer( Module ):
             minLeptonsNoPrescale = 0,
             requireSameSignPair = False,
             jetSel = lambda j : True,
-            minJets = 0,
-            minMET = 0,
-            minMETNoPrescale = 0,
+            minJets = -1,
+            minMET = -999,
+            minMETNoPrescale = -999,
             useEventNumber = True,
             label = "prescaleFromSkim"):
 
@@ -36,9 +36,6 @@ class ttHPrescalingLepSkimmer( Module ):
         self.wrappedOutputTree.branch(self.label,'i')
 
     def analyze(self, event):
-        if self.prescaleFactor == 1:
-            self.wrappedOutputTree.fillBranch(self.label, self.prescaleFactor)
-            return True
 
         toBePrescaled = True
         if self.minLeptons > 0:
@@ -53,6 +50,12 @@ class ttHPrescalingLepSkimmer( Module ):
                         toBePrescaled = False
                 else:
                     toBePrescaled = False
+
+        if self.prescaleFactor == 1:
+            self.wrappedOutputTree.fillBranch(self.label, self.prescaleFactor)
+            return True
+
+                    
         if self.minJets > -1: #was 0, changed to -1: if 0 cannot clean jets and keep them all
             jets = list(filter(self.jetSel, Collection(event, 'Jet')))
             if len(jets) >= self.minJets:

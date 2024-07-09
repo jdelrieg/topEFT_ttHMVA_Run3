@@ -29,12 +29,12 @@ muonSelection     = lambda l : abs(l.eta) < 2.4 and l.pt > conf["muPt" ] and l.m
 from CMGTools.NanoProc.tools.nanoAOD.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
 from PhysicsTools.NanoAODTools.postprocessing.framework.collectionMerger import collectionMerger
 
-lepSkim = ttHPrescalingLepSkimmer(5, 
+lepSkim = ttHPrescalingLepSkimmer(25, 
                 muonSel = muonSelection, electronSel = electronSelection,
                 minLeptonsNoPrescale = 2, # things with less than 2 leptons are rejected irrespectively of the prescale
-                minLeptons = 2, requireSameSignPair = True,
-                jetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4 and j.jetId > 0, 
-                minJets = 4, minMET = 70)
+                minLeptons = 3, requireSameSignPair = False, # prescale everything with less than 3 leptons
+)
+
 lepMerge = collectionMerger(input = ["Electron","Muon"], 
                             output = "LepGood", 
                             selector = dict(Muon = muonSelection, Electron = electronSelection))
