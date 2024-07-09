@@ -12,6 +12,9 @@ TTG_1Jets_PTG_100to200          = kreator.makeMCComponent("TTG_1Jets_PTG_100to20
 TTG_1Jets_PTG_200               = kreator.makeMCComponent("TTG_1Jets_PTG_200", "/TTG-1Jets_PTG-200_TuneCP5_13p6TeV_amcatnloFXFXold-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM", "CMS", ".*root", 0.128)
 TTHtoNon2B                      = kreator.makeMCComponent("TTHtoNon2B", "/TTHtoNon2B_M-125_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM", "CMS", ".*root", 0.25)
 TTLL_MLL_50                     = kreator.makeMCComponent("TTLL_MLL_50", "/TTLL_MLL-50_TuneCP5_13p6TeV_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM", "CMS", ".*root", 0.08646)
+TTLL_CPV                        = kreator.makeMCComponent("TTLL_CPV", "/TTLL-AtLeastOneTtoL-CPV_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM", "CMS", ".*root", 0.113559537782*(1-0.7*0.7))
+TZQ_CPV                         = kreator.makeMCComponent("TZQ_CPV", "/TZQB-ZtoLL-TtoL-CPV_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v3/NANOAODSIM", "CMS", ".*root", 0.07358*0.3)
+
 TTLL_MLL_4to50                  = kreator.makeMCComponent("TTLL_MLL_4to50", "/TTLL_MLL-4to50_TuneCP5_13p6TeV_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM", "CMS", ".*root", 0.03949)
 TTLNu_1Jets                     = kreator.makeMCComponent("TTLNu_1Jets", "/TTLNu-1Jets_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v4/NANOAODSIM", "CMS", ".*root", 0.25)
 TZQB                            = kreator.makeMCComponent("TZQB", "/TZQB-Zto2L-4FS_MLL-30_TuneCP5_13p6TeV_amcatnlo-pythia8/Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2/NANOAODSIM", "CMS", ".*root", 0.07968)
@@ -156,4 +159,6 @@ QCD_PT_80to120_MuEnrichedPt5,
 QCD_PT_120to170_MuEnrichedPt5,
 QCD_PT_20to30_bcToE,
 QCD_PT_30to80_bcToE,
-QCD_PT_80to170_bcToE]
+         QCD_PT_80to170_bcToE,
+         TTTT,
+         ]
