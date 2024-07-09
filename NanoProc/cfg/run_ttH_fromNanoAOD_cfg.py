@@ -44,31 +44,36 @@ if analysis == "main":
     if year in [ '2016', '2016APV', '2017', '2018']:
         mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
             # single boson
-            "WJetsToLNu_LO", "DYJetsToLL_M10to50_LO", "DYJetsToLL_M50",
-            # ttbar + single top + tW
-            "TTJets_SingleLeptonFromT", "TTJets_SingleLeptonFromTbar", "TTJets_DiLepton",
-            "T_sch_lep", "T_tch", "TBar_tch", "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
-            # conversions
-            "TTGJets", "TGJets_lep", "WGToLNuG", "ZGTo2LG",
-            # ttV
-            "TTWToLNu_fxfx", "TTZToLLNuNu_amc", "TTZToLLNuNu_m1to10",
-            # ttH + tHq/tHW
-            "TTHnobb_fxfx", "THQ_ctcvcp", "THW_ctcvcp", "TTH_ctcvcp",
-            # top + V rare processes
-            "TZQToLL", "tWll", "TTTT", "TTWW",
-            # diboson + DPS + WWss
-            "WWTo2L2Nu", "WZTo3LNu_pow", "WZTo3LNu_fxfx", "ZZTo4L", "WW_DPS", "WWTo2L2Nu_DPS", "WpWpJJ",
-            # triboson
-            "WWW", "WWW_ll", "WWZ", "WZG", "WZZ", "ZZZ",
+            #"WJetsToLNu_LO", "DYJetsToLL_M10to50_LO", "DYJetsToLL_M50",
+            ## ttbar + single top + tW
+            #"TTSemi_pow", "TTLep_pow",
+            #"T_sch_lep", "T_tch", "TBar_tch", "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
+            ## conversions
+            #"TTGJets", "TGJets_lep", "WGToLNuG", "ZGTo2LG",
+            ## ttV
+            #"TTWToLNu_fxfx", "TTZToLLNuNu_amc", "TTZToLLNuNu_m1to10",
+            #"TTWJetsToLNu_EWK_5f_NLO", 
+            ## ttH + tHq/tHW
+            #"TTHnobb_fxfx", "THQ_ctcvcp", "THW_ctcvcp", "TTH_ctcvcp",
+            ## top + V rare processes
+            #"TZQToLL", "TTTT", "TTWW",
+            #"tWll_tlep_wlep","tWll_tlep_whad","tWll_thad_wlep", 
+            ## diboson + DPS + WWss
+            #"WWTo2L2Nu", "WZTo3LNu_pow", "WZTo3LNu_fxfx", "ZZTo4L", "WW_DPS", "WWTo2L2Nu_DPS", "WpWpJJ",
+            ## triboson
+            "WZZ",
+            #"WWW", "WWW_ll", "WWZ", "WZG",  "ZZZ",
             # other Higgs processes
-            "GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
+            #"GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
         ]])
     else: # i hope they don't change dataset names again
         mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
             #single boson
-            "DYto2L_2Jets_MLL_50","DYto2L_2Jets_MLL_50_ext","DYto2L_2Jets_MLL_10to50","DYto2L_2Jets_MLL_10to50_ext","WtoLNu_2Jets",
+            "DYto2L_2Jets_MLL_50","DYto2L_2Jets_MLL_50_ext",
+            "DYto2L_2Jets_MLL_10to50","DYto2L_2Jets_MLL_10to50_ext","WtoLNu_2Jets",
             # ttbar + tW, not adding t- or s-channel
-            "TTto2L2Nu", "TTto2L2Nu_ext", "TTtoLNu2Q", "TTtoLNu2Q_ext",
+            "TTto2L2Nu", "TTto2L2Nu_ext",
+            "TTtoLNu2Q", "TTtoLNu2Q_ext",
             "TbarWplusto2L2Nu", "TbarWplusto2L2Nu_ext", "TWminusto2L2Nu", "TWminusto2L2Nu_ext",
             # conversions
             "TTG_1Jets_PTG_200","TTG_1Jets_PTG_100to200","TTG_1Jets_PTG_10to100",
@@ -80,13 +85,19 @@ if analysis == "main":
             # ttH + tHq/tHW
             "TTHtoNon2B", "THQ_ctcvcp_sm", "THW_ctcvcp_sm",
             # top + V rare processes
-            "TZQB", "TTTT", "TWZ_", 
-            # "TTWW",
+            "TZQB",
+            "TTTT",
+            "TWZ_Tto2Q_WtoLNu_Zto2L_DR1", "TWZ_Tto2Q_WtoLNu_Zto2L_DR2",
+            "TWZ_TtoLNu_Wto2Q_Zto2L_DR1", "TWZ_TtoLNu_Wto2Q_Zto2L_DR2",
+            "TWZ_TtoLNu_WtoLNu_Zto2L_DR1", "TWZ_TtoLNu_WtoLNu_Zto2L_DR2", 
+            "TTWW",
             # diboson + DPS + WWss
-            "WWto2L2Nu", "WWto2L2Nu_ext", "ZZto4L" "ZZto4L_ext", "WZto3LNu", 
+            "ZZto4L", "ZZto4L_ext",
+            "WWto2L2Nu", "WWto2L2Nu_ext",  "WZto3LNu", 
             # missing "WWTo2L2Nu_DPS", "WpWpJJ",
             # triboson
-            "WWW", "WWW_ll", "WWZ", "WZG", "WZZ", "ZZZ",
+            "WWW_4F", "WWZ_4F", 
+            "WZG", "WZZ", "ZZZ",
             # other Higgs processes
             "GGHZZ4L", "VHToNonbb", "VHToNonbb_ll", "ZHTobb_ll", "ZHToTauTau", "TTWH", "TTZH",
         ]])
@@ -114,7 +125,7 @@ if analysis == "main":
                    'Muon'       : [], # replaces the two above
 
                    'DoubleEG'       : ['DoubleMuon', 'SingleMuon', 'Muon'],
-                   'SingleElectron' : ['DoubleMuon', 'SingleMuon', 'Muon', 'SingleElectron'],
+                   'SingleElectron' : ['DoubleMuon', 'SingleMuon', 'Muon', 'DoubleEG'],
                    'EGamma'         : ['DoubleMuon', 'SingleMuon', 'Muon'], # replaces the two above
 
 		   'MuonEG' : ['DoubleMuon', 'SingleMuon', 'Muon', 'DoubleEG', 'SingleElectron', 'EGamma'],
@@ -141,7 +152,7 @@ if getCMGOption('applyTriggersInMC'):
         comp.triggers = mcTriggers
 
 # make data
-dataSamples = []; 
+dataSamples = [];
 for pd in Datasets:
     for comp in byCompName(allData, [pd+"_"]):
         comp.triggers = DatasetsAndTriggers[pd]
@@ -159,16 +170,12 @@ if getCMGOption('selectComponents'):
     else:
         selectedComponents = byCompName(selectedComponents, getCMGOption('selectComponents').split(","))
 #autoAAA(selectedComponents, quiet=not(getCMGOption("verboseAAA",False)), redirectorAAA="xrootd-cms.infn.it")
-if year==2018:
-    configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),150 if preprocessor else 10,12)
-    configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),70 if preprocessor else 10,12)
-    configureSplittingFromTime(dataSamples,50 if preprocessor else 5,12)
-else: # rerunning deepFlavor can take up to twice the time, some samples take up to 400 ms per event
-    configureSplittingFromTime(byCompName(mcSamples,['^(?!(TTJets_Single|T_|TBar_)).*']),300 if preprocessor else 10,12)
-    configureSplittingFromTime(byCompName(mcSamples,['^(TTJets_Single|T_|TBar_).*']),150 if preprocessor else 10,12)
-    configureSplittingFromTime(dataSamples,100 if preprocessor else 5,12)
-    configureSplittingFromTime(byCompName(dataSamples,['Single']),50 if preprocessor else 5,12)
+
+configureSplittingFromTime(dataSamples, 5,12)
+configureSplittingFromTime(mcSamples, 100,12)
+    
 selectedComponents, _ = mergeExtensions(selectedComponents)
+
 
 
 
