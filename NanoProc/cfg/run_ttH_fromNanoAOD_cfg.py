@@ -117,7 +117,7 @@ if analysis == "main":
         Datasets=["DoubleMuon", "DoubleEG", "MuonEG", "SingleElectron", "SingleMuon"]
     elif year == '2018': 
         Datasets=["DoubleMuon", "MuonEG", "EGamma", "SingleMuon"]
-    elif year in [ '2022', '2022EE']: 
+    elif year in [ '2022', '2022EE', '2023']: 
         Datasets=["DoubleMuon", "MuonEG", "EGamma", "SingleMuon", "Muon"]
 
     vetoMatrix = { 'DoubleMuon'	: [],
@@ -129,6 +129,27 @@ if analysis == "main":
                    'EGamma'         : ['DoubleMuon', 'SingleMuon', 'Muon'], # replaces the two above
 
 		   'MuonEG' : ['DoubleMuon', 'SingleMuon', 'Muon', 'DoubleEG', 'SingleElectron', 'EGamma'],
+                  }
+elif analysis == "met":
+    if year in [ '2016', '2016APV', '2017', '2018']:
+        mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
+        ]])
+    else: # i hope they don't change dataset names again
+        mcSamples = byCompName(mcSamples_, ["%s(|_PS)$"%dset for dset in [
+        ]])
+
+    DatasetsAndTriggers = dict([
+        ("JetMET"    , []),
+    ])
+    
+    if year in [ '2016', '2016APV', '2017']:
+        Datasets=[]
+    elif year == '2018': 
+        Datasets=[]
+    elif year in [ '2022', '2022EE', '2023']: 
+        Datasets=["JetMET"]
+
+    vetoMatrix = { 'JetMET'	: [],
                   }
 
 elif analysis == "frqcd":
@@ -190,6 +211,9 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 
 # in the cut string, keep only the main cuts to have it simpler
 modules = ttH_sequence_step1
+if analysis == "met":
+    modules = ttH_met_sequence_step1
+
 cut = ttH_skim_cut
 
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"

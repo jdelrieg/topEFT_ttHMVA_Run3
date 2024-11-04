@@ -32,7 +32,15 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.collectionMerger import 
 lepSkim = ttHPrescalingLepSkimmer(25, 
                 muonSel = muonSelection, electronSel = electronSelection,
                 minLeptonsNoPrescale = 2, # things with less than 2 leptons are rejected irrespectively of the prescale
-                minLeptons = 3, requireSameSignPair = False, # prescale everything with less than 3 leptons
+                # minLeptons = 3, requireSameSignPair = False, # prescale everything with less than 3 leptons
+                minLeptons = 2, requireSameSignPair = True, # prescale everything with 2lOS or less
+)
+
+lepMetSkim = ttHPrescalingLepSkimmer(1, 
+                muonSel = muonSelection, electronSel = electronSelection,
+                minLeptonsNoPrescale = 2, # things with less than 2 leptons are rejected irrespectively of the prescale
+                # minLeptons = 3, requireSameSignPair = False, # prescale everything with less than 3 leptons
+                minLeptons = 2, requireSameSignPair = False, # prescale everything with 2lOS or less
 )
 
 lepMerge = collectionMerger(input = ["Electron","Muon"], 
@@ -59,7 +67,7 @@ else:
 
 
 ttH_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, xsecTag,  lepJetBTagDeepFlav, lepMVA]
-
+ttH_met_sequence_step1 = [lepMetSkim, lepMerge, autoPuWeight, yearTag, xsecTag,  lepJetBTagDeepFlav, lepMVA]
 #==== 
 #from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import DeltaR
 # from CMGTools.NanoProc.tools.nanoAOD.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
