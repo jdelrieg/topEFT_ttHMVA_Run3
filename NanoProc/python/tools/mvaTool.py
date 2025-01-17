@@ -14,6 +14,7 @@ class MVAVar:
                 self.func = lambda ev : ev[self.name]
         self.type = type
         self.var  = array('f',[0.]) #TMVA wants ints as floats! #array(type,[0 if type == 'i' else 0.])
+        #print('nombre:',name)
     def set(self,ev): 
         self.var[0] = self.func(ev)
 

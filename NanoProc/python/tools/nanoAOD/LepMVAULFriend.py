@@ -33,6 +33,7 @@ class LeptonMVA:
         print("Booking %s" % (elpath))
 
         self.el = MVATool("BDTG", elpath,elVars)
+        
 
     def __call__(self,lep):
         if   abs(lep.pdgId) == 11: return self.el(lep)
@@ -46,7 +47,7 @@ class LepMVAFriend(Module):
             for era in '16_preVFP,16,17,18'.split(','):
                 self.mva[era] = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/NanoProc/data/leptonMVA/tth/UL20_%s.xml'%era)
         else:
-            self.mva = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/UL20_%s.xml'%era)
+            self.mva = LeptonMVA(os.environ['CMSSW_BASE']+'/src/CMGTools/NanoProc/data/leptonMVA/tth/UL20_%s.xml'%era)
         self.collections = ['Electron', 'Muon'] if separateCollections else [ 'LepGood']
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):

@@ -97,10 +97,13 @@ class lepMVAWZ_run3(Module):
         }
         
         jets = Collection(event, "Jet", "nJet")
+        print('inicie')
 
         for ilep, lep in enumerate(Collection(event, "LepGood","nLepGood")):
+            print('auqi llegue')
             if abs(lep.pdgId) == 11: # Electrons                
                 # Set the values of the input variables
+                print('y aqui')
                 self.set_vars(self.inputVars["electrons"], lep, jets)
                 
                 # Evaluate the MVA
@@ -112,6 +115,7 @@ class lepMVAWZ_run3(Module):
             elif abs(lep.pdgId) == 13: # Muons         
                 # Set the values of the input variables
                 self.set_vars(self.inputVars["muons"], lep, jets)
+                print('y aqui tb')
                 
                 # Evaluate the MVA
                 mva = self.evaluate(self.mva_muons, "muons")
@@ -125,6 +129,8 @@ class lepMVAWZ_run3(Module):
         writeOutput(self, ret)
         return True
 
+lepMVA_probando=lambda : lepMVAWZ_run3("/nfs/fanae/user/cvico/WorkSpace/wz-run3/CMSSW_12_4_12/src/CMGTools/TTHAnalysis/data/WZRun3/", "EGM/Electron-mvaTTH.2022EE.weights_mvaISO.xml","MUO/Muon-mvaTTH.2022EE.weights.xml")
+
 if __name__ == '__main__':
     """ Debug the module """
     from sys import argv
@@ -134,9 +140,10 @@ if __name__ == '__main__':
     from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import InputTree
     
     mainpath = "/lustrefs/hdd_pool_dir/nanoAODv12/24october2023/MC/2022PostEE/WZto3LNu_TuneCP5_13p6TeV_powheg-pythia8/mcRun3_PostEE_oct2023_WZto3LNu_TuneCP5_13p6TeV_powheg-pythia8/231023_150004/0000/"
-    process = "tree_12"
     
-    nentries = int(argv[1])
+    process = "sampleEFT"
+    
+    nentries = 10;#int(argv[1])
     ### Open the main file
     file_ = ROOT.TFile( os.path.join(mainpath, process+".root") )
     tree = file_.Get("Events")
@@ -150,8 +157,8 @@ if __name__ == '__main__':
     
     weightspath_2022EE   = os.path.join(os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/WZRun3/lepMVA/2022EE")
     
-    from CMGTools.TTHAnalysis.tools.nanoAOD.wzsm_modules import lepMerge_EE
-    import CMGTools.TTHAnalysis.tools.nanoAOD.mvaTTH_vars_run3 as mvatth_cfg
+    from CMGTools.NanoProc.tools.nanoAOD.wzsm_modules import lepMerge_EE    
+    import CMGTools.NanoProc.tools.nanoAOD.mvaTTH_vars_run3 as mvatth_cfg
 
     weightspath_2022EE = os.path.join(os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/WZRun3/")
 
@@ -162,6 +169,8 @@ if __name__ == '__main__':
         suffix = "_run3",
         inputVars = {"muons":  mvatth_cfg.muon_df("2022"), "electrons" : mvatth_cfg.electron_df_wIso("2022")}
     )
+    print('llegue aqui')
+    
     
     module_test.beginJob()
     (nall, npass, timeLoop) = eventLoop([lepMerge_EE, module_test], file_, outFile, tree, outTree, maxEvents = nentries)
