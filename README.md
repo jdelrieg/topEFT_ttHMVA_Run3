@@ -40,16 +40,24 @@ git clone https://github.com/jdelrieg/topEFT_ttHMVA_Run3.git -b newcmgtools_pyth
 cd CMGTools
 ```
 
-#### Add your fork, and push the 80X branch to it
+<!--#### Add your fork, and push the 80X branch to it
 
 ```
 git remote add origin  git@github.com:YOUR_GITHUB_REPOSITORY/cmgtools-lite.git
 git push -u origin 80X
 ```
-
+-->
 #### Compile
 
 ```
 cd $CMSSW_BASE/src
 scram b -j 8
+```
+
+
+
+#### Run the skimming code
+
+```
+nano_postproc.py -c "nMuon + nElectron >= 2 && (Sum\$(Muon_looseId && Muon_miniPFRelIso_all < 0.4 && Muon_sip3d < 8) + Sum\$(Electron_miniPFRelIso_all < 0.4 && Electron_sip3d < 8)) >= 2" -I CMGTools.NanoProc.tools.nanoAOD.lepMVA_run3 lepMVA <path to output directory> <Rootfile to run over> -N <number of events to run (add to do a quick test, remove if you want to run over the full rootfile)>
 ```
