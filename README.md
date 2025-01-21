@@ -7,17 +7,17 @@ For the general recipe, [follow these instructions](https://twiki.cern.ch/twiki/
 #### Set up CMSSW and the base git
 
 ```
-cmsrel CMSSW_8_0_25
-cd CMSSW_8_0_25/src
+cmsrel CMSSW_14_0_6
+cd CMSSW_14_0_6/src
 cmsenv
 git cms-init
 ```
 
-#### Add the central cmg-cmssw repository to get the Heppy 80X branch
+%#### Add the central cmg-cmssw repository to get the Heppy 80X branch
 
-```
-git remote add cmg-central https://github.com/CERN-PH-CMG/cmg-cmssw.git -f  -t heppy_80X
-```
+%```
+%git remote add cmg-central https://github.com/CERN-PH-CMG/cmg-cmssw.git -f  -t heppy_80X
+%```
 
 #### Configure the sparse checkout, and get the base heppy packages
 
